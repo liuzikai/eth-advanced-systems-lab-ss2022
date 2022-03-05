@@ -22,16 +22,21 @@ include_directories(third_party)
 
 set(TEST_SOURCES
         tests/test_main.cpp
-        tests/example_test.cpp)
+        tests/example_test.cpp
+        tests/adjacent_graph_test.cpp
+        tests/forward_test.cpp)
 
 set(BENCH_SOURCES
         benchmark/main.cpp)
 
 ADD_LIBRARY(triangle_lib STATIC
-            src/EdgeIterator.cpp )
+        src/AdjacencyGraph.cpp
+        src/Forward.cpp
+        src/EdgeIterator.cpp)
 
 add_executable(tests
         ${TEST_SOURCES})
+target_include_directories(tests PRIVATE src)
 
 add_executable(benchmark
         ${BENCH_SOURCES})
