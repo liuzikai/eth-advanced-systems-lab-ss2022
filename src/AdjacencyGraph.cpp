@@ -7,6 +7,8 @@
 #include <fstream>
 #include <algorithm>
 
+// replace vector, class in C?
+
 AdjacencyGraph::AdjacencyGraph(Index n) : n(n), m(0), adjNodes_(n, std::vector<Index>()) {}
 
 void AdjacencyGraph::addEdge(Index u, Index v) {
@@ -26,6 +28,7 @@ AdjacencyGraph::AdjacencyGraph(const std::string &filename) {
     for (Index i = 0; i < m; i++) {
         Index u, v;
         fin >> u >> v;
+        // implement swap?
         if (u > v) std::swap(u, v);
         adjNodes_[u].emplace_back(v);
     }
@@ -35,6 +38,7 @@ AdjacencyGraph::AdjacencyGraph(const std::string &filename) {
 
 void AdjacencyGraph::sortAdjNodes() {
     for (auto &v : adjNodes_) {
+        // implement sort
         std::sort(v.begin(), v.end());
     }
 }

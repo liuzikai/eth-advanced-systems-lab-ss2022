@@ -1,14 +1,14 @@
 //
-// Created by matthiaas on 04.03.22.
+// Created by matthiaas on 04.03.22
 //
 
-#ifndef TEAM02_EDGEITERATOR_H
-#define TEAM02_EDGEITERATOR_H
+#ifndef TEAM02_FORWARD_H
+#define TEAM02_FORWARD_H
 
+#include "Common.h"
 
-class EdgeIterator {
+class AdjacencyGraph;
 
-};
+Index edgeIteratorSolve(AdjacencyGraph G);
 
-
-#endif //TEAM02_EDGEITERATOR_H
+#endif //TEAM02_FORWARD_H
