@@ -3,22 +3,39 @@
 //
 
 #include <catch.hpp>
-#include "AdjacencyGraph.h"
 
-TEST_CASE("AdjacentGraph: empty") {
-    AdjacencyGraph G(0);
-    REQUIRE(G.nodeCount() == 0);
+extern "C" {
+#include "adjacency_graph.h"
 }
 
-TEST_CASE("AdjacentGraph: in-order node indices") {
-    AdjacencyGraph G(2);
-    REQUIRE(G.nodeCount() == 2);
-    REQUIRE(G.edgeCount() == 0);
-    G.addEdge(1, 0);  // AdjacencyGraph should swap the indices
-    REQUIRE(G.edgeCount() == 1);
-    REQUIRE(G.adjNodes(0).size() == 1);
-    REQUIRE(G.adjNodes(0)[0] == 1);
-    REQUIRE(G.adjNodes(1).empty());
+#include <set>
+
+static std::set<index_t> set_from_list(const adjacency_list_t &list) {
+    return {list.neighbors, list.neighbors + list.count};
 }
 
-// TODO: [Zikai 2022.03.05] unit test AdjacencyGraph(filename)?
+TEST_CASE("adjacency_graph: sample graph") {
+    adjacency_graph_t *graph = create_graph_from_file(INPUT_DIR "sample.txt", nullptr);
+    REQUIRE(graph->n == 5);
+    REQUIRE(graph->adjacency[0].count == 4);
+    REQUIRE(set_from_list(graph->adjacency[0]) == std::set<index_t>({1, 2, 3, 4}));
+    REQUIRE(graph->adjacency[1].count == 2);
+    REQUIRE(set_from_list(graph->adjacency[1]) == std::set<index_t>({2, 3}));
+    REQUIRE(graph->adjacency[2].count == 0);
+    REQUIRE(graph->adjacency[3].count == 1);
+    REQUIRE(set_from_list(graph->adjacency[3]) == std::set<index_t>({4}));
+    REQUIRE(graph->adjacency[4].count == 0);
+    free_graph(graph);
+}
+
+TEST_CASE("adjacency_graph: accessory graph") {
+    adjacency_graph_t *A = nullptr;
+    adjacency_graph_t *graph = create_graph_from_file(INPUT_DIR "sample.txt", &A);
+    REQUIRE(A != nullptr);
+    REQUIRE(A->n == 5);
+    for (index_t i = 0; i < A->n; i++) {
+        REQUIRE(A->adjacency[i].count == 0);
+    }
+    free_graph(A);
+    free_graph(graph);
+}
