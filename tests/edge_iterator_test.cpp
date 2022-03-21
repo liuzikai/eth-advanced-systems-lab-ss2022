@@ -25,8 +25,7 @@ TEST_CASE("edge_iterator: example graph") {
     print_triangle = add_triangle;
 
     adjacency_graph_t *graph = create_graph_from_file(INPUT_DIR "sample.txt", NULL);
-    edge_iterator(graph);
-    // REQUIRE(edge_iterator(graph) == 3);
+    REQUIRE(edge_iterator(graph) == 3);
     REQUIRE(triangles == TriangleSet{{0, 1, 2}, {0, 1, 3}, {0, 3, 4}});
     free_graph(graph);
 

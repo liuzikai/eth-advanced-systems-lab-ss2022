@@ -12,12 +12,8 @@ index_t edge_iterator(adjacency_graph_t *G) {
     // According to sec. 4, the sorting is included in the execution time
     for (index_t u = 0; u < G->n; u++) {
         if (G->adjacency[u].count > 0) {
-            quick_sort(G->adjacency[u].neighbors, 1, G->adjacency[u].count - 1);
+            quick_sort(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1);
         }
-        for (index_t i=0; i<G->adjacency[u].count; i++) {
-            printf("%llu ", G->adjacency[u].neighbors[i]);
-        }
-        printf("\n");
     }
 
     index_t count = 0;
