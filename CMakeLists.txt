@@ -20,6 +20,7 @@ set(TEST_SOURCES
         tests/test_main.cpp
         tests/example_test.cpp
         tests/adjacent_graph_test.cpp
+        tests/forward_test.cpp
         tests/edge_iterator_test.cpp)
 
 set(BENCH_SOURCES

@@ -10,15 +10,6 @@ extern "C" {
 #include <set>
 #include "triangles.h"
 
-// using Triangle = std::set<index_t>;
-// using TriangleSet = std::set<Triangle>;
-// TriangleSet triangles;
-// extern "C" {
-//     static void add_triangle(index_t u, index_t v, index_t w) {
-//         triangles.insert({u, v, w});
-//     }
-// }
-
 TEST_CASE("forward: example graph") {
     triangles.clear();
     print_triangle_func_t original_print = print_triangle;
