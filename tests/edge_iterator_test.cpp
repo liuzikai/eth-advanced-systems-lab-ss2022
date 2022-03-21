@@ -1,10 +1,10 @@
 //
-// Created by Zikai Liu on 3/5/22.
+// Updated by JZ on 20.03.22.
 //
 
 #include <catch.hpp>
 extern "C" {
-#include "forward.h"
+#include "edge_iterator.h"
 #include "common.h"
 }
 #include <set>
@@ -19,16 +19,15 @@ extern "C" {
 //     }
 // }
 
-TEST_CASE("forward: example graph") {
+TEST_CASE("edge_iterator: example graph") {
     triangles.clear();
     print_triangle_func_t original_print = print_triangle;
     print_triangle = add_triangle;
 
-    adjacency_graph_t *A = nullptr;
-    adjacency_graph_t *graph = create_graph_from_file(INPUT_DIR "sample.txt", &A);
-    REQUIRE(forward(graph, A->adjacency) == 3);
+    adjacency_graph_t *graph = create_graph_from_file(INPUT_DIR "sample.txt", NULL);
+    edge_iterator(graph);
+    // REQUIRE(edge_iterator(graph) == 3);
     REQUIRE(triangles == TriangleSet{{0, 1, 2}, {0, 1, 3}, {0, 3, 4}});
-    free_graph(A);
     free_graph(graph);
 
     print_triangle = original_print;

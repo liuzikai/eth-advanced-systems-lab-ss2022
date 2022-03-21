@@ -20,7 +20,7 @@ set(TEST_SOURCES
         tests/test_main.cpp
         tests/example_test.cpp
         tests/adjacent_graph_test.cpp
-        tests/forward_test.cpp)
+        tests/edge_iterator_test.cpp)
 
 set(BENCH_SOURCES
         benchmark/main.cpp)
@@ -28,7 +28,8 @@ set(BENCH_SOURCES
 ADD_LIBRARY(triangle_lib STATIC
         src/common.c
         src/adjacency_graph.c
-        src/forward.c)
+        src/forward.c
+        src/edge_iterator.c)
 
 add_executable(tests
         ${TEST_SOURCES})
