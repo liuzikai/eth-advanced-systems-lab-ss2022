@@ -1,8 +1,8 @@
 #include <catch.hpp>
 
-extern "C" {
+
 #include "adjacency_graph.h"
-}
+
 
 #include <set>
 
