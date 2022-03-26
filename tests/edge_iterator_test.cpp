@@ -1,8 +1,6 @@
 #include <catch.hpp>
-extern "C" {
 #include "edge_iterator.h"
 #include "common.h"
-}
 #include <set>
 #include "triangles.h"
 

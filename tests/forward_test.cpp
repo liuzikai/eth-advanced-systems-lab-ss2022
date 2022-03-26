@@ -1,8 +1,8 @@
 #include <catch.hpp>
-extern "C" {
+
 #include "forward.h"
 #include "common.h"
-}
+
 #include <set>
 #include "triangles.h"
 

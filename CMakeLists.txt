@@ -35,27 +35,23 @@ set(TEST_SOURCES
         tests/forward_test.cpp
         tests/edge_iterator_test.cpp)
 
-
-
 set(BENCH_SOURCES
         benchmark/main.cpp
         benchmark/ArgParser.cpp
         benchmark/ArgParser.h third_party/tsc_x86.h benchmark/BenchMarkingUtils.h)
 
 set(TRIANGLE_SOURCES
-        src/common.c
+        src/common.cpp
         src/common.h
-        src/adjacency_graph.c
+        src/adjacency_graph.cpp
         src/adjacency_graph.h
-        src/forward.c
+        src/forward.cpp
         src/forward.h
-        src/edge_iterator.c
+        src/edge_iterator.cpp
         src/edge_iterator.h)
 
 ADD_LIBRARY(triangle_lib STATIC
         ${TRIANGLE_SOURCES})
-
-
 
 add_executable(benchmark
         ${BENCH_SOURCES})

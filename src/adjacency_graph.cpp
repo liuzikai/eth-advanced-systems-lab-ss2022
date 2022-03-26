@@ -1,16 +1,12 @@
-//
-// Created by Zikai Liu on 3/20/22.
-//
-
 #include "adjacency_graph.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
 
 adjacency_graph_t *create_graph_from_file(const char *filename, adjacency_graph_t **A) {
-    adjacency_graph_t *graph = malloc(sizeof(*graph));
+    adjacency_graph_t *graph = static_cast<adjacency_graph_t*>(malloc(sizeof(*graph)));
     if (A) {
-        *A = malloc(sizeof(*graph));
+        *A = static_cast<adjacency_graph_t*>(malloc(sizeof(*graph)));
     }
 
     FILE *f = fopen(filename, "r");
@@ -19,21 +15,21 @@ adjacency_graph_t *create_graph_from_file(const char *filename, adjacency_graph_
 
     res = fscanf(f, INDEX_FMT, &graph->n);
     assert(res == 1 && "Invalid input: missing n");
-    graph->adjacency = malloc(sizeof(*graph->adjacency) * graph->n);
+    graph->adjacency = static_cast<adjacency_list_t*>(malloc(sizeof(*graph->adjacency) * graph->n));
     if (A) {
         (*A)->n = graph->n;
-        (*A)->adjacency = malloc(sizeof(*((*A)->adjacency)) * graph->n);
+        (*A)->adjacency = static_cast<adjacency_list_t*>(malloc(sizeof(*((*A)->adjacency)) * graph->n));
     }
 
     for (index_t u = 0; u < graph->n; u++) {
         adjacency_list_t *adj = graph->adjacency + u;
         res = fscanf(f, INDEX_FMT, &adj->count);
         assert(res == 1 && "Invalid input: missing node count");
-        adj->neighbors = malloc(sizeof(*adj->neighbors) * adj->count);
+        adj->neighbors = static_cast<index_t*>(malloc(sizeof(*adj->neighbors) * adj->count));
         if (A) {
             adjacency_list_t *a = (*A)->adjacency + u;
             a->count = 0;
-            a->neighbors = malloc(sizeof(*adj->neighbors) * adj->count);
+            a->neighbors = static_cast<index_t*>(malloc(sizeof(*adj->neighbors) * adj->count));
         }
 
         for (index_t i = 0; i < adj->count; i++) {
