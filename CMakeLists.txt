@@ -40,9 +40,13 @@ set(BENCH_SOURCES
 
 ADD_LIBRARY(triangle_lib STATIC
         src/common.cpp
+        src/common.h
         src/adjacency_graph.cpp
+        src/adjacency_graph.h
         src/forward.cpp
-        src/edge_iterator.cpp)
+        src/forward.h
+        src/edge_iterator.cpp
+        src/edge_iterator.h)
 
 add_executable(tests
         ${TEST_SOURCES})
