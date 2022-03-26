@@ -8,11 +8,11 @@
 #include <sstream>
 #include <vector>
 
-extern "C" {
+
 #include "../src/adjacency_graph.h"
 #include "../src/edge_iterator.h"
 #include "../src/common.h"
-}
+
 
 using count_tringangles_fun = std::function<index_t(adjacency_graph_t*)>;
 
