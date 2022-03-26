@@ -1,7 +1,3 @@
-//
-// Updated by JZ on 20.03.22.
-//
-
 #include <assert.h>
 #include "common.h"
 #include "adjacency_graph.h"

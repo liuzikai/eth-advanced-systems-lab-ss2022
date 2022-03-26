@@ -1,7 +1,3 @@
-//
-// Created by Zikai Liu on 3/20/22.
-//
-
 #ifndef TEAM02_ADJACENCY_GRAPH_H
 #define TEAM02_ADJACENCY_GRAPH_H
 

@@ -1,7 +1,3 @@
-//
-// Created by Zikai Liu on 3/5/22.
-//
-
 #include <catch.hpp>
 
 extern "C" {

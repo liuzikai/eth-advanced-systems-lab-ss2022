@@ -1,5 +1,4 @@
 //
-// Created by Zikai Liu on 12/11/19.
 // Reference：[QuickSort - GeeksforGeeks](https://www.geeksforgeeks.org/quick-sort/)
 //
 

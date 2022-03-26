@@ -1,7 +1,3 @@
-//
-// Created by Zikai Liu on 3/5/22.
-//
-
 #include "AdjacencyGraph.h"
 #include <iostream>
 #include <fstream>

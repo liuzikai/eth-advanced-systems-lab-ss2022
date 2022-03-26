@@ -1,14 +1,10 @@
-//
-// Created by Zikai Liu on 3/5/22.
-//
-
 #ifndef TEAM02_COMMON_H
 #define TEAM02_COMMON_H
 
 #include <stdint.h>
 
 typedef uint64_t index_t;  // XXX: smaller int for vectorization
-#define INDEX_FMT "%lld"
+#define INDEX_FMT "%lu"
 
 // XXX: replace with empty define when benchmarking
 #define print_triangle print_triangle_func

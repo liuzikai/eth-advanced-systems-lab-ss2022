@@ -1,7 +1,3 @@
-//
-// Updated by JZ on 20.03.22.
-//
-
 #include <catch.hpp>
 extern "C" {
 #include "edge_iterator.h"

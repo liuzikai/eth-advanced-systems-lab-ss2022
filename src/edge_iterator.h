@@ -1,7 +1,3 @@
-//
-// Updated by JZ on 20.03.22.
-//
-
 #ifndef TEAM02_FORWARD_H
 #define TEAM02_FORWARD_H
 
