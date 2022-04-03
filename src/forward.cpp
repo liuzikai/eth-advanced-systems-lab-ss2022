@@ -20,28 +20,27 @@ index_t forward(adjacency_graph_t *G, adjacency_list_t *A) {
         for (index_t ti = 0; ti < G->adjacency[s].count; ti++) {
             index_t t = G->adjacency[s].neighbors[ti];
 
-            // adjacency_list_t guaranteed s < t, the if statement is eliminated
-            assert(s < t && "Forward: s < t is not satisfied from adjacency_list_t");
-
-            index_t i = 0, j = 0;
-            adjacency_list_t *As = A + s;
-            adjacency_list_t *At = A + t;
-            while (i < As->count && j < At->count) {
-                if (As->neighbors[i] == At->neighbors[j]) {
-                    count++;
+            if(s < t) {
+                index_t i = 0, j = 0;
+                adjacency_list_t *As = A + s;
+                adjacency_list_t *At = A + t;
+                while (i < As->count && j < At->count) {
+                    if (As->neighbors[i] == At->neighbors[j]) {
+                        count++;
 #if defined(print_triangle)
-                    print_triangle(s, t, As->neighbors[i]);
+                        print_triangle(s, t, As->neighbors[i]);
 #endif
-                    i++;
-                    j++;
-                } else if (As->neighbors[i] < At->neighbors[j]) {
-                    i++;
-                } else {
-                    j++;
+                        i++;
+                        j++;
+                    } else if (As->neighbors[i] < At->neighbors[j]) {
+                        i++;
+                    } else {
+                        j++;
+                    }
                 }
-            }
 
-            At->neighbors[At->count++] = s;
+                At->neighbors[At->count++] = s;
+            }
         }
     }
 
