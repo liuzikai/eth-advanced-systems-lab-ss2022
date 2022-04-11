@@ -35,7 +35,6 @@ adjacency_graph_t *create_graph_from_file(const char *filename, adjacency_graph_
         for (index_t i = 0; i < adj->count; i++) {
             res = fscanf(f, INDEX_FMT, adj->neighbors + i);
             assert(res == 1 && "Invalid input: missing target node");
-            assert(res == 1 && "Invalid input: u -> v, u should be less than v");
         }
     }
 
