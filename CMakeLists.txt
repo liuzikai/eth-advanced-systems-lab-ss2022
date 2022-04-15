@@ -33,7 +33,8 @@ set(TEST_SOURCES
         tests/example_test.cpp
         tests/adjacent_graph_test.cpp
         tests/forward_test.cpp
-        tests/edge_iterator_test.cpp)
+        tests/edge_iterator_test.cpp
+        tests/forward_hashed_test.cpp)
 
 set(BENCH_SOURCES
         benchmark/main.cpp
@@ -45,10 +46,16 @@ set(TRIANGLE_SOURCES
         src/common.h
         src/adjacency_graph.cpp
         src/adjacency_graph.h
+        src/adjacency_graph_hashed.cpp
+        src/adjacency_graph_hashed.h
+        src/hash_table.cpp
+        src/hash_table.h
         src/forward.cpp
         src/forward.h
         src/edge_iterator.cpp
-        src/edge_iterator.h)
+        src/edge_iterator.h
+        src/forward_hashed.cpp
+        src/forward_hashed.h)
 
 ADD_LIBRARY(triangle_lib STATIC
         ${TRIANGLE_SOURCES})
