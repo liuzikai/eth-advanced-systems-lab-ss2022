@@ -18,23 +18,22 @@ index_t edge_iterator(adjacency_graph_t *G) {
         for (index_t ti = 0; ti < G->adjacency[s].count; ti++) {
             index_t t = G->adjacency[s].neighbors[ti];
 
-            // adjacency_list_t guaranteed s < t, the if statement is eliminated
-            assert(s < t && "Edge Iterator: s < t is not satisfied from adjacency_list_t");
-
-            index_t i = 0, j = 0;
-            // find the intersection of s's and t's neighbors
-            while (i < G->adjacency[s].count && j < G->adjacency[t].count) {
-                if (G->adjacency[s].neighbors[i] == G->adjacency[t].neighbors[j]) {
-                    count++;
+            if(s < t) {
+                index_t i = 0, j = 0;
+                // find the intersection of s's and t's neighbors
+                while (i < G->adjacency[s].count && j < G->adjacency[t].count) {
+                    if (G->adjacency[s].neighbors[i] == G->adjacency[t].neighbors[j] && G->adjacency[t].neighbors[j] > t) {
+                        count++;
 #if defined(print_triangle)
-                    print_triangle(s, t, G->adjacency[s].neighbors[i]);
+                        print_triangle(s, t, G->adjacency[s].neighbors[i]);
 #endif
-                    i++;
-                    j++;
-                } else if (G->adjacency[s].neighbors[i] < G->adjacency[t].neighbors[j]) {
-                    i++;
-                } else {
-                    j++;
+                        i++;
+                        j++;
+                    } else if (G->adjacency[s].neighbors[i] < G->adjacency[t].neighbors[j]) {
+                        i++;
+                    } else {
+                        j++;
+                    }
                 }
             }
         }
