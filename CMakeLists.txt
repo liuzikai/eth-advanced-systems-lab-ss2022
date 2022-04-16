@@ -39,7 +39,11 @@ set(TEST_SOURCES
 set(BENCH_SOURCES
         benchmark/main.cpp
         benchmark/ArgParser.cpp
-        benchmark/ArgParser.h third_party/tsc_x86.h benchmark/BenchMarkingUtils.h)
+        benchmark/ArgParser.h 
+        benchmark/graph_generation.h
+        benchmark/graph_generation.cpp
+        benchmark/BenchMarkingUtils.h
+        third_party/tsc_x86.h)
 
 set(TRIANGLE_SOURCES
         src/common.cpp
