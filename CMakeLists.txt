@@ -39,25 +39,15 @@ set(TEST_SOURCES
 set(BENCH_SOURCES
         benchmark/main.cpp
         benchmark/ArgParser.cpp
-        benchmark/ArgParser.h 
-        benchmark/graph_generation.h
-        benchmark/graph_generation.cpp
-        benchmark/BenchMarkingUtils.h
-        third_party/tsc_x86.h)
+        benchmark/graph_generation.cpp)
 
 set(TRIANGLE_SOURCES
         src/common.cpp
-        src/common.h
         src/adjacency_graph.cpp
-        src/adjacency_graph.h
         src/hash_table.cpp
-        src/hash_table.h
         src/forward.cpp
-        src/forward.h
         src/edge_iterator.cpp
-        src/edge_iterator.h
-        src/forward_hashed.cpp
-        src/forward_hashed.h)
+        src/forward_hashed.cpp)
 
 ADD_LIBRARY(triangle_lib STATIC
         ${TRIANGLE_SOURCES})
