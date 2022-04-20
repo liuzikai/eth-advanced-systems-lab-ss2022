@@ -1,11 +1,39 @@
-#include <assert.h>
-#include "common.h"
-#include "adjacency_graph.h"
-#include "adjacency_graph_hashed.h"
+#include <cassert>
+#include "forward_hashed.h"
 #include "quick_sort.h"
-#include "hash_table.h"
 
-index_t forward_hashed(adjacency_graph_t *G, adjacency_list_hashed_t *A) {
+static void forward_hashed_reset_neighbor_container(adjacency_graph_t *G, forward_hashed_neighbor_container_t *A);
+
+forward_hashed_neighbor_container_t *forward_hashed_create_neighbor_container(adjacency_graph_t *G) {
+    auto *A = new forward_hashed_neighbor_container_t;
+    A->adjacency = new forward_hashed_neighbor_list_t[G->n];
+    for (index_t u = 0; u < G->n; u++) {
+        A->adjacency[u].neighbors = create_hashtable();
+    }
+    forward_hashed_reset_neighbor_container(G, A);
+    return A;
+}
+
+static void forward_hashed_reset_neighbor_container(adjacency_graph_t *G, forward_hashed_neighbor_container_t *A) {
+    A->n = G->n;
+    for (index_t u = 0; u < G->n; u++) {
+        forward_hashed_neighbor_list_t &a = A->adjacency[u];
+        a.count = 0;
+        hashtable_clear(a.neighbors);
+    }
+}
+
+void forward_hashed_delete_neighbor_container(forward_hashed_neighbor_container_t *A) {
+    for (index_t u = 0; u < A->n; u++) {
+        free_hashtable(A->adjacency[u].neighbors);
+    }
+    delete[] A->adjacency;
+    delete A;
+}
+
+index_t forward_hashed(adjacency_graph_t *G, forward_hashed_neighbor_container_t *A) {
+    forward_hashed_reset_neighbor_container(G, A);
+
     // According to sec. 4, the sorting is included in the execution time
     for (index_t u = 0; u < G->n; u++) {
         if (G->adjacency[u].count > 0) {
@@ -18,34 +46,32 @@ index_t forward_hashed(adjacency_graph_t *G, adjacency_list_hashed_t *A) {
         for (index_t ti = 0; ti < G->adjacency[s].count; ti++) {
             index_t t = G->adjacency[s].neighbors[ti];
 
-            // adjacency_list_hashsed_t guaranteed s < t, the if statement is eliminated
-            assert(s < t && "Forward_hashed: s < t is not satisfied from adjacency_list_hashed_t");
-            // TODO: for all three algos
-            // Add "if s<t" logic to support undirected graphs. Eg. input/sample_undirected.txt
+            if (s < t) {
 
-            adjacency_list_hashed_t *As = A + s;
-            adjacency_list_hashed_t *At = A + t;
-            // set intersection: use the smaller hash table to probe the larger one.
-            hash_table_t *probe = At->neighbors;
-            hash_table_t *build = As->neighbors;
-            if (As->count < At->count) {
-                probe = As->neighbors;
-                build = At->neighbors;
-            }
-            for (index_t i=0; i < probe->size; i++) {
-                hash_item_t *head = probe->container[i];
-                while (head) {
-                    if (hashtable_lookup(build, head->number)) {
-                        count++;
-#if defined(print_triangle)
-                        print_triangle(s, t, head->number);
-#endif
-                    }
-                    head = head->next;
+                forward_hashed_neighbor_list_t *As = A->adjacency + s;
+                forward_hashed_neighbor_list_t *At = A->adjacency + t;
+                // set intersection: use the smaller hash table to probe the larger one.
+                hash_table_t *probe = At->neighbors;
+                hash_table_t *build = As->neighbors;
+                if (As->count < At->count) {
+                    probe = As->neighbors;
+                    build = At->neighbors;
                 }
-            }
+                for (index_t i = 0; i < probe->size; i++) {
+                    hash_item_t *head = probe->container[i];
+                    while (head) {
+                        if (hashtable_lookup(build, head->number)) {
+                            count++;
+#if defined(print_triangle)
+                            print_triangle(s, t, head->number);
+#endif
+                        }
+                        head = head->next;
+                    }
+                }
 
-            hashtable_insert(At->neighbors, s);
+                hashtable_insert(At->neighbors, s);
+            }
         }
     }
 

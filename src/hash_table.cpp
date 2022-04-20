@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <cstring>
 #include "common.h"
 #include "hash_table.h"
 
@@ -14,12 +15,11 @@ index_t hash(index_t x) {
 
 // use a uniform container size
 // optimization?: the hash table of each node will use at most adj->count many slots
-void hashtable_init(hash_table_t *table) {
-    table->container = static_cast<hash_item_t**>(malloc(sizeof(*table->container) * HASH_CONTAINER_SIZE));
+hash_table_t *create_hashtable() {
+    hash_table_t *table = static_cast<hash_table_t *>(malloc(sizeof(hash_table_t)));
+    table->container = static_cast<hash_item_t **>(calloc(HASH_CONTAINER_SIZE, sizeof(*table->container)));  // nullptr
     table->size = HASH_CONTAINER_SIZE;
-    for (index_t i=0; i < table->size; i++) {
-        table->container[i] = nullptr;
-    }
+    return table;
 }
 
 void hashtable_insert(hash_table_t *table, index_t x) {
@@ -48,8 +48,8 @@ bool hashtable_lookup(hash_table_t *table, index_t x) {
     return false;
 }
 
-void free_hashtable(hash_table_t *table) {
-    for (index_t i=0; i < table->size; i++) {
+void hashtable_clear(hash_table_t *table) {
+    for (index_t i = 0; i < table->size; i++) {
         hash_item_t *head = table->container[i];
         hash_item_t *temp;
         while (head) {
@@ -58,5 +58,11 @@ void free_hashtable(hash_table_t *table) {
             free(temp);
         }
     }
+    memset(table->container, 0, sizeof(*table->container) * HASH_CONTAINER_SIZE);
+}
+
+void free_hashtable(hash_table_t *table) {
+    hashtable_clear(table);
+    free(table->container);
     free(table);
 }

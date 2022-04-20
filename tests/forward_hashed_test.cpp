@@ -11,19 +11,23 @@ TEST_CASE("forward_hashed: example graph") {
     print_triangle_func_t original_print = print_triangle;
     print_triangle = add_triangle;
 
-    adjacency_graph_hashed_t *A = nullptr;
-    adjacency_graph_t *graph = create_graph_from_file_hashed(INPUT_DIR "sample.txt", &A);
-    REQUIRE(forward_hashed(graph, A->adjacency) == 3);
-    REQUIRE(triangles == TriangleSet{{0, 1, 2}, {0, 1, 3}, {0, 3, 4}});
-    free_graph_hashed(A);
-    free_graph(graph);
-    
-    A = nullptr;
-    graph = create_graph_from_file_hashed(INPUT_DIR "sample2.txt", &A);
-    REQUIRE(forward_hashed(graph, A->adjacency) == 5);
+    adjacency_graph_t *G = create_graph_from_file(INPUT_DIR "sample_undirected.txt");
+    forward_hashed_neighbor_container_t *A = forward_hashed_create_neighbor_container(G);
+    for (int i = 0; i < 3; i++) {  // repeat
+        REQUIRE(forward_hashed(G, A) == 3);
+        REQUIRE(triangles == TriangleSet{{0, 1, 2},
+                                         {0, 1, 3},
+                                         {0, 3, 4}});
+    }
+    free_graph(G);
+    forward_hashed_delete_neighbor_container(A);
+
+    G = create_graph_from_file(INPUT_DIR "sample2.txt");
+    A = forward_hashed_create_neighbor_container(G);
+    REQUIRE(forward_hashed(G, A) == 5);
     REQUIRE(triangles == TriangleSet{{0, 1, 2}, {0, 1, 3}, {0, 3, 4}, {0, 5, 6}, {0, 7, 8}});
-    free_graph_hashed(A);
-    free_graph(graph);
+    free_graph(G);
+    forward_hashed_delete_neighbor_container(A);
 
     print_triangle = original_print;
 }

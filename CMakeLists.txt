@@ -50,8 +50,6 @@ set(TRIANGLE_SOURCES
         src/common.h
         src/adjacency_graph.cpp
         src/adjacency_graph.h
-        src/adjacency_graph_hashed.cpp
-        src/adjacency_graph_hashed.h
         src/hash_table.cpp
         src/hash_table.h
         src/forward.cpp
