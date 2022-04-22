@@ -23,11 +23,13 @@ typedef struct {
 
 index_t hash(index_t x);
 // init the hash table and zero-init the container
-void hashtable_init(hash_table_t *table);
+hash_table_t *create_hashtable();
 // insert at the end of the corresponding chain
 void hashtable_insert(hash_table_t *table, index_t i);
 // traverse the corresponding chain
 bool hashtable_lookup(hash_table_t *table, index_t i);
+// clear all the chains
+void hashtable_clear(hash_table_t *table);
 // free all the chains and then free the table
 void free_hashtable(hash_table_t *table);
 

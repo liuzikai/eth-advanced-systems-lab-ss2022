@@ -16,11 +16,9 @@ typedef struct {
 /**
  * Create an adjacency graph from a file.
  * @param filename  The input file. See README for input file format.
- * @param A         When not NULL, allocate an accessory graph (used by forward), which has the same space as the
- *                  return graph but adjacency.count is initialized to 0.
  * @return          The graph.
  */
-adjacency_graph_t *create_graph_from_file(const char *filename, adjacency_graph_t **A);
+adjacency_graph_t *create_graph_from_file(const char *filename);
 
 /**
  * Free an adjacency graph, including all its adjacency lists.
