@@ -1,11 +1,13 @@
 #include "graph_generation.h"
 #include "../src/common.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 #include <map>
 #include <vector>
 #include <ctime>
 #include <fstream>
+#include <string>
+
 
 const static std::map<GraphType, std::string> graph_to_file = {
     {GraphType::GERMAN_ROAD_NETWORK, "german_road_network"},

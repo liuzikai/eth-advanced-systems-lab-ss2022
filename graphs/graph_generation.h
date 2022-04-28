@@ -2,6 +2,7 @@
 #define TEAM02_GRAPH_GENERATION_H
 
 #include "../src/common.h"
+#include "adjacency_graph.h"
 #include <string>
 #include <ctime>
 
@@ -65,5 +66,7 @@ struct GraphDefinition {
  * @param graph_defintion  The metadata needed to generate the graph.
  */
 void generate_graph(GraphDefinition graph_defintion);
+
+adjacency_graph_t generate_and_load_graph(
 
 #endif //TEAM02_GRAPH_GENERATION_H

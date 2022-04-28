@@ -1,7 +1,7 @@
 #ifndef TEAM02_ADJACENCY_GRAPH_H
 #define TEAM02_ADJACENCY_GRAPH_H
 
-#include "common.h"
+#include "../src/common.h"
 
 template<class Index>
 struct AdjacencyList {

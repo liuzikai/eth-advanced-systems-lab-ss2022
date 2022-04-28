@@ -1,6 +1,6 @@
 #include <assert.h>
 #include "common.h"
-#include "adjacency_graph.h"
+#include "../graphs/adjacency_graph.h"
 #include "quick_sort.h"
 #include "instrumented_index.h"
 #include <stdio.h>
