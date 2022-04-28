@@ -1,5 +1,5 @@
-#ifndef TEAM02_FORWARD_H
-#define TEAM02_FORWARD_H
+#ifndef TEAM02_FORWARD_HASHED_H
+#define TEAM02_FORWARD_HASHED_H
 
 #include "common.h"
 #include "adjacency_graph.h"
@@ -30,4 +30,4 @@ void forward_hashed_delete_neighbor_container(forward_hashed_neighbor_container_
  */
 index_t forward_hashed(adjacency_graph_t *G, forward_hashed_neighbor_container_t *A);
 
-#endif //TEAM02_FORWARD_H
+#endif //TEAM02_FORWARD_HASHED_H

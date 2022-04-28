@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "ArgParser.h"
+
 #include <string_view>
 #include <functional>
 #include <map>
@@ -9,13 +9,21 @@
 
 #include "BenchMarkingUtils.h"
 
+#include "ArgParser.h"
 #include "tsc_x86.h"
+
+#include "../src/adjacency_graph.h"
+
+#include "../src/forward.h"
+#include "../src/forward_hashed.h"
 
 static constexpr size_t default_num_warmups = 1;
 static constexpr size_t default_num_runs = 5;
 static constexpr size_t default_num_phases = 5;
-static std::map<std::string, count_tringangles_fun> name_to_function =  {
-    {"edge_iterator", edge_iterator}
+static std::map<std::string, TrinagleFunctions> name_to_function =  {
+    {"edge_iterator", TrinagleFunctions(edge_iterator, edge_iterator_get_dummy_helper)},
+    {"forward", TrinagleFunctions(forward, forward_create_neighbor_container)},
+    {"forward_hashed", TrinagleFunctions(forward_hashed, forward_hashed_create_neighbor_container)},
 };
 
 
@@ -25,18 +33,25 @@ BenchParams parse_arguments(ArgParser& parser) {
   params.num_runs = parser.getCmdOptionAsInt("-num_runs").value_or(default_num_runs);
   params.num_phases = parser.getCmdOptionAsInt("-num_phases").value_or(default_num_phases);
   params.file_name = parser.getCmdOption("-o").value_or("default.csv");
+  std::optional<std::string_view> graph_file = parser.getCmdOption("-graph");
+  std::optional<std::string_view> algos_opt = parser.getCmdOption("-algorithm");
 
   // TODO: Maybe we want to benchmark time later as well?
   // std::string_view timing_method_string = parser.getCmdOption("-timing").value_or("cycles");
 
-  std::optional<std::string_view> algos_opt = parser.getCmdOption("-algorithm");
+  if (!graph_file) {
+    throw std::invalid_argument("No algorithm specified.");
+  }  
   if (!algos_opt) {
     throw std::invalid_argument("No algorithm specified.");
   }
+
+  params.graph_file = graph_file.value();
+  
   // Sadly ranges to split the view are not available in gcc yet.
   std::vector<std::string> algos = split(std::string (*algos_opt), ',');
   std::transform(algos.begin(), algos.end(), std::back_inserter(params.bench_mark_functions),
-                 [](std::string s) -> std::pair<std::string_view, count_tringangles_fun> {
+                 [](std::string s) -> std::pair<std::string_view, TrinagleFunctions> {
                    auto it = name_to_function.find(s);
                    if (it == name_to_function.end()) {
                      throw std::invalid_argument("Algorithm does not exist.");
@@ -49,19 +64,22 @@ BenchParams parse_arguments(ArgParser& parser) {
 
 void benchmark(const BenchParams& params, std::ofstream& out_file) {
   // TODO: Read this in when we finally have data.
-  adjacency_graph_t* data = NULL;
+  adjacency_graph_t* graph = create_graph_from_file(params.graph_file.begin());
 
-  for (const auto&[algo_name, algo_function] : params.bench_mark_functions) {
+  for (const auto&[algo_name, triangle_functions] : params.bench_mark_functions) {
 
     std::cout << "Benchmarking " << algo_name << std::endl;
+    void* helper = triangle_functions.get_helper(graph);
+
     // Do the warmup runs:
     for (size_t i = 0; i < params.num_warmups; i++) {
-      algo_function(data);
+      triangle_functions.count(graph, helper);
     }
+
     for (size_t phase = 0; phase < params.num_phases; phase++) {
       size_t cycles = start_tsc();
       for (size_t run = 0; run < params.num_runs; run++) {
-        algo_function(data);
+        triangle_functions.count(graph, helper);
       }
       cycles = stop_tsc(cycles);
       out_file << algo_name << ", " << cycles << std::endl;

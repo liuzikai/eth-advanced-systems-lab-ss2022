@@ -4,7 +4,11 @@
 #include "quick_sort.h"
 #include <stdio.h>
 
-index_t edge_iterator(adjacency_graph_t *G) {
+void* edge_iterator_get_dummy_helper(adjacency_graph_t *) {
+    return nullptr;
+}
+
+index_t edge_iterator(adjacency_graph_t *G, __attribute__((unused)) void* dummy = nullptr) {
     // According to sec. 4, the sorting is included in the execution time
     for (index_t u = 0; u < G->n; u++) {
         if (G->adjacency[u].count > 0) {
