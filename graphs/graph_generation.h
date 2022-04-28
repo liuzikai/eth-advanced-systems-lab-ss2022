@@ -67,6 +67,6 @@ struct GraphDefinition {
  */
 void generate_graph(GraphDefinition graph_defintion);
 
-adjacency_graph_t generate_and_load_graph(
+//adjacency_graph_t generate_and_load_graph(
 
 #endif //TEAM02_GRAPH_GENERATION_H

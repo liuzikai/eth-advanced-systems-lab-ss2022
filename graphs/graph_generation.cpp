@@ -1,5 +1,3 @@
-#include "graph_generation.h"
-#include "../src/common.h"
 #include <cstdlib>
 #include <iostream>
 #include <map>
@@ -7,6 +5,8 @@
 #include <ctime>
 #include <fstream>
 #include <string>
+#include "graph_generation.h"
+#include "../src/common.h"
 
 
 const static std::map<GraphType, std::string> graph_to_file = {
