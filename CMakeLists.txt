@@ -38,7 +38,6 @@ set(TEST_SOURCES
 
 set(BENCH_SOURCES
         benchmark/main.cpp
-        benchmark/ArgParser.cpp
         benchmark/graph_generation.cpp)
 
 set(TRIANGLE_SOURCES
@@ -49,12 +48,19 @@ set(TRIANGLE_SOURCES
         src/edge_iterator.cpp
         src/forward_hashed.cpp)
 
+set(THIRD_PARTY_SOURCES
+        third_party/ArgParser.cpp)
+
 ADD_LIBRARY(triangle_lib STATIC
         ${TRIANGLE_SOURCES})
+
+ADD_LIBRARY(thrid_party STATIC
+        ${THIRD_PARTY_SOURCES})
 
 add_executable(benchmark
         ${BENCH_SOURCES})
 TARGET_LINK_LIBRARIES(benchmark triangle_lib)
+TARGET_LINK_LIBRARIES(benchmark thrid_party)
 
 
 add_executable(tests

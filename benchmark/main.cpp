@@ -9,7 +9,7 @@
 
 #include "BenchMarkingUtils.h"
 
-#include "../third_party/tsc_x86.h"
+#include "tsc_x86.h"
 
 static constexpr size_t default_num_warmups = 1;
 static constexpr size_t default_num_runs = 5;
