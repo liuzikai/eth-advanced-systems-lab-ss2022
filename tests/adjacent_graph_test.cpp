@@ -6,12 +6,12 @@
 
 #include <set>
 
-static std::set<index_t> set_from_list(const adjacency_list_t &list) {
+static std::set<index_t> set_from_list(const AdjacencyList<index_t> &list) {
     return {list.neighbors, list.neighbors + list.count};
 }
 
 TEST_CASE("adjacency_graph: sample graph") {
-    adjacency_graph_t *graph = create_graph_from_file(INPUT_DIR "sample.txt");
+    AdjacencyGraph<index_t> *graph = create_graph_from_file<index_t>(INPUT_DIR "sample.txt");
     REQUIRE(graph->n == 5);
     REQUIRE(graph->adjacency[0].count == 4);
     REQUIRE(set_from_list(graph->adjacency[0]) == std::set<index_t>({1, 2, 3, 4}));

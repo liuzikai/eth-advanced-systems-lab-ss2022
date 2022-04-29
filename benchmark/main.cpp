@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "BenchMarkingUtils.h"
+#include "../src/instrumented_index.h"
 
 #include "ArgParser.h"
 #include "tsc_x86.h"
@@ -17,18 +18,37 @@
 #include "../src/forward.h"
 #include "../src/forward_hashed.h"
 
+#include "../src/instrumented_index.h"
+
 static constexpr size_t default_num_warmups = 1;
 static constexpr size_t default_num_runs = 5;
 static constexpr size_t default_num_phases = 5;
-static std::map<std::string, TrinagleFunctions> name_to_function =  {
-    {"edge_iterator", TrinagleFunctions(edge_iterator, edge_iterator_get_dummy_helper)},
-    {"forward", TrinagleFunctions(forward, forward_create_neighbor_container)},
-    {"forward_hashed", TrinagleFunctions(forward_hashed, forward_hashed_create_neighbor_container)},
+
+template <class Index>
+class BenchmarkFunctions {
+public:
+  void add_functions(std::vector<std::string> names, std::vector<std::pair<std::string, TriangleFunctions<Index>>>& result) {
+    std::transform(names.begin(), names.end(), std::back_inserter(result),
+        [this](std::string s) -> std::pair<std::string, TriangleFunctions<Index>> {
+          auto it = name_to_function.find(s);
+          if (it == name_to_function.end()) {
+            throw std::invalid_argument("Algorithm does not exist.");
+          } else {
+            return *it;
+          }
+      });
+  }
+private:
+  std::map<std::string, TriangleFunctions<Index>> name_to_function = {
+      {"edge_iterator", TriangleFunctions(edge_iterator<Index>, edge_iterator_get_dummy_helper)},
+      {"forward", TriangleFunctions(forward<Index>, forward_create_neighbor_container)},
+      {"forward_hashed", TriangleFunctions(forward_hashed<Index>, forward_hashed_create_neighbor_container)},
+  };
 };
 
-
-BenchParams parse_arguments(ArgParser& parser) {
-  BenchParams params;
+template<class Index>
+BenchParams<Index> parse_arguments(ArgParser& parser) {
+  BenchParams<Index> params;
   params.num_warmups = parser.getCmdOptionAsInt("-num_warmups").value_or(default_num_warmups);
   params.num_runs = parser.getCmdOptionAsInt("-num_runs").value_or(default_num_runs);
   params.num_phases = parser.getCmdOptionAsInt("-num_phases").value_or(default_num_phases);
@@ -50,21 +70,15 @@ BenchParams parse_arguments(ArgParser& parser) {
   
   // Sadly ranges to split the view are not available in gcc yet.
   std::vector<std::string> algos = split(std::string (*algos_opt), ',');
-  std::transform(algos.begin(), algos.end(), std::back_inserter(params.bench_mark_functions),
-                 [](std::string s) -> std::pair<std::string_view, TrinagleFunctions> {
-                   auto it = name_to_function.find(s);
-                   if (it == name_to_function.end()) {
-                     throw std::invalid_argument("Algorithm does not exist.");
-                   } else {
-                     return *it;
-                   }
-                });
+  BenchmarkFunctions<Index> benchmarkFunctions;
+  benchmarkFunctions.add_functions(algos, params.bench_mark_functions);
+  
   return params;
 }
 
-void benchmark(const BenchParams& params, std::ofstream& out_file) {
+void benchmark(const BenchParams<index_t>& params, std::ofstream& out_file) {
   // TODO: Read this in when we finally have data.
-  adjacency_graph_t* graph = create_graph_from_file(params.graph_file.begin());
+  AdjacencyGraph<index_t>* graph = create_graph_from_file<index_t>(params.graph_file.c_str());
 
   for (const auto&[algo_name, triangle_functions] : params.bench_mark_functions) {
 
@@ -88,19 +102,48 @@ void benchmark(const BenchParams& params, std::ofstream& out_file) {
   std::cout << "All Benchmarking Completed" <<  std::endl;
 }
 
-int main(int argc, char * argv[]) {
-  ArgParser parser(argc, argv);
-  BenchParams params;
-  try {
-    params = parse_arguments(parser);;
-  } catch (const std::invalid_argument& e) {
-    std::cout << "Invalid argument: " << e.what() << std::endl;
-    return 0;
-  }
+static void run_instrumented(ArgParser& parser) {
+  BenchParams<InstrumentedIndex> params;
+  params = parse_arguments<InstrumentedIndex>(parser);;
 
+  std::ofstream out_file;
+  out_file.open(std::string(params.file_name));
+  out_file << "algorithm, op_count" << std::endl;
+
+  AdjacencyGraph<InstrumentedIndex>* graph = create_graph_from_file<InstrumentedIndex>(params.graph_file.c_str());
+
+  for (const auto&[algo_name, triangle_functions] : params.bench_mark_functions) {
+    std::cout << "Instrumented run: " << algo_name << std::endl;
+    OpCounter::ResetOpCount();
+    void* helper = triangle_functions.get_helper(graph);
+    triangle_functions.count(graph, helper);
+    out_file << algo_name << ", " << OpCounter::GetOpCount() << std::endl;
+  }
+  std::cout << "All instrumneting Completed" <<  std::endl;
+}
+
+static void run_benchmark(ArgParser& parser) {
+  BenchParams<index_t> params;
+  params = parse_arguments<index_t>(parser);;
   std::ofstream out_file;
   out_file.open(std::string(params.file_name));
   out_file << "algorithm, num_runs" << std::endl;
   benchmark(params, out_file);
   out_file.close();
+}
+
+
+
+int main(int argc, char * argv[]) {
+  ArgParser parser(argc, argv);
+  bool run_inst = parser.cmdOptionExists("-instrumented");
+  try {
+    if(run_inst) {
+      run_instrumented(parser);
+    } else {
+      run_benchmark(parser);
+    }
+  } catch (const std::invalid_argument& e) {
+    std::cout << "Invalid argument: " << e.what() << std::endl;
+  }
 }

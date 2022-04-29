@@ -9,18 +9,25 @@
 #include "../src/edge_iterator.h"
 #include "../src/common.h"
 
+/*
 namespace {
-  typedef index_t (*count_triangles_c_style)(adjacency_graph_t*, void*);
-  typedef void* (*get_helper_c_style)(adjacency_graph_t*);
+  
 }
+*/
 
-using count_tringangles_fun = std::function<index_t(adjacency_graph_t*, void*)>;
-using get_helper_struct_fun = std::function<void*(adjacency_graph_t*)>;
 
-struct TrinagleFunctions {
+template<class Index>
+struct TriangleFunctions {
+
+  using count_tringangles_fun = std::function<index_t(AdjacencyGraph<Index>*, void*)>;
+  using get_helper_struct_fun = std::function<void*(AdjacencyGraph<Index>*)>;
+
+  typedef index_t (*count_triangles_c_style)(AdjacencyGraph<Index>*, void*);
+  typedef void* (*get_helper_c_style)(AdjacencyGraph<Index>*);
   
   template<class HelperStruct>
-  TrinagleFunctions(index_t (*c)(adjacency_graph_t*, HelperStruct*), HelperStruct* (*h)(adjacency_graph_t*) ) {
+  TriangleFunctions(index_t (*c)(AdjacencyGraph<Index>*, HelperStruct*), 
+  HelperStruct* (*h)(AdjacencyGraph<Index>*) ) {
     // Ugh. This is disgusting... 
     // But hey it works and its not undefined behaviour for compatible types which they should be.
     this->count = (count_triangles_c_style)(c);
@@ -42,14 +49,14 @@ std::vector<std::string>  split(const std::string &s, char delim) {
   return elems;
 }
 
-
+template<class Index>
 struct BenchParams {
     size_t num_warmups;
     size_t num_runs;
     size_t num_phases;
-    std::string_view file_name;
-    std::string_view graph_file;
-    std::vector<std::pair<std::string_view, TrinagleFunctions>> bench_mark_functions;
+    std::string file_name;
+    std::string graph_file;
+    std::vector<std::pair<std::string, TriangleFunctions<Index>>> bench_mark_functions;
 };
 
 

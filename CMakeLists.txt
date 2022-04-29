@@ -34,7 +34,8 @@ set(TEST_SOURCES
         tests/adjacent_graph_test.cpp
         tests/forward_test.cpp
         tests/edge_iterator_test.cpp
-        tests/forward_hashed_test.cpp)
+        tests/forward_hashed_test.cpp
+        tests/instrumented_index_test.cpp)
 
 set(BENCH_SOURCES
         benchmark/main.cpp
@@ -43,6 +44,7 @@ set(BENCH_SOURCES
 set(TRIANGLE_SOURCES
         src/common.cpp
         src/adjacency_graph.cpp
+        src/instrumented_index.cpp
         src/hash_table.cpp
         src/forward.cpp
         src/edge_iterator.cpp

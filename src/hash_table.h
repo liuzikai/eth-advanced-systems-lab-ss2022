@@ -8,29 +8,42 @@
 
 // separate chaining
 
-// a hash_item in a chain
-typedef struct hash_item {
+// a HashItem in a chain
+template<class Index>
+struct HashItem {
     // the actual value (node id)
-    index_t number;
-    struct hash_item *next;
-} hash_item_t;
+    Index number;
+    struct HashItem<Index> *next;
+};
 
-typedef struct {
-    index_t size;
-    // a linked list of "size"-many ptrs to a chain of hash_items
-    hash_item_t **container;
-} hash_table_t;
+template<class Index>
+struct HashTable{
+    Index size;
+    // a linked list of "size"-many ptrs to a chain of HashItems
+    HashItem<Index> **container;
+};
 
-index_t hash(index_t x);
+template<class Index>
+index_t hash(Index x);
 // init the hash table and zero-init the container
-hash_table_t *create_hashtable();
+
+template<class Index>
+HashTable<Index> *create_hashtable();
 // insert at the end of the corresponding chain
-void hashtable_insert(hash_table_t *table, index_t i);
+
+template<class Index>
+void hashtable_insert(HashTable<Index>  *table, Index i);
+
 // traverse the corresponding chain
-bool hashtable_lookup(hash_table_t *table, index_t i);
+template<class Index>
+bool hashtable_lookup(HashTable<Index>  *table, Index i);
+
 // clear all the chains
-void hashtable_clear(hash_table_t *table);
+template<class Index>
+void hashtable_clear(HashTable<Index> *table);
+
 // free all the chains and then free the table
-void free_hashtable(hash_table_t *table);
+template<class Index>
+void free_hashtable(HashTable<Index>  *table);
 
 #endif //TEAM02_HASH_TABLE_H

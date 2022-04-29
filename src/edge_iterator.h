@@ -4,8 +4,10 @@
 #include "common.h"
 #include "adjacency_graph.h"
 
-void* edge_iterator_get_dummy_helper(adjacency_graph_t *);
+template<class Index>
+void* edge_iterator_get_dummy_helper(AdjacencyGraph<Index> *);
 
-index_t edge_iterator(adjacency_graph_t *G, void* dummy = nullptr);
+template<class Index>
+index_t edge_iterator(AdjacencyGraph<Index> *G, void* dummy = nullptr);
 
 #endif //TEAM02_EDGE_ITER_H
