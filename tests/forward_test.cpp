@@ -8,8 +8,8 @@
 
 TEST_CASE("forward: neighbor container") {
 
-    adjacency_graph_t *G = create_graph_from_file(INPUT_DIR "sample.txt");
-    forward_neighbor_container_t *A = forward_create_neighbor_container(G);
+    AdjacencyGraph<index_t> *G = create_graph_from_file<index_t>(INPUT_DIR "sample.txt");
+    ForwardNeighborContainer<index_t> *A = forward_create_neighbor_container(G);
     REQUIRE(A != nullptr);
     REQUIRE(A->n == 5);
     for (index_t i = 0; i < A->n; i++) {
@@ -25,8 +25,8 @@ TEST_CASE("forward: example graph") {
     print_triangle = add_triangle;
 
 
-    adjacency_graph_t *G = create_graph_from_file(INPUT_DIR "sample_undirected.txt");
-    forward_neighbor_container_t *A = forward_create_neighbor_container(G);
+    AdjacencyGraph<index_t> *G = create_graph_from_file<index_t>(INPUT_DIR "sample_undirected.txt");
+    ForwardNeighborContainer<index_t> *A = forward_create_neighbor_container(G);
     for (int i = 0; i < 3; i++) {  // repeat
         REQUIRE(forward(G, A) == 3);
         REQUIRE(triangles == TriangleSet{{0, 1, 2},
@@ -37,7 +37,7 @@ TEST_CASE("forward: example graph") {
     forward_delete_neighbor_container(A);
 
 
-    G = create_graph_from_file(INPUT_DIR "sample2.txt");
+    G = create_graph_from_file<index_t>(INPUT_DIR "sample2.txt");
     A = forward_create_neighbor_container(G);
     REQUIRE(forward(G, A) == 5);
     REQUIRE(triangles == TriangleSet{{0, 1, 2},

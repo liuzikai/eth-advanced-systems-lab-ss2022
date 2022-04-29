@@ -9,16 +9,18 @@
 #include <stdio.h>
 
 // A utility function to swap two elements
-static inline void swap(index_t *a, index_t *b) {
-    index_t t = *a;
+template<class Index>
+static inline void swap(Index *a, Index *b) {
+    Index t = *a;
     *a = *b;
     *b = t;
 }
 
-static inline index_t partition(index_t *arr, index_t low, index_t high) {
-    index_t pivot = arr[high];  // pivot
-    index_t i = low;
-    index_t j = low;
+template<class Index>
+static inline Index partition(Index *arr, Index low, Index high) {
+    Index pivot = arr[high];  // pivot
+    Index i = low;
+    Index j = low;
     for (; j <= high - 1; j++) {
         // If current element is smaller than the pivot
         if (arr[j] < pivot) {
@@ -37,10 +39,11 @@ static inline index_t partition(index_t *arr, index_t low, index_t high) {
  * @param low     Starting index (inclusive)
  * @param high    Ending index (inclusive)
  */
-static inline void quick_sort(index_t *arr, index_t low, index_t high) {
+template<class Index>
+static inline void quick_sort(Index *arr, Index low, Index high) {
     if (low < high) {
 
-        index_t pi = partition(arr, low, high);
+        Index pi = partition<Index>(arr, low, high);
 
         // Separately sort elements before
         // partition and after partition

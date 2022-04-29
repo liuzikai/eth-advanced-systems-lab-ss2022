@@ -3,29 +3,33 @@
 #include <cstring>
 #include "common.h"
 #include "hash_table.h"
+#include "instrumented_index.h"
 
 // separate chaining
 
 // super naive hash function
 // optimization?: a better hash function with fewer collisions, https://stackoverflow.com/questions/664014/what-integer-hash-function-are-good-that-accepts-an-integer-hash-key
-index_t hash(index_t x) {
+template<class Index>
+index_t hash(Index x) {
     x = x % HASH_CONTAINER_SIZE;
     return x;
 }
 
 // use a uniform container size
 // optimization?: the hash table of each node will use at most adj->count many slots
-hash_table_t *create_hashtable() {
-    hash_table_t *table = static_cast<hash_table_t *>(malloc(sizeof(hash_table_t)));
-    table->container = static_cast<hash_item_t **>(calloc(HASH_CONTAINER_SIZE, sizeof(*table->container)));  // nullptr
+template<class Index>
+HashTable<Index> *create_hashtable() {
+    HashTable<Index> *table = new HashTable<Index>;
+    table->container = static_cast<HashItem<Index> **>(calloc(HASH_CONTAINER_SIZE, sizeof(*table->container)));  // nullptr
     table->size = HASH_CONTAINER_SIZE;
     return table;
 }
 
-void hashtable_insert(hash_table_t *table, index_t x) {
-    index_t i = hash(x);
-    hash_item_t *head = table->container[i];
-    hash_item_t *new_item = static_cast<hash_item_t *>(malloc(sizeof(hash_item_t)));
+template<class Index>
+void hashtable_insert(HashTable<Index> *table, Index x) {
+    Index i = hash(x);
+    HashItem<Index> *head = table->container[i];
+    HashItem<Index> *new_item = static_cast< HashItem<Index> *>(malloc(sizeof(HashItem<Index>)));
     new_item->number = x;
     new_item->next = NULL;
     if (head == nullptr) {
@@ -38,9 +42,10 @@ void hashtable_insert(hash_table_t *table, index_t x) {
     }
 }
 
-bool hashtable_lookup(hash_table_t *table, index_t x) {
-    index_t i = hash(x);
-    hash_item_t *head = table->container[i];
+template<class Index>
+bool hashtable_lookup(HashTable<Index> *table, Index x) {
+    Index i = hash(x);
+    HashItem<Index> *head = table->container[i];
     while (head) {
         if (head->number == x) return true;
         head = head->next;
@@ -48,10 +53,11 @@ bool hashtable_lookup(hash_table_t *table, index_t x) {
     return false;
 }
 
-void hashtable_clear(hash_table_t *table) {
-    for (index_t i = 0; i < table->size; i++) {
-        hash_item_t *head = table->container[i];
-        hash_item_t *temp;
+template<class Index>
+void hashtable_clear(HashTable<Index> *table) {
+    for (Index i = 0; i < table->size; i++) {
+        HashItem<Index> *head = table->container[i];
+        HashItem<Index> *temp;
         while (head) {
             temp = head;
             head = head->next;
@@ -61,8 +67,25 @@ void hashtable_clear(hash_table_t *table) {
     memset(table->container, 0, sizeof(*table->container) * HASH_CONTAINER_SIZE);
 }
 
-void free_hashtable(hash_table_t *table) {
+template<class Index>
+void free_hashtable(HashTable<Index> *table) {
     hashtable_clear(table);
     free(table->container);
     free(table);
 }
+
+
+
+template index_t hash(index_t x);
+template HashTable<index_t> *create_hashtable();
+template void hashtable_insert(HashTable<index_t>  *table, index_t i);
+template bool hashtable_lookup(HashTable<index_t>  *table, index_t i);
+template void hashtable_clear(HashTable<index_t> *table);
+template void free_hashtable(HashTable<index_t>  *table);
+
+template index_t hash(InstrumentedIndex x);
+template HashTable<InstrumentedIndex> *create_hashtable();
+template void hashtable_insert(HashTable<InstrumentedIndex>  *table, InstrumentedIndex i);
+template bool hashtable_lookup(HashTable<InstrumentedIndex>  *table, InstrumentedIndex i);
+template void hashtable_clear(HashTable<InstrumentedIndex> *table);
+template void free_hashtable(HashTable<InstrumentedIndex>  *table);
