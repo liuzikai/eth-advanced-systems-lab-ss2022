@@ -80,6 +80,10 @@ void benchmark(const BenchParams<index_t>& params, std::ofstream& out_file) {
   // TODO: Read this in when we finally have data.
   AdjacencyGraph<index_t>* graph = create_graph_from_file<index_t>(params.graph_file.c_str());
 
+  std::cout << "num_warmups = " << params.num_warmups << std::endl;
+  std::cout << "num_phases = " << params.num_phases << std::endl;
+  std::cout << "num_runs = " << params.num_runs << std::endl;
+
   for (const auto&[algo_name, triangle_functions] : params.bench_mark_functions) {
 
     std::cout << "Benchmarking " << algo_name << std::endl;
@@ -96,7 +100,7 @@ void benchmark(const BenchParams<index_t>& params, std::ofstream& out_file) {
         triangle_functions.count(graph, helper);
       }
       cycles = stop_tsc(cycles);
-      out_file << algo_name << "," << cycles << std::endl;
+      out_file << algo_name << "," << cycles / params.num_runs << std::endl;
     }
   }
   std::cout << "All Benchmarking Completed" <<  std::endl;
@@ -108,7 +112,7 @@ static void run_instrumented(ArgParser& parser) {
 
   std::ofstream out_file;
   out_file.open(std::string(params.file_name));
-  out_file << "algorithm,op_count" << std::endl;
+  out_file << "algorithm,op_count_per_run" << std::endl;
 
   AdjacencyGraph<InstrumentedIndex>* graph = create_graph_from_file<InstrumentedIndex>(params.graph_file.c_str());
 
@@ -119,7 +123,7 @@ static void run_instrumented(ArgParser& parser) {
     triangle_functions.count(graph, helper);
     out_file << algo_name << "," << OpCounter::GetOpCount() << std::endl;
   }
-  std::cout << "All instrumneting Completed" <<  std::endl;
+  std::cout << "All instrumenting Completed" <<  std::endl;
 }
 
 static void run_benchmark(ArgParser& parser) {
@@ -127,7 +131,7 @@ static void run_benchmark(ArgParser& parser) {
   params = parse_arguments<index_t>(parser);;
   std::ofstream out_file;
   out_file.open(std::string(params.file_name));
-  out_file << "algorithm,num_runs" << std::endl;
+  out_file << "algorithm,cycles_per_run" << std::endl;
   benchmark(params, out_file);
   out_file.close();
 }
