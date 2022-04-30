@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(ASL-Team02)
 
+MESSAGE("${CMAKE_CXX_COMPILER_ID}")
+
 set(CMAKE_CXX_STANDARD 20)
 
 # Enable Warnings

@@ -27,3 +27,4 @@ Files named with camelcase are of C++ version. Otherwise, C version.
 ## input
 ## tests
 ## benchmark
+`./benchmark -algorithm forward -graph <path-to-graph>`

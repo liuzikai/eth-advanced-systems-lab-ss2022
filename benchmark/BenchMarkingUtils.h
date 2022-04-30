@@ -11,7 +11,7 @@
 
 /*
 namespace {
-  
+
 }
 */
 
@@ -19,22 +19,22 @@ namespace {
 template<class Index>
 struct TriangleFunctions {
 
-  using count_tringangles_fun = std::function<index_t(AdjacencyGraph<Index>*, void*)>;
+  using count_triangles_fun = std::function<index_t(AdjacencyGraph<Index>*, void*)>;
   using get_helper_struct_fun = std::function<void*(AdjacencyGraph<Index>*)>;
 
   typedef index_t (*count_triangles_c_style)(AdjacencyGraph<Index>*, void*);
   typedef void* (*get_helper_c_style)(AdjacencyGraph<Index>*);
-  
+
   template<class HelperStruct>
-  TriangleFunctions(index_t (*c)(AdjacencyGraph<Index>*, HelperStruct*), 
+  TriangleFunctions(index_t (*c)(AdjacencyGraph<Index>*, HelperStruct*),
   HelperStruct* (*h)(AdjacencyGraph<Index>*) ) {
-    // Ugh. This is disgusting... 
+    // Ugh. This is disgusting...
     // But hey it works and its not undefined behaviour for compatible types which they should be.
     this->count = (count_triangles_c_style)(c);
     this->get_helper = (get_helper_c_style)(h);
   }
 
-  count_tringangles_fun count;
+  count_triangles_fun count;
   get_helper_struct_fun get_helper;
   get_helper_struct_fun reset_helper;
 };
