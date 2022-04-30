@@ -61,18 +61,18 @@ BenchParams<Index> parse_arguments(ArgParser& parser) {
 
   if (!graph_file) {
     throw std::invalid_argument("No algorithm specified.");
-  }  
+  }
   if (!algos_opt) {
     throw std::invalid_argument("No algorithm specified.");
   }
 
   params.graph_file = graph_file.value();
-  
+
   // Sadly ranges to split the view are not available in gcc yet.
   std::vector<std::string> algos = split(std::string (*algos_opt), ',');
   BenchmarkFunctions<Index> benchmarkFunctions;
   benchmarkFunctions.add_functions(algos, params.bench_mark_functions);
-  
+
   return params;
 }
 
@@ -96,7 +96,7 @@ void benchmark(const BenchParams<index_t>& params, std::ofstream& out_file) {
         triangle_functions.count(graph, helper);
       }
       cycles = stop_tsc(cycles);
-      out_file << algo_name << ", " << cycles << std::endl;
+      out_file << algo_name << "," << cycles << std::endl;
     }
   }
   std::cout << "All Benchmarking Completed" <<  std::endl;
@@ -108,7 +108,7 @@ static void run_instrumented(ArgParser& parser) {
 
   std::ofstream out_file;
   out_file.open(std::string(params.file_name));
-  out_file << "algorithm, op_count" << std::endl;
+  out_file << "algorithm,op_count" << std::endl;
 
   AdjacencyGraph<InstrumentedIndex>* graph = create_graph_from_file<InstrumentedIndex>(params.graph_file.c_str());
 
@@ -117,7 +117,7 @@ static void run_instrumented(ArgParser& parser) {
     OpCounter::ResetOpCount();
     void* helper = triangle_functions.get_helper(graph);
     triangle_functions.count(graph, helper);
-    out_file << algo_name << ", " << OpCounter::GetOpCount() << std::endl;
+    out_file << algo_name << "," << OpCounter::GetOpCount() << std::endl;
   }
   std::cout << "All instrumneting Completed" <<  std::endl;
 }
@@ -127,7 +127,7 @@ static void run_benchmark(ArgParser& parser) {
   params = parse_arguments<index_t>(parser);;
   std::ofstream out_file;
   out_file.open(std::string(params.file_name));
-  out_file << "algorithm, num_runs" << std::endl;
+  out_file << "algorithm,num_runs" << std::endl;
   benchmark(params, out_file);
   out_file.close();
 }
