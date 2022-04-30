@@ -91,9 +91,9 @@ struct GraphDefinition {
     Density density;
     HighDegreeNodeGeneration hdng;
     std::string output_filename;
-    index_t random_seed;
-    index_t nodes;
-    index_t edges;
+    uint64_t random_seed;
+    uint64_t nodes;
+    uint64_t edges;
     bool shuffle_edges;
 
     GraphDefinition(GraphType gT = GraphType::GENERATED, std::string out = std::string("generated_graph.txt")) {
@@ -107,7 +107,7 @@ struct GraphDefinition {
         }
         output_filename = out;
     }
-    GraphDefinition(GraphType gT, Density dense, HighDegreeNodeGeneration degree, index_t m, index_t n = 0, bool shuffle = true, index_t seed = static_cast<index_t>(std::time(0)), std::string out = std::string("generated_graph.txt")) {
+    GraphDefinition(GraphType gT, Density dense, HighDegreeNodeGeneration degree, uint64_t m, uint64_t n = 0, bool shuffle = true, uint64_t seed = static_cast<uint64_t>(std::time(0)), std::string out = std::string("generated_graph.txt")) {
         graphType = gT;
         density = dense;
         hdng = degree;

@@ -25,8 +25,8 @@ const static std::map<GraphType, std::string> graph_to_file = {
 
 void generate_random_graph(const GraphDefinition &graph_definition, std::ofstream &outfile)
 {
-    std::vector<std::vector<index_t>> adjacency_matrix(graph_definition.nodes, std::vector<index_t>(graph_definition.nodes, 0));
-    index_t src, dst, edges_left = graph_definition.edges;
+    std::vector<std::vector<uint64_t>> adjacency_matrix(graph_definition.nodes, std::vector<uint64_t>(graph_definition.nodes, 0));
+    uint64_t src, dst, edges_left = graph_definition.edges;
     while (edges_left > 0)
     {
         src = std::rand() % graph_definition.nodes;
@@ -41,13 +41,13 @@ void generate_random_graph(const GraphDefinition &graph_definition, std::ofstrea
     }
     outfile << graph_definition.nodes << std::endl;
     std::default_random_engine gen(graph_definition.random_seed);
-    for (index_t i = 0; i < graph_definition.nodes; i++)
+    for (uint64_t i = 0; i < graph_definition.nodes; i++)
     {
         outfile << adjacency_matrix[i][i] << " ";
         //get all indecies of non-zero elements in row i of adjacency_matrix
-        std::vector<index_t> non_zero_indecies;
+        std::vector<uint64_t> non_zero_indecies;
         adjacency_matrix[i][i] = 0;
-        for (index_t j = 0; j < graph_definition.nodes; j++)
+        for (uint64_t j = 0; j < graph_definition.nodes; j++)
         {
             if (adjacency_matrix[i][j]) {
                 non_zero_indecies.push_back(j);
@@ -59,7 +59,7 @@ void generate_random_graph(const GraphDefinition &graph_definition, std::ofstrea
             std::shuffle(non_zero_indecies.begin(), non_zero_indecies.end(), gen);
         }
 
-        for (index_t j = 0; j < non_zero_indecies.size(); j++)
+        for (uint64_t j = 0; j < non_zero_indecies.size(); j++)
         {
             outfile << non_zero_indecies[j] << " ";
         }
