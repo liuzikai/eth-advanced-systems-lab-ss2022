@@ -42,6 +42,7 @@ set(TEST_SOURCES
 
 set(GRAPH_SOURCES
         graphs/graph_generation.cpp
+        graphs/graph_generation.h
         graphs/adjacency_graph.cpp)
 
 set(BENCH_SOURCES
@@ -61,7 +62,7 @@ set(THIRD_PARTY_SOURCES
 ADD_LIBRARY(triangle_lib STATIC
         ${TRIANGLE_SOURCES})
 
-ADD_LIBRARY(thrid_party STATIC
+ADD_LIBRARY(third_party STATIC
         ${THIRD_PARTY_SOURCES})
 
 ADD_LIBRARY(graph_lib STATIC
@@ -70,8 +71,14 @@ ADD_LIBRARY(graph_lib STATIC
 add_executable(benchmark
         ${BENCH_SOURCES})
 TARGET_LINK_LIBRARIES(benchmark triangle_lib)
-TARGET_LINK_LIBRARIES(benchmark thrid_party)
+TARGET_LINK_LIBRARIES(benchmark third_party)
 TARGET_LINK_LIBRARIES(benchmark graph_lib)
+
+add_executable(graph_generation 
+        ${GRAPH_SOURCES})
+TARGET_LINK_LIBRARIES(graph_generation triangle_lib)
+TARGET_LINK_LIBRARIES(graph_generation third_party)
+TARGET_LINK_LIBRARIES(graph_generation graph_lib)
 
 
 add_executable(tests

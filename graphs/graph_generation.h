@@ -5,6 +5,11 @@
 #include "adjacency_graph.h"
 #include <string>
 #include <ctime>
+#include <algorithm>
+
+void convert_to_upper(std::string &s) {
+    std::transform(s.begin(), s.end(), s.begin(), ::toupper);
+}
 
 enum class GraphType {
     GERMAN_ROAD_NETWORK,
@@ -18,17 +23,68 @@ enum class GraphType {
     GENERATED
 };
 
+GraphType string_to_graphType(std::string s) {
+    convert_to_upper(s);
+    if (s == "GERMAN_ROAD_NETWORK") {
+        return GraphType::GERMAN_ROAD_NETWORK;
+    } else if (s == "ACTOR_MOVIE_GRAPH") {
+        return GraphType::ACTOR_MOVIE_GRAPH;
+    } else if (s == "COMP_SCIENCE_AUTHORS") {
+        return GraphType::COMP_SCIENCE_AUTHORS;
+    } else if (s == "GOOGLE_CONTEST") {
+        return GraphType::GOOGLE_CONTEST;
+    } else if (s == "HELP_LITERATURE") {
+        return GraphType::HELP_LITERATURE;
+    } else if (s == "ROUTER_NETWORK") {
+        return GraphType::ROUTER_NETWORK;
+    } else if (s == "WWW_NOTRE_DAME") {
+        return GraphType::WWW_NOTRE_DAME;
+    } else if (s == "US_PATENTS") {
+        return GraphType::US_PATENTS;
+    } else if (s == "GENERATED") {
+        return GraphType::GENERATED;
+    } else {
+        throw std::invalid_argument("Invalid GraphType");
+    }
+}
+
 enum class Density {
     NONE,
     SPARSE,
     DENSE
 };
 
+Density string_to_density(std::string s) {
+    convert_to_upper(s);
+    if (s == "NONE") {
+        return Density::NONE;
+    } else if (s == "SPARSE") {
+        return Density::SPARSE;
+    } else if (s == "DENSE") {
+        return Density::DENSE;
+    } else {
+        throw std::invalid_argument("Invalid Density");
+    }
+}
+
 enum class HighDegreeNodeGeneration {
     NONE,
     NATURAL_LOG,
     SQRT
 };
+
+HighDegreeNodeGeneration string_to_highDegreeNodeGeneration(std::string s) {
+    convert_to_upper(s);
+    if (s == "NONE") {
+        return HighDegreeNodeGeneration::NONE;
+    } else if (s == "NATURAL_LOG") {
+        return HighDegreeNodeGeneration::NATURAL_LOG;
+    } else if (s == "SQRT") {
+        return HighDegreeNodeGeneration::SQRT;
+    } else {
+        throw std::invalid_argument("Invalid HighDegreeNodeGeneration");
+    }
+}
 
 struct GraphDefinition {
     GraphType graphType;
@@ -38,23 +94,26 @@ struct GraphDefinition {
     index_t random_seed;
     index_t nodes;
     index_t edges;
+    bool shuffle_edges;
 
-    GraphDefinition(GraphType gT, std::string out = std::string("generated_graph.txt")) {
+    GraphDefinition(GraphType gT = GraphType::GENERATED, std::string out = std::string("generated_graph.txt")) {
         graphType = gT;
         if(gT == GraphType::GENERATED) {
             density = Density::SPARSE;
             hdng = HighDegreeNodeGeneration::NONE;
             nodes = 100;
             edges = 1000;
+            shuffle_edges = true;
         }
         output_filename = out;
     }
-    GraphDefinition(GraphType gT, Density dense, HighDegreeNodeGeneration degree, index_t m, index_t n = 0, index_t seed = static_cast<index_t>(std::time(0)), std::string out = std::string("generated_graph.txt")) {
+    GraphDefinition(GraphType gT, Density dense, HighDegreeNodeGeneration degree, index_t m, index_t n = 0, bool shuffle = true, index_t seed = static_cast<index_t>(std::time(0)), std::string out = std::string("generated_graph.txt")) {
         graphType = gT;
         density = dense;
         hdng = degree;
         nodes = n;
         edges = m;
+        shuffle_edges = shuffle;
         random_seed = seed;
         output_filename = out;
     }
@@ -65,6 +124,6 @@ struct GraphDefinition {
  * Generate a graph and store to file.
  * @param graph_defintion  The metadata needed to generate the graph.
  */
-void generate_graph(GraphDefinition graph_defintion);
+void generate_graph(const GraphDefinition &graph_defintion);
 
 #endif //TEAM02_GRAPH_GENERATION_H
