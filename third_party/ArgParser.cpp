@@ -30,6 +30,7 @@ std::optional<size_t> ArgParser::getCmdOptionAsInt(const std::string &option) co
     else if (exc.ec == std::errc::result_out_of_range) {
       throw std::out_of_range{"out_of_range when parsing argument as size_t"};
     }
+    return res;
   }
   return std::nullopt;
 }
