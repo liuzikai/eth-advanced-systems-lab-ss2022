@@ -2,6 +2,7 @@
 #define TEAM02_GRAPH_GENERATION_H
 
 #include "../src/common.h"
+#include "adjacency_graph.h"
 #include <string>
 #include <ctime>
 

@@ -2,7 +2,7 @@
 #define TEAM02_FORWARD_HASHED_H
 
 #include "common.h"
-#include "adjacency_graph.h"
+#include "../graphs/adjacency_graph.h"
 #include "hash_table.h"
 
 /// Accessory container

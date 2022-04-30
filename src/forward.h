@@ -2,7 +2,7 @@
 #define TEAM02_FORWARD_H
 
 #include "common.h"
-#include "adjacency_graph.h"
+#include "../graphs/adjacency_graph.h"
 
 /// Accessory container (array A in the paper)
 template<class Index>

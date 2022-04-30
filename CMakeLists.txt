@@ -26,6 +26,7 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fno-omit-frame-pointer")
 
 include_directories(third_party)
+include_directories(graphs)
 add_compile_definitions(INPUT_DIR="${PROJECT_SOURCE_DIR}/input/")
 
 set(TEST_SOURCES
@@ -37,13 +38,15 @@ set(TEST_SOURCES
         tests/forward_hashed_test.cpp
         tests/instrumented_index_test.cpp)
 
+set(GRAPH_SOURCES
+        graphs/graph_generation.cpp
+        graphs/adjacency_graph.cpp)
+
 set(BENCH_SOURCES
-        benchmark/main.cpp
-        benchmark/graph_generation.cpp)
+        benchmark/main.cpp)
 
 set(TRIANGLE_SOURCES
         src/common.cpp
-        src/adjacency_graph.cpp
         src/instrumented_index.cpp
         src/hash_table.cpp
         src/forward.cpp
@@ -59,13 +62,18 @@ ADD_LIBRARY(triangle_lib STATIC
 ADD_LIBRARY(thrid_party STATIC
         ${THIRD_PARTY_SOURCES})
 
+ADD_LIBRARY(graph_lib STATIC
+        ${GRAPH_SOURCES})
+
 add_executable(benchmark
         ${BENCH_SOURCES})
 TARGET_LINK_LIBRARIES(benchmark triangle_lib)
 TARGET_LINK_LIBRARIES(benchmark thrid_party)
+TARGET_LINK_LIBRARIES(benchmark graph_lib)
 
 
 add_executable(tests
         ${TEST_SOURCES})
 target_include_directories(tests PRIVATE src)
 TARGET_LINK_LIBRARIES(tests triangle_lib)
+TARGET_LINK_LIBRARIES(tests graph_lib)
