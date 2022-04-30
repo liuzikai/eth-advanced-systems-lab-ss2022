@@ -50,3 +50,4 @@ template void free_graph(AdjacencyGraph<index_t> *graph);
 
 template AdjacencyGraph<InstrumentedIndex> *create_graph_from_file(const char *filename);
 template void free_graph(AdjacencyGraph<InstrumentedIndex> *graph);
+
