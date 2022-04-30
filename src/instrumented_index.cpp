@@ -1,5 +1,4 @@
 #include "common.h"
-#include <compare>
 #include "instrumented_index.h"
 #include <iostream>
 

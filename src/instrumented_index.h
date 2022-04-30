@@ -2,7 +2,6 @@
 #define TEAM02_INSTRUMENTED_INDEX_H
 
 #include "common.h"
-#include <compare>
 
 class InstrumentedIndex {
 public:
