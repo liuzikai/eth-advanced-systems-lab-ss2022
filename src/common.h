@@ -8,7 +8,7 @@ typedef uint64_t index_t;  // XXX: smaller int for vectorization
 #define INDEX_FMT "%" PRIu64
 
 // XXX: replace with empty define when benchmarking
-#define print_triangle print_triangle_func
+// #define print_triangle print_triangle_func
 
 typedef void (*print_triangle_func_t)(index_t u, index_t v, index_t w);
 
