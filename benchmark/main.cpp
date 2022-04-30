@@ -13,7 +13,7 @@
 #include "ArgParser.h"
 #include "tsc_x86.h"
 
-#include "../src/adjacency_graph.h"
+#include "../graphs/adjacency_graph.h"
 
 #include "../src/forward.h"
 #include "../src/forward_hashed.h"
