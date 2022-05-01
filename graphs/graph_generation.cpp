@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <sstream>
 
-#include "ArgParser.h"
+#include "arg_parser.h"
 
 #include "graph_generation.h"
 #include "graph_generation_util.h"
@@ -196,7 +196,7 @@ void generate_graph(const GraphDefinition &graph_definition)
     }
 }
 
-GraphDefinition parse_arguments(ArgParser &parser)
+GraphDefinition parse_arguments(arg_parser &parser)
 {
     GraphDefinition graph;
 
@@ -214,7 +214,7 @@ GraphDefinition parse_arguments(ArgParser &parser)
 
 int main(int argc, char *argv[])
 {
-    ArgParser parser(argc, argv);
+    arg_parser parser(argc, argv);
     std::cout << "Generating graph..." << std::endl;
     GraphDefinition graph = parse_arguments(parser);
     generate_graph(graph);

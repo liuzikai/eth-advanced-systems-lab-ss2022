@@ -57,7 +57,7 @@ set(TRIANGLE_SOURCES
         src/forward_hashed.cpp)
 
 set(THIRD_PARTY_SOURCES
-        third_party/ArgParser.cpp)
+        third_party/arg_parser.cpp)
 
 ADD_LIBRARY(triangle_lib STATIC
         ${TRIANGLE_SOURCES})
