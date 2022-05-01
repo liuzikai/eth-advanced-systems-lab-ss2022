@@ -7,21 +7,24 @@
 #include <string>
 #include <algorithm>
 #include <random>
+#include <unordered_map>
+#include <sstream>
 
 #include "ArgParser.h"
 
 #include "graph_generation.h"
+#include "graph_generation_util.h"
 #include "../src/common.h"
 
 const static std::map<GraphType, std::string> graph_to_file = {
-    {GraphType::GERMAN_ROAD_NETWORK, "german_road_network"},
-    {GraphType::ACTOR_MOVIE_GRAPH, "actor_movie_graph"},
-    {GraphType::COMP_SCIENCE_AUTHORS, "comp_science_authors"},
-    {GraphType::GOOGLE_CONTEST, "google_contest"},
-    {GraphType::HELP_LITERATURE, "hep_literature"},
-    {GraphType::ROUTER_NETWORK, "router_network"},
-    {GraphType::WWW_NOTRE_DAME, "www_notre_dame"},
-    {GraphType::US_PATENTS, "us_patents"}};
+    {GraphType::GERMAN_ROAD_NETWORK, ""},
+    {GraphType::ACTOR_MOVIE_GRAPH, ""},
+    {GraphType::COMP_SCIENCE_AUTHORS, ""},
+    {GraphType::GOOGLE_CONTEST, ""},
+    {GraphType::HELP_LITERATURE, ""},
+    {GraphType::ROUTER_NETWORK, ""},
+    {GraphType::WWW_NOTRE_DAME, ""},
+    {GraphType::US_PATENTS, "../graphs/graph_data/cit-Patents.txt.gz"}};
 
 void generate_random_graph(const GraphDefinition &graph_definition, std::ofstream &outfile)
 {
@@ -67,6 +70,74 @@ void generate_random_graph(const GraphDefinition &graph_definition, std::ofstrea
     }
 }
 
+void output_adjacency_list(const GraphDefinition &graph_definition, std::ofstream &outfile, std::vector<std::vector<uint64_t>> &adjacency_list)
+{
+    std::default_random_engine gen(graph_definition.random_seed);
+    outfile << adjacency_list.size() << std::endl;
+    for (uint64_t i = 0; i < adjacency_list.size(); i++)
+    {
+        outfile << adjacency_list[i].size() << " ";
+        if (graph_definition.shuffle_edges) {
+            std::shuffle(adjacency_list[i].begin(), adjacency_list[i].end(), gen);
+        }
+        for (uint64_t j = 0; j < adjacency_list[i].size(); j++)
+        {
+            outfile << adjacency_list[i][j] << " ";
+        }
+        outfile << std::endl;
+    }
+}
+
+void generate_us_patents_graph(const GraphDefinition &graph_definition, std::ifstream &infile, std::ofstream &outfile)
+{
+    std::unordered_map<uint64_t, uint64_t> patent_to_index;
+    uint64_t patent_id_from, patent_id_to;
+    uint64_t patents_count = 0;
+    //skip lines until we get to the Nodes section
+    std::string line;
+    while (line.find("Nodes") == std::string::npos)
+    {
+        std::getline(infile, line);
+    }
+    //read in the number between "Nodes: " and "Edges: " in line
+    uint64_t nodes = std::stoull(line.substr(line.find("Nodes: ") + 7, line.find(" Edges: ") - line.find("Nodes: ") - 7));
+
+    std::vector<std::vector<uint64_t>> adjacency_list(nodes, std::vector<uint64_t>());
+
+    std::getline(infile, line);
+    // read in the patent id and patent index line by line
+    while (std::getline(infile, line))
+    {
+        // get the two patent ids from line
+        std::stringstream ss(line);
+        ss >> patent_id_from >> patent_id_to;
+        if (patent_to_index.find(patent_id_from) == patent_to_index.end())
+        {
+            patent_to_index[patent_id_from] = patents_count;
+            patent_id_from = patents_count;
+            patents_count++;
+        } else {
+            patent_id_from = patent_to_index[patent_id_from];
+        }
+        if (patent_to_index.find(patent_id_to) == patent_to_index.end())
+        {
+            patent_to_index[patent_id_to] = patents_count;
+            patent_id_to = patents_count;
+            patents_count++;
+        } else {
+            patent_id_to = patent_to_index[patent_id_to];
+        }
+
+        if (patent_id_from == patent_id_to || 
+            std::find(adjacency_list[patent_id_from].begin(), adjacency_list[patent_id_from].end(), patent_id_to) != adjacency_list[patent_id_from].end()) {
+            continue;
+        }
+        adjacency_list[patent_id_from].push_back(patent_id_to);
+        adjacency_list[patent_id_to].push_back(patent_id_from);
+    }
+    output_adjacency_list(graph_definition, outfile, adjacency_list);
+}
+
 // Output Format:
 // num_nodes
 // for each node:
@@ -76,6 +147,20 @@ void generate_graph(const GraphDefinition &graph_definition)
     //print the seed
     std::srand(graph_definition.random_seed);
     std::ofstream outfile(graph_definition.output_filename);
+    //convert graphType to file name using graph_to_file map and the default value "" if the graphType is not in the map
+    auto search = graph_to_file.find(graph_definition.graphType);
+    std::string zipped_file_name = (search != graph_to_file.end()) ? search->second : "";
+
+    if (graph_definition.graphType != GraphType::GENERATED && zipped_file_name.empty()) {
+        std::cerr << "Graph type currently not supported." << std::endl;
+        exit(1);
+    }
+
+    std::string file_name = unzip_file(zipped_file_name);
+    // open file_name
+    std::ifstream infile(file_name);
+
+    std::cout << "Generating " << zipped_file_name << std::endl;
 
     switch (graph_definition.graphType)
     {
@@ -94,6 +179,7 @@ void generate_graph(const GraphDefinition &graph_definition)
     case GraphType::WWW_NOTRE_DAME:
         break;
     case GraphType::US_PATENTS:
+        generate_us_patents_graph(graph_definition, infile, outfile);
         break;
     case GraphType::GENERATED:
         switch (graph_definition.density)

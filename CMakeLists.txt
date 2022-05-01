@@ -34,6 +34,7 @@ add_compile_definitions(INPUT_DIR="${PROJECT_SOURCE_DIR}/input/")
 set(GRAPH_SOURCES
         graphs/graph_generation.cpp
         graphs/graph_generation.h
+        graphs/graph_generation_util.cpp
         graphs/adjacency_graph.cpp)
 
 set(BENCH_SOURCES
