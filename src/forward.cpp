@@ -37,8 +37,9 @@ void forward_delete_neighbor_container(ForwardNeighborContainer<Index> *A) {
     delete A;
 }
 
-template<class Index>
-index_t forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
+template<class Index, class TRL>
+TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
+    TRL lister;
     forward_reset_neighbor_container(G, A);
 
     // According to sec. 4, the sorting is included in the execution time
@@ -48,7 +49,6 @@ index_t forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
         }
     }
 
-    Index count = 0;
     for (Index s = 0; s < G->n; s++) {
         for (Index ti = 0; ti < G->adjacency[s].count; ti++) {
             Index t = G->adjacency[s].neighbors[ti];
@@ -59,10 +59,7 @@ index_t forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
                 ForwardNeighbourList<Index> *At = A->adjacency + t;
                 while (i < As->count && j < At->count) {
                     if (As->neighbors[i] == At->neighbors[j]) {
-                        count++;
-#if defined(print_triangle)
-                        print_triangle(s, t, As->neighbors[i]);
-#endif
+                        lister.list_triangle(s, t, As->neighbors[i]);
                         i++;
                         j++;
                     } else if (As->neighbors[i] < At->neighbors[j]) {
@@ -77,13 +74,24 @@ index_t forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
         }
     }
 
-    return count;
+    return lister;
 }
 
-template void forward_delete_neighbor_container(ForwardNeighborContainer<index_t> *A);
-template ForwardNeighborContainer<index_t> *forward_create_neighbor_container(AdjacencyGraph<index_t> *G);
-template index_t forward(AdjacencyGraph<index_t> *G, ForwardNeighborContainer<index_t> *A);
+template TriangleListing::Count forward<index_t, TriangleListing::Count>(AdjacencyGraph<index_t> *G, ForwardNeighborContainer<index_t> *A);
+template TriangleListing::Count forward<InstrumentedIndex, TriangleListing::Count>(AdjacencyGraph<InstrumentedIndex> *G,
+                                                                    ForwardNeighborContainer<InstrumentedIndex> *A);
+
+template TriangleListing::Print forward<index_t, TriangleListing::Print>(AdjacencyGraph<index_t> *G, ForwardNeighborContainer<index_t> *A);
+template TriangleListing::Print forward<InstrumentedIndex, TriangleListing::Print>(AdjacencyGraph<InstrumentedIndex> *G,
+                                                                                   ForwardNeighborContainer<InstrumentedIndex> *A);
+
+template TriangleListing::Collect forward<index_t, TriangleListing::Collect>(AdjacencyGraph<index_t> *G, ForwardNeighborContainer<index_t> *A);
+template TriangleListing::Collect forward<InstrumentedIndex, TriangleListing::Collect>(AdjacencyGraph<InstrumentedIndex> *G,
+                                                     ForwardNeighborContainer<InstrumentedIndex> *A);
+
 
 template void forward_delete_neighbor_container(ForwardNeighborContainer<InstrumentedIndex> *A);
+template void forward_delete_neighbor_container(ForwardNeighborContainer<index_t> *A);
+
+template ForwardNeighborContainer<index_t> *forward_create_neighbor_container(AdjacencyGraph<index_t> *G);
 template ForwardNeighborContainer<InstrumentedIndex> *forward_create_neighbor_container(AdjacencyGraph<InstrumentedIndex> *G);
-template index_t forward(AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> *A);

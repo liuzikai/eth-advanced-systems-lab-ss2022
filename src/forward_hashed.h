@@ -4,6 +4,8 @@
 #include "common.h"
 #include "../graphs/adjacency_graph.h"
 #include "hash_table.h"
+#include "triangle_lister.h"
+
 
 /// Accessory container
 
@@ -32,7 +34,7 @@ void forward_hashed_delete_neighbor_container(ForwardHashedNeighborContainer<Ind
  * @return   The number of triangles.
  * @note     Triangles are printed using print_triangle if it is defined.
  */
-template<class Index>
-index_t forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedNeighborContainer<Index> *A);
+template<class Index, class TRL = TriangleListing::Count>
+TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedNeighborContainer<Index> *A);
 
 #endif //TEAM02_FORWARD_HASHED_H

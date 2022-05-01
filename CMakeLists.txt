@@ -37,11 +37,19 @@ set(GRAPH_SOURCES
         graphs/graph_generation_util.cpp
         graphs/adjacency_graph.cpp)
 
+set(TEST_SOURCES
+        tests/test_main.cpp
+        tests/example_test.cpp
+        tests/adjacent_graph_test.cpp
+        tests/forward_test.cpp
+        tests/edge_iterator_test.cpp
+        tests/forward_hashed_test.cpp
+        tests/instrumented_index_test.cpp)
+
 set(BENCH_SOURCES
         benchmark/main.cpp)
 
 set(TRIANGLE_SOURCES
-        src/common.cpp
         src/instrumented_index.cpp
         src/hash_table.cpp
         src/forward.cpp
@@ -71,3 +79,9 @@ add_executable(graph_generation
 TARGET_LINK_LIBRARIES(graph_generation triangle_lib)
 TARGET_LINK_LIBRARIES(graph_generation third_party)
 TARGET_LINK_LIBRARIES(graph_generation graph_lib)
+
+add_executable(tests
+        ${TEST_SOURCES})
+target_include_directories(tests PRIVATE src)
+TARGET_LINK_LIBRARIES(tests triangle_lib)
+TARGET_LINK_LIBRARIES(tests graph_lib)

@@ -16,17 +16,17 @@ namespace {
 */
 
 
-template<class Index>
+template<class Index, class TLR>
 struct TriangleFunctions {
 
-  using count_triangles_fun = std::function<index_t(AdjacencyGraph<Index>*, void*)>;
+  using count_triangles_fun = std::function<TLR(AdjacencyGraph<Index>*, void*)>;
   using get_helper_struct_fun = std::function<void*(AdjacencyGraph<Index>*)>;
 
-  typedef index_t (*count_triangles_c_style)(AdjacencyGraph<Index>*, void*);
+  typedef TLR (*count_triangles_c_style)(AdjacencyGraph<Index>*, void*);
   typedef void* (*get_helper_c_style)(AdjacencyGraph<Index>*);
 
   template<class HelperStruct>
-  TriangleFunctions(index_t (*c)(AdjacencyGraph<Index>*, HelperStruct*),
+  TriangleFunctions(TLR (*c)(AdjacencyGraph<Index>*, HelperStruct*),
   HelperStruct* (*h)(AdjacencyGraph<Index>*) ) {
     // Ugh. This is disgusting...
     // But hey it works and its not undefined behaviour for compatible types which they should be.
@@ -49,14 +49,14 @@ std::vector<std::string>  split(const std::string &s, char delim) {
   return elems;
 }
 
-template<class Index>
+template<class Index, class TLR>
 struct BenchParams {
     size_t num_warmups;
     size_t num_runs;
     size_t num_phases;
     std::string file_name;
     std::string graph_file;
-    std::vector<std::pair<std::string, TriangleFunctions<Index>>> bench_mark_functions;
+    std::vector<std::pair<std::string, TriangleFunctions<Index, TLR>>> bench_mark_functions;
 };
 
 

@@ -3,6 +3,8 @@
 
 #include "common.h"
 #include "../graphs/adjacency_graph.h"
+#include "instrumented_index.h"
+#include "triangle_lister.h"
 
 /// Accessory container (array A in the paper)
 template<class Index>
@@ -30,7 +32,7 @@ void forward_delete_neighbor_container(ForwardNeighborContainer<Index> *A);
  * @return   The number of triangles.
  * @note     Triangles are printed using print_triangle if it is defined.
  */
-template<class Index>
-index_t forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A);
+template<class Index, class TRL = TriangleListing::Count>
+TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A);
 
 #endif //TEAM02_FORWARD_H

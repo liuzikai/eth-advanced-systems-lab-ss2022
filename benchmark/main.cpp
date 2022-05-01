@@ -19,17 +19,18 @@
 #include "../src/forward_hashed.h"
 
 #include "../src/instrumented_index.h"
+#include "../src/triangle_lister.h"
 
 static constexpr size_t default_num_warmups = 1;
 static constexpr size_t default_num_runs = 5;
 static constexpr size_t default_num_phases = 5;
 
-template <class Index>
+template <class Index, class TLR>
 class BenchmarkFunctions {
 public:
-  void add_functions(std::vector<std::string> names, std::vector<std::pair<std::string, TriangleFunctions<Index>>>& result) {
+  void add_functions(std::vector<std::string> names, std::vector<std::pair<std::string, TriangleFunctions<Index, TLR>>>& result) {
     std::transform(names.begin(), names.end(), std::back_inserter(result),
-        [this](std::string s) -> std::pair<std::string, TriangleFunctions<Index>> {
+        [this](std::string s) -> std::pair<std::string, TriangleFunctions<Index,TLR>> {
           auto it = name_to_function.find(s);
           if (it == name_to_function.end()) {
             throw std::invalid_argument("Algorithm does not exist.");
@@ -39,16 +40,16 @@ public:
       });
   }
 private:
-  std::map<std::string, TriangleFunctions<Index>> name_to_function = {
-      {"edge_iterator", TriangleFunctions(edge_iterator<Index>, edge_iterator_get_dummy_helper)},
-      {"forward", TriangleFunctions(forward<Index>, forward_create_neighbor_container)},
-      {"forward_hashed", TriangleFunctions(forward_hashed<Index>, forward_hashed_create_neighbor_container)},
+  std::map<std::string, TriangleFunctions<Index,TLR>> name_to_function = {
+      {"edge_iterator", TriangleFunctions(edge_iterator<Index, TLR>, edge_iterator_get_dummy_helper)},
+      {"forward", TriangleFunctions(forward<Index, TLR>, forward_create_neighbor_container)},
+      {"forward_hashed", TriangleFunctions(forward_hashed<Index, TLR>, forward_hashed_create_neighbor_container)},
   };
 };
 
-template<class Index>
-BenchParams<Index> parse_arguments(ArgParser& parser) {
-  BenchParams<Index> params;
+template<class Index, class TLR>
+BenchParams<Index, TLR> parse_arguments(ArgParser& parser) {
+  BenchParams<Index, TLR> params;
   params.num_warmups = parser.getCmdOptionAsInt("-num_warmups").value_or(default_num_warmups);
   params.num_runs = parser.getCmdOptionAsInt("-num_runs").value_or(default_num_runs);
   params.num_phases = parser.getCmdOptionAsInt("-num_phases").value_or(default_num_phases);
@@ -70,13 +71,13 @@ BenchParams<Index> parse_arguments(ArgParser& parser) {
 
   // Sadly ranges to split the view are not available in gcc yet.
   std::vector<std::string> algos = split(std::string (*algos_opt), ',');
-  BenchmarkFunctions<Index> benchmarkFunctions;
+  BenchmarkFunctions<Index, TLR> benchmarkFunctions;
   benchmarkFunctions.add_functions(algos, params.bench_mark_functions);
 
   return params;
 }
 
-void benchmark(const BenchParams<index_t>& params, std::ofstream& out_file) {
+void benchmark(const BenchParams<index_t, TriangleListing::Count>& params, std::ofstream& out_file) {
   // TODO: Read this in when we finally have data.
   AdjacencyGraph<index_t>* graph = create_graph_from_file<index_t>(params.graph_file.c_str());
 
@@ -107,8 +108,8 @@ void benchmark(const BenchParams<index_t>& params, std::ofstream& out_file) {
 }
 
 static void run_instrumented(ArgParser& parser) {
-  BenchParams<InstrumentedIndex> params;
-  params = parse_arguments<InstrumentedIndex>(parser);;
+  BenchParams<InstrumentedIndex, TriangleListing::Count> params;
+  params = parse_arguments<InstrumentedIndex, TriangleListing::Count>(parser);;
 
   std::ofstream out_file;
   out_file.open(std::string(params.file_name));
@@ -127,16 +128,14 @@ static void run_instrumented(ArgParser& parser) {
 }
 
 static void run_benchmark(ArgParser& parser) {
-  BenchParams<index_t> params;
-  params = parse_arguments<index_t>(parser);;
+  BenchParams<index_t, TriangleListing::Count> params;
+  params = parse_arguments<index_t, TriangleListing::Count>(parser);;
   std::ofstream out_file;
   out_file.open(std::string(params.file_name));
   out_file << "algorithm,cycles_per_run" << std::endl;
   benchmark(params, out_file);
   out_file.close();
 }
-
-
 
 int main(int argc, char * argv[]) {
   ArgParser parser(argc, argv);
