@@ -1,5 +1,5 @@
 #include "adjacency_graph.h"
-#include "../src/instrumented_index.h"
+#include "instrumented_index.h"
 #include <cstdio>
 #include <cassert>
 #include <stdexcept>

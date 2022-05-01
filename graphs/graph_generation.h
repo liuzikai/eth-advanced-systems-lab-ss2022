@@ -1,7 +1,7 @@
 #ifndef TEAM02_GRAPH_GENERATION_H
 #define TEAM02_GRAPH_GENERATION_H
 
-#include "../src/common.h"
+#include "common.h"
 #include "adjacency_graph.h"
 #include <string>
 #include <ctime>

@@ -4,9 +4,9 @@
 #include <sstream>
 #include <vector>
 
-#include "../graphs/adjacency_graph.h"
-#include "../src/edge_iterator.h"
-#include "../src/common.h"
+#include "adjacency_graph.h"
+#include "edge_iterator.h"
+#include "common.h"
 
 
 template<class Index, class TLR>

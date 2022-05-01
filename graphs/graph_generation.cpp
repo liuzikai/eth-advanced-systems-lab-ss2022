@@ -14,7 +14,7 @@
 
 #include "graph_generation.h"
 #include "graph_generation_util.h"
-#include "../src/common.h"
+#include "common.h"
 
 const static std::map<GraphType, std::string> graph_to_file = {
     {GraphType::GERMAN_ROAD_NETWORK, ""},

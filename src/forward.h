@@ -2,7 +2,7 @@
 #define TEAM02_FORWARD_H
 
 #include "common.h"
-#include "../graphs/adjacency_graph.h"
+#include "adjacency_graph.h"
 #include "instrumented_index.h"
 #include "triangle_lister.h"
 

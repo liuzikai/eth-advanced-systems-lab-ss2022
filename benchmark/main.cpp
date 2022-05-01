@@ -8,18 +8,18 @@
 #include <vector>
 
 #include "benchmark_utils.h"
-#include "../src/instrumented_index.h"
+#include "instrumented_index.h"
 
 #include "arg_parser.h"
 #include "tsc_x86.h"
 
-#include "../graphs/adjacency_graph.h"
+#include "adjacency_graph.h"
 
-#include "../src/forward.h"
-#include "../src/forward_hashed.h"
+#include "forward.h"
+#include "forward_hashed.h"
 
-#include "../src/instrumented_index.h"
-#include "../src/triangle_lister.h"
+#include "instrumented_index.h"
+#include "triangle_lister.h"
 
 static constexpr size_t default_num_warmups = 1;
 static constexpr size_t default_num_runs = 5;
