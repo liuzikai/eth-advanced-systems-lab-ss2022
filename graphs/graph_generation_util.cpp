@@ -20,7 +20,7 @@ std::string unzip_file(std::string file_name) {
         std::string unzipped_file_name = file_name.substr(0, file_name.find(".gz"));
         if (!file_exists(unzipped_file_name)) {
             std::cout << file_name << " is unzipping..." << std::endl;
-            std::string command = "gzip -d" + file_name + " > " + unzipped_file_name;
+            std::string command = "gzip -d -c " + file_name + " > " + unzipped_file_name;
             system(command.c_str());
             std::cout << file_name << " unzipped." << std::endl;
         }
