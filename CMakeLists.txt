@@ -43,6 +43,7 @@ set(TEST_SOURCES
 set(GRAPH_SOURCES
         graphs/graph_generation.cpp
         graphs/graph_generation.h
+        graphs/graph_generation_util.cpp
         graphs/adjacency_graph.cpp)
 
 set(BENCH_SOURCES
