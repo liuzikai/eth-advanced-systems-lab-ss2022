@@ -19,7 +19,7 @@
 const static std::map<GraphType, std::string> graph_to_file = {
     {GraphType::GERMAN_ROAD_NETWORK, ""},
     {GraphType::ACTOR_MOVIE_GRAPH, ""},
-    {GraphType::COMP_SCIENCE_AUTHORS, ""},
+    {GraphType::COMP_SCIENCE_AUTHORS, "../graphs/graph_data/com-dblp.ungraph.txt.gz"},
     {GraphType::GOOGLE_CONTEST, "../graphs/graph_data/google_contest.txt.gz"},
     {GraphType::HELP_LITERATURE, ""},
     {GraphType::ROUTER_NETWORK, ""},
@@ -130,6 +130,7 @@ void generate_graph(const GraphDefinition &graph_definition)
     case GraphType::ACTOR_MOVIE_GRAPH:
         break;
     case GraphType::COMP_SCIENCE_AUTHORS:
+        generate_graph_from_snap_stanford_ds(graph_definition, infile, outfile);
         break;
     case GraphType::GOOGLE_CONTEST:
         generate_graph_from_snap_stanford_ds(graph_definition, infile, outfile);
