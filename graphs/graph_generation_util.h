@@ -15,7 +15,8 @@ std::string unzip_file(std::string file_name);
  * The method returns the number of edges in the graph.
  */
 uint64_t parse_edge_list(std::ifstream &infile, 
-        std::vector<std::vector<uint64_t>> &adjacency_list);
+        std::vector<std::vector<uint64_t>> &adjacency_list,
+        bool initialized = true);
 
 /*
  * A method that takes as argument a graph definition, an output file stream, and an adjacency list.

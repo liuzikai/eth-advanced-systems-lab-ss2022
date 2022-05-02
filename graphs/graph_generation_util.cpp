@@ -48,7 +48,8 @@ std::string unzip_file(std::string file_name) {
  * The method returns the number of edges in the graph.
  */
 uint64_t parse_edge_list(std::ifstream &infile, 
-        std::vector<std::vector<uint64_t>> &adjacency_list)
+        std::vector<std::vector<uint64_t>> &adjacency_list,
+        bool initialized)
 {
     std::unordered_map<uint64_t, uint64_t> nodeid_to_index;
     uint64_t node_id_from, node_id_to;
@@ -66,6 +67,10 @@ uint64_t parse_edge_list(std::ifstream &infile,
             nodeid_to_index[node_id_from] = nodes_count;
             node_id_from = nodes_count;
             nodes_count++;
+            if(!initialized)
+            {
+                adjacency_list.push_back(std::vector<uint64_t>());
+            }
         } else {
             node_id_from = nodeid_to_index[node_id_from];
         }
@@ -74,6 +79,10 @@ uint64_t parse_edge_list(std::ifstream &infile,
             nodeid_to_index[node_id_to] = nodes_count;
             node_id_to = nodes_count;
             nodes_count++;
+            if(!initialized)
+            {
+                adjacency_list.push_back(std::vector<uint64_t>());
+            }
         } else {
             node_id_to = nodeid_to_index[node_id_to];
         }
