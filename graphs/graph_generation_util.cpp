@@ -50,9 +50,9 @@ std::string unzip_file(std::string file_name) {
 uint64_t parse_edge_list(std::ifstream &infile, 
         std::vector<std::vector<uint64_t>> &adjacency_list)
 {
-    std::unordered_map<uint64_t, uint64_t> patent_to_index;
-    uint64_t patent_id_from, patent_id_to;
-    uint64_t edges_added = 0, patents_count = 0;
+    std::unordered_map<uint64_t, uint64_t> nodeid_to_index;
+    uint64_t node_id_from, node_id_to;
+    uint64_t edges_added = 0, nodes_count = 0;
     std::string line;
 
     // read in the patent id and patent index line by line
@@ -60,30 +60,30 @@ uint64_t parse_edge_list(std::ifstream &infile,
     {
         // get the two patent ids from line
         std::stringstream ss(line);
-        ss >> patent_id_from >> patent_id_to;
-        if (patent_to_index.find(patent_id_from) == patent_to_index.end())
+        ss >> node_id_from >> node_id_to;
+        if (nodeid_to_index.find(node_id_from) == nodeid_to_index.end())
         {
-            patent_to_index[patent_id_from] = patents_count;
-            patent_id_from = patents_count;
-            patents_count++;
+            nodeid_to_index[node_id_from] = nodes_count;
+            node_id_from = nodes_count;
+            nodes_count++;
         } else {
-            patent_id_from = patent_to_index[patent_id_from];
+            node_id_from = nodeid_to_index[node_id_from];
         }
-        if (patent_to_index.find(patent_id_to) == patent_to_index.end())
+        if (nodeid_to_index.find(node_id_to) == nodeid_to_index.end())
         {
-            patent_to_index[patent_id_to] = patents_count;
-            patent_id_to = patents_count;
-            patents_count++;
+            nodeid_to_index[node_id_to] = nodes_count;
+            node_id_to = nodes_count;
+            nodes_count++;
         } else {
-            patent_id_to = patent_to_index[patent_id_to];
+            node_id_to = nodeid_to_index[node_id_to];
         }
 
-        if (patent_id_from == patent_id_to || 
-            std::find(adjacency_list[patent_id_from].begin(), adjacency_list[patent_id_from].end(), patent_id_to) != adjacency_list[patent_id_from].end()) {
+        if (node_id_from == node_id_to || 
+            std::find(adjacency_list[node_id_from].begin(), adjacency_list[node_id_from].end(), node_id_to) != adjacency_list[node_id_from].end()) {
             continue;
         }
-        adjacency_list[patent_id_from].push_back(patent_id_to);
-        adjacency_list[patent_id_to].push_back(patent_id_from);
+        adjacency_list[node_id_from].push_back(node_id_to);
+        adjacency_list[node_id_to].push_back(node_id_from);
         edges_added++;
     }
     return edges_added;
