@@ -180,11 +180,11 @@ if [ $GRAPHTYPE = "GENERATED" ]; then
 		echo "+ $graph"
 		if [ -z $SEED ]; then
             # always generate random graph without seed
-			graph_generation -gt $GRAPHTYPE -num_nodes $(($i/$NODE)) -num_edges $i -o $INPUTDIR/$graph.txt
+			./graph_generation -gt $GRAPHTYPE -num_nodes $(($i/$NODE)) -num_edges $i -o $INPUTDIR/$graph.txt
 		else
             # generate graph if doesn't exist
             if [ ! -f $INPUTDIR/$graph.txt ]; then
-                graph_generation -gt $GRAPHTYPE -num_nodes $(($i/$NODE)) -num_edges $i -seed $SEED -o $INPUTDIR/$graph.txt
+                ./graph_generation -gt $GRAPHTYPE -num_nodes $(($i/$NODE)) -num_edges $i -seed $SEED -o $INPUTDIR/$graph.txt
             fi
 		fi
 		./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPNUM/$graph.csv -algorithm edge_iterator,forward,forward_hashed -graph $INPUTDIR/$graph.txt
@@ -198,7 +198,7 @@ else
 	echo "+ $graph"
 	# generate graph if doesn't exist
 	if [ ! -f $INPUTDIR/$graph.txt ]; then
-		graph_generation -gt $GRAPHTYPE -o $INPUTDIR/$graph.txt
+		./graph_generation -gt $GRAPHTYPE -o $INPUTDIR/$graph.txt
 	fi
 	./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPNUM/$graph.csv -algorithm edge_iterator,forward,forward_hashed -graph $INPUTDIR/$graph.txt
 fi
