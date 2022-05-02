@@ -20,7 +20,7 @@ const static std::map<GraphType, std::string> graph_to_file = {
     {GraphType::GERMAN_ROAD_NETWORK, ""},
     {GraphType::ACTOR_MOVIE_GRAPH, ""},
     {GraphType::COMP_SCIENCE_AUTHORS, ""},
-    {GraphType::GOOGLE_CONTEST, ""},
+    {GraphType::GOOGLE_CONTEST, "../graphs/graph_data/google_contest.txt.gz"},
     {GraphType::HELP_LITERATURE, ""},
     {GraphType::ROUTER_NETWORK, ""},
     {GraphType::WWW_NOTRE_DAME, ""},
@@ -70,30 +70,8 @@ void generate_random_graph(const GraphDefinition &graph_definition, std::ofstrea
     }
 }
 
-void output_adjacency_list(const GraphDefinition &graph_definition, std::ofstream &outfile, std::vector<std::vector<uint64_t>> &adjacency_list)
-{
-    std::default_random_engine gen(graph_definition.random_seed);
-    outfile << adjacency_list.size() << std::endl;
-    for (uint64_t i = 0; i < adjacency_list.size(); i++)
-    {
-        outfile << adjacency_list[i].size() << " ";
-        if (graph_definition.shuffle_edges) {
-            std::shuffle(adjacency_list[i].begin(), adjacency_list[i].end(), gen);
-        }
-        for (uint64_t j = 0; j < adjacency_list[i].size(); j++)
-        {
-            outfile << adjacency_list[i][j] << " ";
-        }
-        outfile << std::endl;
-    }
-}
 
-void generate_us_patents_graph(const GraphDefinition &graph_definition, std::ifstream &infile, std::ofstream &outfile)
-{
-    std::unordered_map<uint64_t, uint64_t> patent_to_index;
-    uint64_t patent_id_from, patent_id_to;
-    uint64_t patents_count = 0;
-    //skip lines until we get to the Nodes section
+uint64_t num_nodes_snap_stanford_ds(std::ifstream &infile) {
     std::string line;
     while (line.find("Nodes") == std::string::npos)
     {
@@ -101,41 +79,24 @@ void generate_us_patents_graph(const GraphDefinition &graph_definition, std::ifs
     }
     //read in the number between "Nodes: " and "Edges: " in line
     uint64_t nodes = std::stoull(line.substr(line.find("Nodes: ") + 7, line.find(" Edges: ") - line.find("Nodes: ") - 7));
+    return nodes;
+}
+
+void generate_graph_from_snap_stanford_ds(const GraphDefinition &graph_definition, std::ifstream &infile, std::ofstream &outfile)
+{
+    std::string line;
+
+    uint64_t nodes = num_nodes_snap_stanford_ds(infile);
 
     std::vector<std::vector<uint64_t>> adjacency_list(nodes, std::vector<uint64_t>());
 
+    //skip a line to get to the Data Section
     std::getline(infile, line);
-    // read in the patent id and patent index line by line
-    while (std::getline(infile, line))
-    {
-        // get the two patent ids from line
-        std::stringstream ss(line);
-        ss >> patent_id_from >> patent_id_to;
-        if (patent_to_index.find(patent_id_from) == patent_to_index.end())
-        {
-            patent_to_index[patent_id_from] = patents_count;
-            patent_id_from = patents_count;
-            patents_count++;
-        } else {
-            patent_id_from = patent_to_index[patent_id_from];
-        }
-        if (patent_to_index.find(patent_id_to) == patent_to_index.end())
-        {
-            patent_to_index[patent_id_to] = patents_count;
-            patent_id_to = patents_count;
-            patents_count++;
-        } else {
-            patent_id_to = patent_to_index[patent_id_to];
-        }
+    
+    uint64_t edges = parse_edge_list(infile, adjacency_list);
+    std::cout << "Nodes: " << nodes << " Edges: " << edges << std::endl;
 
-        if (patent_id_from == patent_id_to || 
-            std::find(adjacency_list[patent_id_from].begin(), adjacency_list[patent_id_from].end(), patent_id_to) != adjacency_list[patent_id_from].end()) {
-            continue;
-        }
-        adjacency_list[patent_id_from].push_back(patent_id_to);
-        adjacency_list[patent_id_to].push_back(patent_id_from);
-    }
-    output_adjacency_list(graph_definition, outfile, adjacency_list);
+    output_adjacency_list(outfile, adjacency_list, graph_definition.shuffle_edges, graph_definition.random_seed);
 }
 
 // Output Format:
@@ -171,6 +132,7 @@ void generate_graph(const GraphDefinition &graph_definition)
     case GraphType::COMP_SCIENCE_AUTHORS:
         break;
     case GraphType::GOOGLE_CONTEST:
+        generate_graph_from_snap_stanford_ds(graph_definition, infile, outfile);
         break;
     case GraphType::HELP_LITERATURE:
         break;
@@ -179,7 +141,7 @@ void generate_graph(const GraphDefinition &graph_definition)
     case GraphType::WWW_NOTRE_DAME:
         break;
     case GraphType::US_PATENTS:
-        generate_us_patents_graph(graph_definition, infile, outfile);
+        generate_graph_from_snap_stanford_ds(graph_definition, infile, outfile);
         break;
     case GraphType::GENERATED:
         switch (graph_definition.density)
