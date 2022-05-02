@@ -3,10 +3,10 @@
 2. Run run.sh: -h for help
 
 ## Output directory
-random graph: data/<commit_hash>-<graph_type>-<low_edge_count>-<high_edge_count>-<interval>-<node_degree>(-<seed>)/<num_warmups>-<num_runs>-<num_phases>/<number>/\
-real-world graph: data/<commit_hash>-<graph_type>/<num_warmups>-<num_runs>-<num_phases>/<number>/\
+random graph: data/`commit_hash`-`graph_type`-`low_edge_count`-`high_edge_count`-`interval-node_degree`(-`seed`)/`num_warmups`-`num_runs`-`num_phases`/`number`/\
+real-world graph: data/`commit_hash`-`graph_type`/`num_warmups`-`num_runs`-`num_phases`/`number`/\
 There's a `config.json` file in each folder.\
-<number>: the number of times this configuration is experimented with.\
+`number`: the number of times this configuration is experimented with.\
 `config.json` stores all the above parameters.\
 Every time this configuration is executed, <number> increments by one.
 
