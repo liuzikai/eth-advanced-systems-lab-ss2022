@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
 project(ASL-Team02)
 
+if (NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
+    set(CMAKE_BUILD_TYPE "Release")
+endif()
+
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 MESSAGE("${CMAKE_CXX_COMPILER_ID}")
 
 set(CMAKE_CXX_STANDARD 20)
