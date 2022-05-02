@@ -19,11 +19,11 @@
 const static std::map<GraphType, std::string> graph_to_file = {
     {GraphType::GERMAN_ROAD_NETWORK, ""},
     {GraphType::ACTOR_MOVIE_GRAPH, ""},
-    {GraphType::COMP_SCIENCE_AUTHORS, ""},
+    {GraphType::COMP_SCIENCE_AUTHORS, "../graphs/graph_data/com-dblp.ungraph.txt.gz"},
     {GraphType::GOOGLE_CONTEST, "../graphs/graph_data/google_contest.txt.gz"},
     {GraphType::HELP_LITERATURE, ""},
     {GraphType::ROUTER_NETWORK, ""},
-    {GraphType::WWW_NOTRE_DAME, ""},
+    {GraphType::WWW_NOTRE_DAME, "../graphs/graph_data/web-NotreDame.txt.gz"},
     {GraphType::US_PATENTS, "../graphs/graph_data/cit-Patents.txt.gz"}};
 
 void generate_random_graph(const GraphDefinition &graph_definition, std::ofstream &outfile)
@@ -130,6 +130,7 @@ void generate_graph(const GraphDefinition &graph_definition)
     case GraphType::ACTOR_MOVIE_GRAPH:
         break;
     case GraphType::COMP_SCIENCE_AUTHORS:
+        generate_graph_from_snap_stanford_ds(graph_definition, infile, outfile);
         break;
     case GraphType::GOOGLE_CONTEST:
         generate_graph_from_snap_stanford_ds(graph_definition, infile, outfile);
@@ -139,6 +140,7 @@ void generate_graph(const GraphDefinition &graph_definition)
     case GraphType::ROUTER_NETWORK:
         break;
     case GraphType::WWW_NOTRE_DAME:
+        generate_graph_from_snap_stanford_ds(graph_definition, infile, outfile);
         break;
     case GraphType::US_PATENTS:
         generate_graph_from_snap_stanford_ds(graph_definition, infile, outfile);
