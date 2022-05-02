@@ -60,13 +60,13 @@ if [ ! -d $DATADIR ]; then
 fi
 
 # read opts
-while getopts ":hg:b:e:i:n:s:w:r:p:" opt
+while getopts ":hg:a:b:i:n:s:w:r:p:" opt
 do
     case $opt in
         h) help; exit 1;;
         g) GRAPHTYPE=$OPTARG;;
-		b) LOWEDGE=$OPTARG;;
-        e) HIGHEDGE=$OPTARG;;
+		a) LOWEDGE=$OPTARG;;
+        b) HIGHEDGE=$OPTARG;;
         i) INTERVAL=$OPTARG;;
 		n) NODE=$OPTARG;;
 		s) SEED=$OPTARG;;
