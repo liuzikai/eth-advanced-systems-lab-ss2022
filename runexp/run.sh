@@ -2,6 +2,14 @@
 
 source env.sh
 
+# directories
+RUNEXP=$PWD
+PROJECT="$(dirname $RUNEXP)"
+BUILDDIR=$PROJECT/build
+INPUTDIR=$PROJECT/input
+DATADIR=$PROJECT/data
+echo "You are in $PWD"
+
 help() {
 cat << EOF
 Usage:
