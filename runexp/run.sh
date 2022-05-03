@@ -200,7 +200,11 @@ if [ $GRAPHTYPE = "GENERATED" ]; then
 
     cd $RUNEXP
     echo "Your are in $RUNEXP"
-    python plot.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL -s $SEED
+    if [ -z $SEED ]; then
+        python plot.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL
+    else
+        python plot.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL -s $SEED
+    fi
 else
 	graph=$GRAPHTYPE
 	echo "+ $graph"

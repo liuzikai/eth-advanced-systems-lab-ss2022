@@ -37,7 +37,6 @@ for edge_count in range(low_edge, high_edge, interval):
     if seed:
         random_graphs.append(f"generated_{seed}_{node_count}_{edge_count}")
     else:
-        print(seed)
         random_graphs.append(f"generated_{node_count}_{edge_count}")
 
 edge_counts = []
