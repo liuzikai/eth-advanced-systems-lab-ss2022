@@ -1,16 +1,16 @@
-#include "ArgParser.h"
+#include "arg_parser.h"
 
 #include <algorithm>
 #include <charconv>
 
 // This is taken from here:
 // https://stackoverflow.com/questions/865668/parsing-command-line-arguments-in-c
-ArgParser::ArgParser (int &argc, char **argv){
+arg_parser::arg_parser (int &argc, char **argv){
   for (int i=1; i < argc; ++i)
     this->tokens.push_back(std::string(argv[i]));
 }
 
-std::optional<const std::string_view> ArgParser::getCmdOption(const std::string &option) const {
+std::optional<const std::string_view> arg_parser::getCmdOption(const std::string &option) const {
   std::vector<std::string>::const_iterator itr;
   itr =  std::find(this->tokens.begin(), this->tokens.end(), option);
   if (itr != this->tokens.end() && ++itr != this->tokens.end()){
@@ -19,7 +19,7 @@ std::optional<const std::string_view> ArgParser::getCmdOption(const std::string 
   return std::nullopt;
 }
 
-std::optional<size_t> ArgParser::getCmdOptionAsInt(const std::string &option) const {
+std::optional<size_t> arg_parser::getCmdOptionAsInt(const std::string &option) const {
   auto opt = getCmdOption(option);
   if(opt){
     size_t  res;
@@ -36,7 +36,7 @@ std::optional<size_t> ArgParser::getCmdOptionAsInt(const std::string &option) co
 }
 
 
-bool ArgParser::cmdOptionExists(const std::string &option) const{
+bool arg_parser::cmdOptionExists(const std::string &option) const{
   return std::find(this->tokens.begin(), this->tokens.end(), option)
          != this->tokens.end();
 }

@@ -33,7 +33,10 @@ std::string unzip_file(std::string file_name) {
         if (!file_exists(unzipped_file_name)) {
             std::cout << file_name << " is unzipping..." << std::endl;
             std::string command = "gzip -d -c " + file_name + " > " + unzipped_file_name;
-            std::ignore = system(command.c_str());
+            int exit_code = system(command.c_str());
+            if (exit_code != 0) {
+                throw std::runtime_error("gzip failed");
+            }
             std::cout << file_name << " unzipped." << std::endl;
         }
         return unzipped_file_name;

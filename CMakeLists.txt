@@ -34,6 +34,7 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fno-omit-frame-pointer")
 
 include_directories(third_party)
 include_directories(graphs)
+include_directories(src)
 add_compile_definitions(INPUT_DIR="${PROJECT_SOURCE_DIR}/input/")
 
 set(GRAPH_SOURCES
@@ -62,7 +63,7 @@ set(TRIANGLE_SOURCES
         src/forward_hashed.cpp)
 
 set(THIRD_PARTY_SOURCES
-        third_party/ArgParser.cpp)
+        third_party/arg_parser.cpp)
 
 ADD_LIBRARY(triangle_lib STATIC
         ${TRIANGLE_SOURCES})

@@ -1,6 +1,6 @@
 #include <catch.hpp>
 
-#include "../src/instrumented_index.h"
+#include "instrumented_index.h"
 
 TEST_CASE("InstrumentedIndex") {
     InstrumentedIndex i = 0;

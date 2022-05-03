@@ -1,5 +1,5 @@
 #include "adjacency_graph.h"
-#include "../src/instrumented_index.h"
+#include "instrumented_index.h"
 #include <cstdio>
 #include <cassert>
 #include <stdexcept>
@@ -14,6 +14,7 @@ AdjacencyGraph<Index> *create_graph_from_file(const char *filename) {
     }
     assert(f && "Invalid input: fail to open the file");
     int res;
+    (void) res;
 
     index_t read_val;
 
@@ -36,6 +37,7 @@ AdjacencyGraph<Index> *create_graph_from_file(const char *filename) {
 
         for (index_t i = 0; i < adj->count; i++) {
             res = fscanf(f, INDEX_FMT, &read_val);
+            if (res != 1) throw std::runtime_error("Invalid input: missing target node");
             *(adj->neighbors + i) = read_val;
             if (res != 1) {
                 throw std::invalid_argument("Invalid input: missing target node");
@@ -57,8 +59,10 @@ void free_graph(AdjacencyGraph<Index> *graph) {
 
 
 template AdjacencyGraph<index_t> *create_graph_from_file(const char *filename);
+
 template void free_graph(AdjacencyGraph<index_t> *graph);
 
 template AdjacencyGraph<InstrumentedIndex> *create_graph_from_file(const char *filename);
+
 template void free_graph(AdjacencyGraph<InstrumentedIndex> *graph);
 
