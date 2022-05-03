@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cassert>
 #include <stdexcept>
+#include <string>
 
 template<class Index>
 AdjacencyGraph<Index> *create_graph_from_file(const char *filename) {

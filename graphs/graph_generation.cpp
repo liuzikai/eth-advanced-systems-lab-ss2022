@@ -17,14 +17,14 @@
 #include "common.h"
 
 const static std::map<GraphType, std::string> graph_to_file = {
-    {GraphType::GERMAN_ROAD_NETWORK, ""},
+    {GraphType::GERMAN_ROAD_NETWORK, "../graphs/graph_data/german_road_network.mtx"}, // nodes 2.5x and edges 2.08x
     {GraphType::ACTOR_MOVIE_GRAPH, ""},
-    {GraphType::COMP_SCIENCE_AUTHORS, "../graphs/graph_data/com-dblp.ungraph.txt.gz"},
-    {GraphType::GOOGLE_CONTEST, "../graphs/graph_data/google_contest.txt.gz"},
-    {GraphType::HELP_LITERATURE, "../graphs/graph_data/hep-th-citations"},
+    {GraphType::COMP_SCIENCE_AUTHORS, "../graphs/graph_data/com-dblp.ungraph.txt.gz"}, // 3% more node and 25% more edges
+    {GraphType::GOOGLE_CONTEST, "../graphs/graph_data/google_contest.txt.gz"}, // nodes 2.22x and edges 9x
+    {GraphType::HELP_LITERATURE, "../graphs/graph_data/hep-th-citations"}, // 2% more nodes and 3% more edges
     {GraphType::ROUTER_NETWORK, ""},
-    {GraphType::WWW_NOTRE_DAME, "../graphs/graph_data/web-NotreDame.txt.gz"},
-    {GraphType::US_PATENTS, "../graphs/graph_data/cit-Patents.txt.gz"}};
+    {GraphType::WWW_NOTRE_DAME, "../graphs/graph_data/web-NotreDame.txt.gz"}, // equal
+    {GraphType::US_PATENTS, "../graphs/graph_data/cit-Patents.txt.gz"}}; // equal
 
 void generate_random_graph(const GraphDefinition &graph_definition, std::ofstream &outfile)
 {
@@ -107,6 +107,21 @@ void generate_hep_citations_graph(const GraphDefinition &graph_definition, std::
     output_adjacency_list(outfile, adjacency_list, graph_definition.shuffle_edges, graph_definition.random_seed);
 }
 
+void generate_road_network_graph(const GraphDefinition &graph_definition, std::ifstream &infile, std::ofstream &outfile)
+{
+    std::string line;
+    std::getline(infile, line);
+    std::stringstream ss(line);
+    uint64_t nodes; ss >> nodes;
+
+    std::vector<std::vector<uint64_t>> adjacency_list(nodes, std::vector<uint64_t>());
+
+    uint64_t edges = parse_edge_list(infile, adjacency_list, true);
+    std::cout << "Nodes: " << nodes << " Edges: " << edges << std::endl;
+
+    output_adjacency_list(outfile, adjacency_list, graph_definition.shuffle_edges, graph_definition.random_seed);
+}
+
 // Output Format:
 // num_nodes
 // for each node:
@@ -134,6 +149,7 @@ void generate_graph(const GraphDefinition &graph_definition)
     switch (graph_definition.graphType)
     {
     case GraphType::GERMAN_ROAD_NETWORK:
+        generate_road_network_graph(graph_definition, infile, outfile);
         break;
     case GraphType::ACTOR_MOVIE_GRAPH:
         break;

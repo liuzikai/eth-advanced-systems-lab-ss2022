@@ -44,3 +44,29 @@ TEST_CASE("forward: example graph") {
     free_graph(G);
     forward_delete_neighbor_container(A);
 }
+
+TEST_CASE("forward: WWW_NOTRE_DAME graph") {
+    std::string generate_graph = "./graph_generation -gt www_notre_dame -o notre.txt -shuffle_edges";
+    std::string delete_graph = "rm notre.txt";
+    std::ignore = system(generate_graph.c_str());
+    AdjacencyGraph<index_t> *graph = create_graph_from_file<index_t>("notre.txt");
+    ForwardNeighborContainer<index_t> *A = forward_create_neighbor_container(graph);
+    auto triangle_listing = forward<index_t, TriangleListing::Collect>(graph, A);
+    REQUIRE(triangle_listing.triangles.size() == 8910005);
+    free_graph(graph);
+    forward_delete_neighbor_container(A);
+    std::ignore = system(delete_graph.c_str());
+}
+
+TEST_CASE("forward: US Patents graph") {
+    std::string generate_graph = "./graph_generation -gt us_patents -o us_patents.txt -shuffle_edges";
+    std::string delete_graph = "rm us_patents.txt";
+    std::ignore = system(generate_graph.c_str());
+    AdjacencyGraph<index_t> *graph = create_graph_from_file<index_t>("us_patents.txt");
+    ForwardNeighborContainer<index_t> *A = forward_create_neighbor_container(graph);
+    auto triangle_listing = forward<index_t, TriangleListing::Collect>(graph, A);
+    REQUIRE(triangle_listing.triangles.size() == 7515023);
+    free_graph(graph);
+    forward_delete_neighbor_container(A);
+    std::ignore = system(delete_graph.c_str());
+}
