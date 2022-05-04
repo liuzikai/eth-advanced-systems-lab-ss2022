@@ -16,7 +16,7 @@ enum class GraphType {
     ACTOR_MOVIE_GRAPH,
     COMP_SCIENCE_AUTHORS,
     GOOGLE_CONTEST,
-    HELP_LITERATURE,
+    HEP_LITERATURE,
     ROUTER_NETWORK,
     WWW_NOTRE_DAME,
     US_PATENTS,
@@ -33,8 +33,8 @@ GraphType string_to_graphType(std::string s) {
         return GraphType::COMP_SCIENCE_AUTHORS;
     } else if (s == "GOOGLE_CONTEST") {
         return GraphType::GOOGLE_CONTEST;
-    } else if (s == "HELP_LITERATURE") {
-        return GraphType::HELP_LITERATURE;
+    } else if (s == "HEP_LITERATURE") {
+        return GraphType::HEP_LITERATURE;
     } else if (s == "ROUTER_NETWORK") {
         return GraphType::ROUTER_NETWORK;
     } else if (s == "WWW_NOTRE_DAME") {

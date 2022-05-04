@@ -19,7 +19,7 @@ Usage:
         actor ... ACTOR_MOVIE_GRAPH
         comp ... COMP_SCIENCE_AUTHORS
         google ... GOOGLE_CONTEST
-        help ... HELP_LITERATURE
+        hep ... HEP_LITERATURE
         router ... ROUTER_NETWORK
         www ... WWW_NOTRE_DAME
         us ... US_PATENTS
@@ -43,7 +43,7 @@ cat << EOF
 	actor ... ACTOR_MOVIE_GRAPH
 	comp ... COMP_SCIENCE_AUTHORS
 	google ... GOOGLE_CONTEST
-	help ... HELP_LITERATURE
+	hep ... HEP_LITERATURE
 	router ... ROUTER_NETWORK
 	www ... WWW_NOTRE_DAME
 	us ... US_PATENTS
@@ -98,7 +98,7 @@ case $GRAPHTYPE in
 	actor) GRAPHTYPE="ACTOR_MOVIE_GRAPH";;
     comp) GRAPHTYPE="COMP_SCIENCE_AUTHORS";;
     google) GRAPHTYPE="GOOGLE_CONTEST";;
-	help) GRAPHTYPE="HELP_LITERATURE";;
+	hep) GRAPHTYPE="HEP_LITERATURE";;
 	router) GRAPHTYPE="ROUTER_NETWORK";;
 	www) GRAPHTYPE="WWW_NOTRE_DAME";;
 	us) GRAPHTYPE="US_PATENTS";;
