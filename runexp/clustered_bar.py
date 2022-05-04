@@ -109,7 +109,7 @@ sns.set_style('darkgrid') # darkgrid, white grid, dark, white and ticks
 sns.color_palette('pastel')
 
 
-def plot(x, width, algos, data, ylabel, gne, title, figname):
+def plot(x, width, algos, data, ylabel, gne, title, figname, yscale="linear"):
     fig, ax = plt.subplots(figsize=(12, 6))
     rects=[]
     for i in range(len(algos)):
@@ -120,6 +120,7 @@ def plot(x, width, algos, data, ylabel, gne, title, figname):
     ax.set_xticks(x)
     ax.set_xticklabels(gne)
     ax.set_title(title)
+    ax.set_yscale(yscale)
     # for i in range(len(algos)):
     #     ax.bar_label(rects2[i], padding=3)
     fig.tight_layout()
@@ -137,7 +138,7 @@ width = len(gs)/20  # the width of the bars
 plot(x, width, algos, ops_df, "ops", gne, 'Op Count', f"{PLOTDIR}/large_graphs_ops.png")
 
 #---runtime cycles---
-plot(x, width, algos, cycles_df, "cycles", gne, 'Runtime', f"{PLOTDIR}/large_graphs_cycles.png")
+plot(x, width, algos, cycles_df, "cycles", gne, 'Runtime', f"{PLOTDIR}/large_graphs_cycles.png", yscale="log")
 
 #---perf ops/cycle---
 plot(x, width, algos, perf_df, "ops/cycle", gne, 'Performance', f"{PLOTDIR}/large_graphs_perf.png")
