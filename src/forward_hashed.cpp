@@ -41,13 +41,6 @@ TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedNeighborContainer<Inde
     TRL lister;
     forward_hashed_reset_neighbor_container(G, A);
 
-    // According to sec. 4, the sorting is included in the execution time
-    for (Index u = 0; u < G->n; u++) {
-        if (G->adjacency[u].count > 0) {
-            quick_sort(G->adjacency[u].neighbors, Index(0), G->adjacency[u].count - 1);
-        }
-    }
-
     for (Index s = 0; s < G->n; s++) {
         for (Index ti = 0; ti < G->adjacency[s].count; ti++) {
             Index t = G->adjacency[s].neighbors[ti];
