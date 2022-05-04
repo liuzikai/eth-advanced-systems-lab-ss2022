@@ -14,7 +14,7 @@ help() {
 cat << EOF
 Usage:
     -h ... help
-    -g ... graph type
+    -g ... graph type, optional
         german ... GERMAN_ROAD_NETWORK
         actor ... ACTOR_MOVIE_GRAPH
         comp ... COMP_SCIENCE_AUTHORS
@@ -24,15 +24,15 @@ Usage:
         www ... WWW_NOTRE_DAME
         us ... US_PATENTS
         gen or [remove -g] ... GENERATED
-    -a ... start edge count
-    -b ... end edge count
-    -i ... interval (step)
+    -a ... start edge count, default 1000
+    -b ... end edge count, default 5000
+    -i ... interval (step), default 50
         for edge_count in range(l,r,i)
-    -n ... n such that node_count = edge_count / n
-    -s ... seed for random graph
-    -w ... num warmups
-    -r ... num runs
-    -p ... num phases
+    -n ... n such that node_count = edge_count / n, default 10
+    -s ... seed for random graph, optional
+    -w ... num warmups, default 5
+    -r ... num runs, default 10
+    -p ... num phases, default 5
 EOF
 }
 

@@ -8,3 +8,4 @@ build/
 data/
 input/**
 !input/sample*.txt
+graphs/graph_data/*.txt

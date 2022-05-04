@@ -24,4 +24,8 @@ A plot will be generated and saved in the output directory at the end of the run
 `./run.sh -g <graph_type> -w 10 -r 10 -p 10`\
 Run experiments with graph <graph_type>\
 10 warmups, 10 runs, 10 phases\
-Don't know what plot to draw yet.
+
+After all experiments are finished, plot the data.
+performance/opcount/runtime vs. graph clustered bar graph.
+`clustered_bar.sh -c <commit_hash> -w 10 -r 10 -p 10 -n 1`
+`-n 1`: the first experiment of this configuration
