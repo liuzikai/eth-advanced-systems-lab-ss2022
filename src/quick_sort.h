@@ -17,10 +17,10 @@ static inline void swap(Index *a, Index *b) {
 }
 
 template<class Index>
-static inline Index partition(Index *arr, Index low, Index high) {
+static inline index_t partition(Index *arr, index_t low, index_t high) {
     Index pivot = arr[high];  // pivot
-    Index i = low;
-    Index j = low;
+    index_t i = low;
+    index_t j = low;
     for (; j <= high - 1; j++) {
         // If current element is smaller than the pivot
         if (arr[j] < pivot) {
@@ -40,10 +40,10 @@ static inline Index partition(Index *arr, Index low, Index high) {
  * @param high    Ending index (inclusive)
  */
 template<class Index>
-static inline void quick_sort(Index *arr, Index low, Index high) {
+static inline void quick_sort(Index *arr, index_t low, index_t high) {
     if (low < high) {
 
-        Index pi = partition<Index>(arr, low, high);
+        index_t pi = partition<Index>(arr, low, high);
 
         // Separately sort elements before
         // partition and after partition

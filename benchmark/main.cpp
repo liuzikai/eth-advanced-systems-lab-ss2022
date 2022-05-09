@@ -15,8 +15,8 @@
 
 #include "adjacency_graph.h"
 
-#include "forward.h"
-#include "forward_hashed.h"
+#include "forward.hpp"
+#include "forward_hashed.hpp"
 
 #include "instrumented_index.h"
 #include "triangle_lister.h"
@@ -25,11 +25,11 @@ static constexpr size_t default_num_warmups = 1;
 static constexpr size_t default_num_runs = 5;
 static constexpr size_t default_num_phases = 5;
 
-template<class Index, class TLR>
-static std::map<std::string, TriangleFunctions<Index, TLR>> name_to_function = {
-        {"edge_iterator",  TriangleFunctions(edge_iterator<Index, TLR>, edge_iterator_get_dummy_helper)},
-        {"forward",        TriangleFunctions(forward<Index, TLR>, forward_create_neighbor_container)},
-        {"forward_hashed", TriangleFunctions(forward_hashed<Index, TLR>, forward_hashed_create_neighbor_container)},
+template<class Index, class Counter, class TLR>
+static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_function = {
+        {"edge_iterator",  TriangleFunctions(edge_iterator<Index, Counter, TLR>, edge_iterator_get_dummy_helper<Index, Counter>)},
+        {"forward",        TriangleFunctions(forward<Index, Counter, TLR>, forward_create_neighbor_container<Index, Counter>)},
+        {"forward_hashed", TriangleFunctions(forward_hashed<Index, Counter, TLR>, forward_hashed_create_neighbor_container<Index, Counter>)},
 };
 
 BenchParams parse_arguments(arg_parser &parser) {
@@ -61,15 +61,16 @@ BenchParams parse_arguments(arg_parser &parser) {
 void run(const BenchParams &params, std::ofstream &out_file) {
     auto *instrumented_graph = create_graph_from_file<InstrumentedIndex>(params.graph_file.c_str());
     auto *benchmark_graph = create_graph_from_file<index_t>(params.graph_file.c_str());
+    auto *benchmark_graph_copy = create_graph_copy(benchmark_graph);
 
     std::cout << "num_warmups = " << params.num_warmups << std::endl;
     std::cout << "num_phases = " << params.num_phases << std::endl;
     std::cout << "num_runs = " << params.num_runs << std::endl;
 
-    static const auto test_translator = name_to_function<InstrumentedIndex, TriangleListing::Collect>;
-    static const auto benchmark_translator = name_to_function<index_t, TriangleListing::Count>;
+    static const auto test_translator = name_to_function<InstrumentedIndex, index_t , TriangleListing::Collect<InstrumentedIndex>>;
+    static const auto benchmark_translator = name_to_function<index_t, index_t, TriangleListing::Count<index_t>>;
 
-    TriangleSet last_result;
+    TriangleListing::Collect<InstrumentedIndex>::TriangleSet last_result;
     bool has_last_result = false;
 
     for (const auto &algo_name: params.algos) {
@@ -113,12 +114,19 @@ void run(const BenchParams &params, std::ofstream &out_file) {
 
             // Do the benchmark runs
             for (size_t phase = 0; phase < params.num_phases; phase++) {
-                TriangleListing::Count result;
+
+                // Revert the graph
+                copy_graph(benchmark_graph, benchmark_graph_copy);
+
+                TriangleListing::Count<index_t> result;
+
+                // Start benchmark
                 size_t cycles = start_tsc();
                 for (size_t run = 0; run < params.num_runs; run++) {
                     result = functions.count(benchmark_graph, helper);
                 }
                 cycles = stop_tsc(cycles);
+
                 if (result.count != last_result.size()) {
                     throw std::runtime_error("count of triangles differs from the instrumented run");
                 }
@@ -131,6 +139,10 @@ void run(const BenchParams &params, std::ofstream &out_file) {
         out_file << "\n";
     }
     std::cout << "All Benchmarking Completed" << std::endl;
+
+    free_graph(instrumented_graph);
+    free_graph(benchmark_graph);
+    free_graph(benchmark_graph_copy);
 }
 
 int main(int argc, char *argv[]) {

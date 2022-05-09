@@ -12,11 +12,14 @@ InstrumentedIndex::InstrumentedIndex() {
 
 InstrumentedIndex::InstrumentedIndex(index_t v) : val(v) {}
 
-InstrumentedIndex::InstrumentedIndex(int v) : val(v) {}
-
 bool InstrumentedIndex::operator<(const InstrumentedIndex& other) const {
     op_count++;
     return val < other.val;
+}
+
+bool InstrumentedIndex::operator>(const InstrumentedIndex& other) const {
+    op_count++;
+    return val > other.val;
 }
 
 bool InstrumentedIndex::operator==(const InstrumentedIndex& other) const {
@@ -24,16 +27,9 @@ bool InstrumentedIndex::operator==(const InstrumentedIndex& other) const {
     return val == other.val;
 }
 
-
-
 InstrumentedIndex InstrumentedIndex::operator+(const InstrumentedIndex& other) const {
     op_count++;
     return InstrumentedIndex(val + other.val);
-}
-
-InstrumentedIndex InstrumentedIndex::operator+(const int& other) const {
-    op_count++;
-    return InstrumentedIndex(val + other);
 }
 
 InstrumentedIndex InstrumentedIndex::operator-(const InstrumentedIndex& other) const {
@@ -41,9 +37,9 @@ InstrumentedIndex InstrumentedIndex::operator-(const InstrumentedIndex& other) c
     return InstrumentedIndex(val - other.val);
 }
 
-InstrumentedIndex InstrumentedIndex::operator-(const int& other) const {
+InstrumentedIndex InstrumentedIndex::operator%(const InstrumentedIndex& other) const {
     op_count++;
-    return InstrumentedIndex(val - other);
+    return InstrumentedIndex(val % other.val);
 }
 
 InstrumentedIndex& InstrumentedIndex::operator++() {

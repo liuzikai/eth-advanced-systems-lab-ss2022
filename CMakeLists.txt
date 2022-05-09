@@ -6,7 +6,7 @@ if (NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
 endif()
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
-MESSAGE("${CMAKE_CXX_COMPILER_ID}")
+message("${CMAKE_CXX_COMPILER_ID}")
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -56,38 +56,35 @@ set(BENCH_SOURCES
         benchmark/main.cpp)
 
 set(TRIANGLE_SOURCES
-        src/instrumented_index.cpp
-        src/hash_table.cpp
-        src/forward.cpp
-        src/edge_iterator.cpp
-        src/forward_hashed.cpp)
+        src/instrumented_index.cpp)
 
 set(THIRD_PARTY_SOURCES
         third_party/arg_parser.cpp)
 
-ADD_LIBRARY(triangle_lib STATIC
+add_library(triangle_lib STATIC
         ${TRIANGLE_SOURCES})
 
-ADD_LIBRARY(third_party STATIC
+add_library(third_party STATIC
         ${THIRD_PARTY_SOURCES})
 
-ADD_LIBRARY(graph_lib STATIC
+add_library(graph_lib STATIC
         ${GRAPH_SOURCES})
 
 add_executable(benchmark
         ${BENCH_SOURCES})
-TARGET_LINK_LIBRARIES(benchmark triangle_lib)
-TARGET_LINK_LIBRARIES(benchmark third_party)
-TARGET_LINK_LIBRARIES(benchmark graph_lib)
+target_link_libraries(benchmark triangle_lib)
+target_link_libraries(benchmark third_party)
+target_link_libraries(benchmark graph_lib)
 
 add_executable(graph_generation
         ${GRAPH_SOURCES})
-TARGET_LINK_LIBRARIES(graph_generation triangle_lib)
-TARGET_LINK_LIBRARIES(graph_generation third_party)
-TARGET_LINK_LIBRARIES(graph_generation graph_lib)
+target_link_libraries(graph_generation triangle_lib)
+target_link_libraries(graph_generation third_party)
+target_link_libraries(graph_generation graph_lib)
 
 add_executable(tests
         ${TEST_SOURCES})
 target_include_directories(tests PRIVATE src)
-TARGET_LINK_LIBRARIES(tests triangle_lib)
-TARGET_LINK_LIBRARIES(tests graph_lib)
+target_link_libraries(tests triangle_lib)
+target_link_libraries(tests graph_lib)
+add_dependencies(tests graph_generation)
