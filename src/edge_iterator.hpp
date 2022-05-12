@@ -7,7 +7,7 @@
 #include "quick_sort.h"
 
 template<class Index, class Counter = index_t>
-void *edge_iterator_get_dummy_helper(AdjacencyGraph<Index> *) {
+void *edge_iterator_get_dummy_helper(const AdjacencyGraph<Index> *) {
     return nullptr;
 }
 

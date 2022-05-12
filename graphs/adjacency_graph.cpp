@@ -79,7 +79,7 @@ void copy_graph(AdjacencyGraph<Index> *dest, const AdjacencyGraph<Index> *src) {
 }
 
 template<class Index, class Counter>
-void free_graph(AdjacencyGraph<Index> *graph) {
+void free_graph(const AdjacencyGraph<Index> *graph) {
     for (Counter u = 0; u < graph->n; u++) {
         delete[] graph->adjacency[u].neighbors;
     }
@@ -94,7 +94,7 @@ template AdjacencyGraph<index_t> *create_graph_copy(const AdjacencyGraph<index_t
 
 template void copy_graph(AdjacencyGraph<index_t> *dest, const AdjacencyGraph<index_t> *src);
 
-template void free_graph(AdjacencyGraph<index_t> *graph);
+template void free_graph(const AdjacencyGraph<index_t> *graph);
 
 template AdjacencyGraph<InstrumentedIndex> *create_graph_from_file(const char *filename);
 
@@ -102,5 +102,5 @@ template AdjacencyGraph<InstrumentedIndex> *create_graph_copy(const AdjacencyGra
 
 template void copy_graph(AdjacencyGraph<InstrumentedIndex> *dest, const AdjacencyGraph<InstrumentedIndex> *src);
 
-template void free_graph(AdjacencyGraph<InstrumentedIndex> *graph);
+template void free_graph(const AdjacencyGraph<InstrumentedIndex> *graph);
 

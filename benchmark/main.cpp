@@ -60,8 +60,16 @@ BenchParams parse_arguments(arg_parser &parser) {
 
 void run(const BenchParams &params, std::ofstream &out_file) {
     auto *instrumented_graph = create_graph_from_file<InstrumentedIndex>(params.graph_file.c_str());
-    auto *benchmark_graph = create_graph_from_file<index_t>(params.graph_file.c_str());
-    auto *benchmark_graph_copy = create_graph_copy(benchmark_graph);
+
+    // Declare as const to avoid misuse that change the graph
+    const auto *benchmark_graph_original = create_graph_from_file<index_t>(params.graph_file.c_str());
+
+    // Make copies of the benchmark graph
+    std::vector<AdjacencyGraph<index_t>*> benchmark_graphs;
+    benchmark_graphs.reserve(params.num_runs);
+    for (size_t i = 0; i < params.num_runs; i++) {
+        benchmark_graphs.emplace_back(create_graph_copy(benchmark_graph_original));
+    }
 
     std::cout << "num_warmups = " << params.num_warmups << std::endl;
     std::cout << "num_phases = " << params.num_phases << std::endl;
@@ -105,25 +113,28 @@ void run(const BenchParams &params, std::ofstream &out_file) {
         std::cout << "Benchmarking " << algo_name << std::endl;
         {
             const auto &functions = benchmark_translator.at(algo_name);  // throw error if no matched name
-            void *helper = functions.get_helper(benchmark_graph);
+            void *helper = functions.get_helper(benchmark_graph_original);
 
             // Do the warmup runs
+            // Use benchmark_graphs[0], which will be restored later anyway
             for (size_t i = 0; i < params.num_warmups; i++) {
-                functions.count(benchmark_graph, helper);
+                functions.count(benchmark_graphs[0], helper);
             }
 
             // Do the benchmark runs
             for (size_t phase = 0; phase < params.num_phases; phase++) {
 
-                // Revert the graph
-                copy_graph(benchmark_graph, benchmark_graph_copy);
+                // Restore the graphs
+                for (size_t i = 0; i < params.num_runs; i++) {
+                    copy_graph(benchmark_graphs[i], benchmark_graph_original);
+                }
 
                 TriangleListing::Count<index_t> result;
 
                 // Start benchmark
                 size_t cycles = start_tsc();
                 for (size_t run = 0; run < params.num_runs; run++) {
-                    result = functions.count(benchmark_graph, helper);
+                    result = functions.count(benchmark_graphs[run], helper);
                 }
                 cycles = stop_tsc(cycles);
 
@@ -141,8 +152,10 @@ void run(const BenchParams &params, std::ofstream &out_file) {
     std::cout << "All Benchmarking Completed" << std::endl;
 
     free_graph(instrumented_graph);
-    free_graph(benchmark_graph);
-    free_graph(benchmark_graph_copy);
+    free_graph(benchmark_graph_original);
+    for (size_t i = 0; i < params.num_warmups; i++) {
+        free_graph(benchmark_graphs[i]);
+    }
 }
 
 int main(int argc, char *argv[]) {

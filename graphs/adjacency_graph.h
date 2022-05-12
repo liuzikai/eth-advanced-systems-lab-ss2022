@@ -44,6 +44,6 @@ void copy_graph(AdjacencyGraph<Index> *dest, const AdjacencyGraph<Index> *src);
  * @param graph
  */
 template<class Index, class Counter = index_t>
-void free_graph(AdjacencyGraph<Index> *graph);
+void free_graph(const AdjacencyGraph<Index> *graph);
 
 #endif //TEAM02_ADJACENCY_GRAPH_H

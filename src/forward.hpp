@@ -22,7 +22,7 @@ struct ForwardNeighborContainer {
 
 
 template<class Index, class Counter = index_t>
-ForwardNeighborContainer<Index> *forward_create_neighbor_container(AdjacencyGraph<Index> *G) {
+ForwardNeighborContainer<Index> *forward_create_neighbor_container(const AdjacencyGraph<Index> *G) {
     auto *A = new ForwardNeighborContainer<Index>;
     A->adjacency = new ForwardNeighbourList<Index>[G->n];
     for (Counter u = 0; u < G->n; u++) {

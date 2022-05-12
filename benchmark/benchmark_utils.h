@@ -14,15 +14,15 @@ struct TriangleFunctions {
 
     using Graph = AdjacencyGraph<Index, Counter>;
     using count_triangles_fun = std::function<TLR(Graph *, void *)>;
-    using get_helper_struct_fun = std::function<void *(Graph *)>;
+    using get_helper_struct_fun = std::function<void *(const Graph *)>;
 
     typedef TLR (*count_triangles_c_style)(Graph *, void *);
 
-    typedef void *(*get_helper_c_style)(Graph *);
+    typedef void *(*get_helper_c_style)(const Graph *);
 
     template<class HelperStruct>
     TriangleFunctions(TLR (*c)(Graph *, HelperStruct *),
-                      HelperStruct *(*h)(Graph *)) {
+                      HelperStruct *(*h)(const Graph *)) {
         // Ugh. This is disgusting...
         // But hey it works and its not undefined behaviour for compatible types which they should be.
         this->count = (count_triangles_c_style) (c);
