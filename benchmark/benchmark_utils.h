@@ -5,23 +5,24 @@
 #include <vector>
 
 #include "adjacency_graph.h"
-#include "edge_iterator.h"
+#include "edge_iterator.hpp"
 #include "common.h"
 
 
-template<class Index, class TLR>
+template<class Index, class Counter, class TLR>
 struct TriangleFunctions {
 
-    using count_triangles_fun = std::function<TLR(AdjacencyGraph<Index> *, void *)>;
-    using get_helper_struct_fun = std::function<void *(AdjacencyGraph<Index> *)>;
+    using Graph = AdjacencyGraph<Index, Counter>;
+    using count_triangles_fun = std::function<TLR(Graph *, void *)>;
+    using get_helper_struct_fun = std::function<void *(const Graph *)>;
 
-    typedef TLR (*count_triangles_c_style)(AdjacencyGraph<Index> *, void *);
+    typedef TLR (*count_triangles_c_style)(Graph *, void *);
 
-    typedef void *(*get_helper_c_style)(AdjacencyGraph<Index> *);
+    typedef void *(*get_helper_c_style)(const Graph *);
 
     template<class HelperStruct>
-    TriangleFunctions(TLR (*c)(AdjacencyGraph<Index> *, HelperStruct *),
-                      HelperStruct *(*h)(AdjacencyGraph<Index> *)) {
+    TriangleFunctions(TLR (*c)(Graph *, HelperStruct *),
+                      HelperStruct *(*h)(const Graph *)) {
         // Ugh. This is disgusting...
         // But hey it works and its not undefined behaviour for compatible types which they should be.
         this->count = (count_triangles_c_style) (c);

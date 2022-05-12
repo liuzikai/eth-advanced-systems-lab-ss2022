@@ -5,17 +5,14 @@
 #include <iostream>
 #include <set>
 
-#define SWAP(x, y) { const index_t t = x; x = y; y = t; }
-
-using Triangle = std::set<index_t>;
-using TriangleSet = std::set<Triangle>;
-
 
 namespace TriangleListing {
-struct Count {
-    index_t count = 0;
 
-    void list_triangle(index_t a, index_t b, index_t c) {
+template<class Index, class Counter = index_t>
+struct Count {
+    Counter count = 0;
+
+    void list_triangle(Index a, Index b, Index c) {
         (void) a;
         (void) b;
         (void) c;
@@ -23,20 +20,27 @@ struct Count {
     }
 };
 
+template<class Index, class Counter = index_t>
 struct Print {
-    void list_triangle(index_t a, index_t b, index_t c) {
+#define SWAP(x, y) { const Index t = x; x = y; y = t; }
+    void list_triangle(Index a, Index b, Index c) {
         if (a > c) SWAP(a, c);
         if (a > b) SWAP(a, b);
         if (b > c) SWAP(b, c);
         std::cout << a << " " << b << " " << c << std::endl;
     }
+
+#undef SWAP
 };
 
-
+template<class Index, class Counter = index_t>
 struct Collect {
+    using Triangle = std::set<Index>;
+    using TriangleSet = std::set<Triangle>;
+
     TriangleSet triangles;
 
-    void list_triangle(index_t a, index_t b, index_t c) {
+    void list_triangle(Index a, Index b, Index c) {
         triangles.insert({a, b, c});
     }
 };

@@ -9,28 +9,23 @@ public:
 
     explicit InstrumentedIndex(index_t v);
 
-    InstrumentedIndex(int v);
-
     bool operator<(const InstrumentedIndex& other) const;
+
+    bool operator>(const InstrumentedIndex& other) const;
 
     bool operator==(const InstrumentedIndex& other) const;
 
-    // TODO: This is not working for some reason....
-    bool operator!=(const InstrumentedIndex& other) const;
-
     InstrumentedIndex operator+(const InstrumentedIndex& other) const;
-
-    InstrumentedIndex operator+(const int& other) const;
 
     InstrumentedIndex operator-(const InstrumentedIndex& other) const;
 
-    InstrumentedIndex operator-(const int& other) const;
+    InstrumentedIndex operator%(const InstrumentedIndex& other) const;
 
     InstrumentedIndex& operator++();
 
     InstrumentedIndex operator++(int);
 
-    operator index_t() const;
+    explicit operator index_t() const;
 
 private:
     index_t val;

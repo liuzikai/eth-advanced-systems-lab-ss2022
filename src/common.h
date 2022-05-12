@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 
-typedef uint64_t index_t;  // XXX: smaller int for vectorization
-#define INDEX_FMT "%" PRIu64
+typedef uint32_t index_t;
+#define INDEX_FMT "%" PRIu32
 
 #endif //TEAM02_COMMON_H
