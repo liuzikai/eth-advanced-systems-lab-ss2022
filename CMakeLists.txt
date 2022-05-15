@@ -17,10 +17,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARNING_FLAGS}")
 set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} ${WARNING_FLAGS}")
 
 # Release Flags
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  -O3")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  -O3 -march=skylake")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  ${WARNING_FLAGS}")
 
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}  -O3")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}  -O3 -march=skylake")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}  ${WARNING_FLAGS}")
 
 # Debug Flags
@@ -60,7 +60,8 @@ set(TRIANGLE_SOURCES
         src/instrumented_index.cpp)
 
 set(THIRD_PARTY_SOURCES
-        third_party/arg_parser.cpp)
+        third_party/arg_parser.cpp
+        third_party/avx2-quicksort.cpp)
 
 add_library(triangle_lib STATIC
         ${TRIANGLE_SOURCES})

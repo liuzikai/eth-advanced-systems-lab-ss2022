@@ -24,6 +24,7 @@
 #include "dummy_helper.hpp"
 #include "quick_sort.h"
 #include "merge_sort.h"
+#include "avx2-quicksort.h"
 
 static constexpr size_t default_num_warmups = 1;
 static constexpr size_t default_num_runs = 5;
@@ -37,6 +38,12 @@ static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_fun
         // Sorting
         {"quick_sort",  TriangleFunctions(quick_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>)},
         {"merge_sort",  TriangleFunctions(merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>)},
+        {"std_sort",  TriangleFunctions(std_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>)},
+};
+
+template<class Counter, class TLR>
+static std::map<std::string, TriangleFunctions<index_t, Counter, TLR>> name_to_function_no_instrumentation = {
+        {"WojciechMula",  TriangleFunctions(WojciechMula_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>)},
 };
 
 BenchParams parse_arguments(arg_parser &parser) {
@@ -82,8 +89,10 @@ void run(const BenchParams &params, std::ofstream &out_file) {
     std::cout << "num_phases = " << params.num_phases << std::endl;
     std::cout << "num_runs = " << params.num_runs << std::endl;
 
-    static const auto test_translator = name_to_function<InstrumentedIndex, index_t , TriangleListing::Collect<InstrumentedIndex>>;
-    static const auto benchmark_translator = name_to_function<index_t, index_t, TriangleListing::Count<index_t>>;
+    const auto test_translator = name_to_function<InstrumentedIndex, index_t , TriangleListing::Collect<InstrumentedIndex>>;
+    auto benchmark_translator = name_to_function<index_t, index_t, TriangleListing::Count<index_t>>;
+    const auto translator_no_instrumentation = name_to_function_no_instrumentation<index_t, TriangleListing::Count<index_t>>;
+    benchmark_translator.insert(translator_no_instrumentation.begin(), translator_no_instrumentation.end());
 
     TriangleListing::Collect<InstrumentedIndex>::TriangleSet last_result;
     bool has_last_result = false;
@@ -95,22 +104,29 @@ void run(const BenchParams &params, std::ofstream &out_file) {
         std::cout << "Instrumented run: " << algo_name << std::endl;
         uintptr_t op_count;
         {
-            const auto &functions = test_translator.at(algo_name);  // throw error if no matched name
-            void *helper = functions.get_helper(instrumented_graph);
-
-            // List triangles and get op count
-            OpCounter::ResetOpCount();
-            auto result = functions.count(instrumented_graph, helper);
-            op_count = OpCounter::GetOpCount();
-
-            // Compare triangles with the result of the last algorithm (if available)
-            if (has_last_result) {
-                if (result.triangles != last_result) {
-                    throw std::runtime_error("different triangles");
-                }
+            auto functions_it = test_translator.find(algo_name);
+            if (functions_it == test_translator.end()) {
+                // Skip and report 0 as 
+                std::cerr << "Skipping instrumentation for: " << algo_name << std::endl;
+                op_count = 0;
             } else {
-                last_result = std::move(result.triangles);
-                has_last_result = true;
+                const auto &functions = functions_it->second; 
+                void *helper = functions.get_helper(instrumented_graph);
+
+                // List triangles and get op count
+                OpCounter::ResetOpCount();
+                auto result = functions.count(instrumented_graph, helper);
+                op_count = OpCounter::GetOpCount();
+
+                // Compare triangles with the result of the last algorithm (if available)
+                if (has_last_result) {
+                    if (result.triangles != last_result) {
+                        throw std::runtime_error("different triangles");
+                    }
+                } else {
+                    last_result = std::move(result.triangles);
+                    has_last_result = true;
+                }
             }
         }
         out_file << op_count;

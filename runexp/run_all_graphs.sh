@@ -5,5 +5,4 @@
 ./run.sh -g hep -w 0 -r 1 -p 1
 ./run.sh -g www -w 0 -r 1 -p 1
 ./run.sh -g us -w 0 -r 1 -p 1
-# Dangerous: Make sure to adjust the -n in every run.
-./clustered_bar.sh -c f8a4753 -w 0 -r 1 -p 1 -n 1
+#./clustered_bar.sh -c COMMIT_SHA -w 0 -r 1 -p 1 -n 10
