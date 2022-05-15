@@ -21,15 +21,22 @@
 #include "instrumented_index.h"
 #include "triangle_lister.h"
 
+#include "dummy_helper.hpp"
+#include "quick_sort.h"
+#include "merge_sort.h"
+
 static constexpr size_t default_num_warmups = 1;
 static constexpr size_t default_num_runs = 5;
 static constexpr size_t default_num_phases = 5;
 
 template<class Index, class Counter, class TLR>
 static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_function = {
-        {"edge_iterator",  TriangleFunctions(edge_iterator<Index, Counter, TLR>, edge_iterator_get_dummy_helper<Index, Counter>)},
+        {"edge_iterator",  TriangleFunctions(edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>)},
         {"forward",        TriangleFunctions(forward<Index, Counter, TLR>, forward_create_neighbor_container<Index, Counter>)},
         {"forward_hashed", TriangleFunctions(forward_hashed<Index, Counter, TLR>, forward_hashed_create_neighbor_container<Index, Counter>)},
+        // Sorting
+        {"quick_sort",  TriangleFunctions(quick_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>)},
+        {"merge_sort",  TriangleFunctions(merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>)},
 };
 
 BenchParams parse_arguments(arg_parser &parser) {

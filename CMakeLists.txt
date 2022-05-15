@@ -50,6 +50,7 @@ set(TEST_SOURCES
         tests/forward_test.cpp
         tests/edge_iterator_test.cpp
         tests/forward_hashed_test.cpp
+        tests/merge_sort_test.cpp
         tests/instrumented_index_test.cpp)
 
 set(BENCH_SOURCES
