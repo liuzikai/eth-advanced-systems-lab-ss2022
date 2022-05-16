@@ -4,7 +4,9 @@
 #include "common.h"
 #include <cstring>
 
-#define HASH_CONTAINER_SIZE 4U
+namespace fh0 {
+
+static constexpr size_t HASH_CONTAINER_SIZE = 4U;
 
 // separate chaining
 
@@ -17,7 +19,7 @@ struct HashItem {
 };
 
 template<class Index, class Counter = index_t>
-struct HashTable{
+struct HashTable {
     Counter size;
     // a linked list of "size"-many ptrs to a chain of HashItems
     HashItem<Index> **container;
@@ -36,7 +38,8 @@ Counter hash(Index x) {
 template<class Index, class Counter = index_t>
 HashTable<Index> *create_hashtable() {
     HashTable<Index> *table = new HashTable<Index>;
-    table->container = static_cast<HashItem<Index> **>(calloc(HASH_CONTAINER_SIZE, sizeof(*table->container)));  // nullptr
+    table->container = static_cast<HashItem<Index> **>(calloc(HASH_CONTAINER_SIZE,
+                                                              sizeof(*table->container)));  // nullptr
     table->size = HASH_CONTAINER_SIZE;
     return table;
 }
@@ -88,6 +91,8 @@ void free_hashtable(HashTable<Index> *table) {
     hashtable_clear(table);
     free(table->container);
     free(table);
+}
+
 }
 
 #endif //TEAM02_HASH_TABLE_H

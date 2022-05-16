@@ -29,7 +29,7 @@ template<class Index, class Counter, class TLR>
 static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_function = {
         {"edge_iterator",  TriangleFunctions(edge_iterator<Index, Counter, TLR>, edge_iterator_get_dummy_helper<Index, Counter>, edge_iterator_free_dummy_helper<Index, Counter>)},
         {"forward",        TriangleFunctions(forward<Index, Counter, TLR>, forward_create_neighbor_container<Index, Counter>, forward_delete_neighbor_container<Index, Counter>)},
-        {"forward_hashed", TriangleFunctions(forward_hashed<Index, Counter, TLR>, forward_hashed_create_neighbor_container<Index, Counter>, forward_hashed_delete_neighbor_container<Index, Counter>)},
+        {"forward_hashed", TriangleFunctions(fh0::forward_hashed<Index, Counter, TLR>, fh0::forward_hashed_create_neighbor_container<Index, Counter>, fh0::forward_hashed_delete_neighbor_container<Index, Counter>)},
 };
 
 BenchParams parse_arguments(arg_parser &parser) {
