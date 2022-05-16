@@ -27,9 +27,9 @@ static constexpr size_t default_num_phases = 5;
 
 template<class Index, class Counter, class TLR>
 static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_function = {
-        {"edge_iterator",  TriangleFunctions(edge_iterator<Index, Counter, TLR>, edge_iterator_get_dummy_helper<Index, Counter>)},
-        {"forward",        TriangleFunctions(forward<Index, Counter, TLR>, forward_create_neighbor_container<Index, Counter>)},
-        {"forward_hashed", TriangleFunctions(forward_hashed<Index, Counter, TLR>, forward_hashed_create_neighbor_container<Index, Counter>)},
+        {"edge_iterator",  TriangleFunctions(edge_iterator<Index, Counter, TLR>, edge_iterator_get_dummy_helper<Index, Counter>, edge_iterator_free_dummy_helper<Index, Counter>)},
+        {"forward",        TriangleFunctions(forward<Index, Counter, TLR>, forward_create_neighbor_container<Index, Counter>, forward_delete_neighbor_container<Index, Counter>)},
+        {"forward_hashed", TriangleFunctions(forward_hashed<Index, Counter, TLR>, forward_hashed_create_neighbor_container<Index, Counter>, forward_hashed_delete_neighbor_container<Index, Counter>)},
 };
 
 BenchParams parse_arguments(arg_parser &parser) {
@@ -59,7 +59,53 @@ BenchParams parse_arguments(arg_parser &parser) {
 }
 
 void run(const BenchParams &params, std::ofstream &out_file) {
-    auto *instrumented_graph = create_graph_from_file<InstrumentedIndex>(params.graph_file.c_str());
+    std::cout << "num_warmups = " << params.num_warmups << std::endl;
+    std::cout << "num_phases = " << params.num_phases << std::endl;
+    std::cout << "num_runs = " << params.num_runs << std::endl;
+
+    std::map<std::string, size_t> op_counts;
+    size_t triangle_count = -1;
+
+    // Instrumented runs
+    {
+        auto *instrumented_graph = create_graph_from_file<InstrumentedIndex>(params.graph_file.c_str());
+
+        static const auto test_translator = name_to_function<InstrumentedIndex, index_t , TriangleListing::Collect<InstrumentedIndex>>;
+
+        TriangleListing::Collect<InstrumentedIndex>::TriangleSet last_result;
+        bool has_last_result = false;
+
+        for (const auto &algo_name: params.algos) {
+
+            uintptr_t op_count;
+            {
+                const auto &functions = test_translator.at(algo_name);  // throw error if no matched name
+                void *helper = functions.get_helper(instrumented_graph);
+
+                // List triangles and get op count
+                OpCounter::ResetOpCount();
+                auto result = functions.count(instrumented_graph, helper);
+                op_count = OpCounter::GetOpCount();
+
+                // Compare triangles with the result of the last algorithm (if available)
+                if (has_last_result) {
+                    if (result.triangles != last_result) {
+                        throw std::runtime_error("different triangles");
+                    }
+                } else {
+                    last_result = std::move(result.triangles);
+                    has_last_result = true;
+                    triangle_count = last_result.size();
+                }
+
+                functions.free_helper(helper);
+            }
+            op_counts[algo_name] = op_count;
+            std::cout << algo_name << ": " << op_count << " ops, verified, " << last_result.size() << " triangles" << std::endl;
+        }
+
+        free_graph(instrumented_graph);
+    }
 
     // Declare as const to avoid misuse that change the graph
     const auto *benchmark_graph_original = create_graph_from_file<index_t>(params.graph_file.c_str());
@@ -71,44 +117,11 @@ void run(const BenchParams &params, std::ofstream &out_file) {
         benchmark_graphs.emplace_back(create_graph_copy(benchmark_graph_original));
     }
 
-    std::cout << "num_warmups = " << params.num_warmups << std::endl;
-    std::cout << "num_phases = " << params.num_phases << std::endl;
-    std::cout << "num_runs = " << params.num_runs << std::endl;
-
-    static const auto test_translator = name_to_function<InstrumentedIndex, index_t , TriangleListing::Collect<InstrumentedIndex>>;
     static const auto benchmark_translator = name_to_function<index_t, index_t, TriangleListing::Count<index_t>>;
-
-    TriangleListing::Collect<InstrumentedIndex>::TriangleSet last_result;
-    bool has_last_result = false;
 
     for (const auto &algo_name: params.algos) {
 
-        out_file << algo_name << ",";
-
-        std::cout << "Instrumented run: " << algo_name << std::endl;
-        uintptr_t op_count;
-        {
-            const auto &functions = test_translator.at(algo_name);  // throw error if no matched name
-            void *helper = functions.get_helper(instrumented_graph);
-
-            // List triangles and get op count
-            OpCounter::ResetOpCount();
-            auto result = functions.count(instrumented_graph, helper);
-            op_count = OpCounter::GetOpCount();
-
-            // Compare triangles with the result of the last algorithm (if available)
-            if (has_last_result) {
-                if (result.triangles != last_result) {
-                    throw std::runtime_error("different triangles");
-                }
-            } else {
-                last_result = std::move(result.triangles);
-                has_last_result = true;
-            }
-        }
-        out_file << op_count;
-        std::cout << "  " << op_count << " ops" << std::endl;
-        std::cout << "  Result verified" << std::endl;
+        out_file << algo_name << "," << op_counts[algo_name];
 
         std::cout << "Benchmarking " << algo_name << std::endl;
         {
@@ -138,20 +151,21 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                 }
                 cycles = stop_tsc(cycles);
 
-                if (result.count != last_result.size()) {
+                if (result.count != triangle_count) {
                     throw std::runtime_error("count of triangles differs from the instrumented run");
                 }
                 size_t cycle_per_run = cycles / params.num_runs;
                 out_file << "," << cycle_per_run;
                 std::cout << "  " << cycle_per_run << " cycles/run, "
-                          << (double) op_count / (double) cycle_per_run << " ops/cycle" << std::endl;
+                          << (double) op_counts[algo_name] / (double) cycle_per_run << " ops/cycle" << std::endl;
             }
+
+            functions.free_helper(helper);
         }
         out_file << "\n";
     }
     std::cout << "All Benchmarking Completed" << std::endl;
 
-    free_graph(instrumented_graph);
     free_graph(benchmark_graph_original);
     for (size_t i = 0; i < params.num_warmups; i++) {
         free_graph(benchmark_graphs[i]);

@@ -11,6 +11,9 @@ void *edge_iterator_get_dummy_helper(const AdjacencyGraph<Index> *) {
     return nullptr;
 }
 
+template<class Index, class Counter = index_t>
+void edge_iterator_free_dummy_helper(void *) {}
+
 template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
 TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
     (void) dummy;
