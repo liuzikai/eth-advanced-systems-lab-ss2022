@@ -17,6 +17,7 @@
 
 #include "forward.hpp"
 #include "forward_hashed.hpp"
+#include "forward_hashed_v1.hpp"
 
 #include "instrumented_index.h"
 #include "triangle_lister.h"
@@ -30,6 +31,7 @@ static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_fun
         {"edge_iterator",  TriangleFunctions(edge_iterator<Index, Counter, TLR>, edge_iterator_get_dummy_helper<Index, Counter>, edge_iterator_free_dummy_helper<Index, Counter>)},
         {"forward",        TriangleFunctions(forward<Index, Counter, TLR>, forward_create_neighbor_container<Index, Counter>, forward_delete_neighbor_container<Index, Counter>)},
         {"forward_hashed", TriangleFunctions(fh0::forward_hashed<Index, Counter, TLR>, fh0::forward_hashed_create_neighbor_container<Index, Counter>, fh0::forward_hashed_delete_neighbor_container<Index, Counter>)},
+        {"fh1", TriangleFunctions(fh1::forward_hashed<Index, Counter, TLR>, fh1::forward_hashed_create_neighbor_container<Index, Counter>, fh1::forward_hashed_delete_neighbor_container<Index, Counter>)},
 };
 
 BenchParams parse_arguments(arg_parser &parser) {
