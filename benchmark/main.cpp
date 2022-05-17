@@ -25,8 +25,10 @@
 
 #include "dummy_helper.hpp"
 #include "quick_sort.h"
-#include "merge_sort.h"
+#include "merge_sort_base.h"
 #include "merge_sort_v2.h"
+#include "merge_sort_v3.h"
+#include "merge_sort_v4.h"
 #include "avx2-quicksort.h"
 
 static constexpr size_t default_num_warmups = 1;
@@ -42,14 +44,16 @@ static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_fun
     {"fh2", TriangleFunctions(fh2::forward_hashed<Index, Counter, TLR>, fh2::forward_hashed_create_neighbor_container<Index, Counter>, fh2::forward_hashed_delete_neighbor_container<Index, Counter>)},
     // Sorting
     {"quick_sort",  TriangleFunctions(quick_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
-    {"merge_sort_v1",  TriangleFunctions(merge_sort_v1::merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"merge_sort_base",  TriangleFunctions(merge_sort_base::merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"merge_sort_v2",  TriangleFunctions(merge_sort_v2::merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
     {"std_sort",  TriangleFunctions(std_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
 };
 
 template<class Counter, class TLR>
 static std::map<std::string, TriangleFunctions<index_t, Counter, TLR>> name_to_function_no_instrumentation = {
     {"WojciechMula",  TriangleFunctions(WojciechMula_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
-    {"merge_sort_v2",  TriangleFunctions(merge_sort_v2::merge_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
+    {"merge_sort_v3",  TriangleFunctions(merge_sort_v3::merge_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
+    {"merge_sort_v4",  TriangleFunctions(merge_sort_v4::merge_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
 };
 
 BenchParams parse_arguments(arg_parser &parser) {

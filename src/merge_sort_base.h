@@ -1,7 +1,3 @@
-//
-// Reference：[QuickSort - GeeksforGeeks](https://www.geeksforgeeks.org/quick-sort/)
-//
-
 #ifndef _MSORT_H
 #define _MSORT_H
 
@@ -11,7 +7,7 @@
 #include <stdio.h>
 #include <immintrin.h>
 
-namespace merge_sort_v1 {
+namespace merge_sort_base {
 
 template<class Index>
 static inline void merge(Index* out, Index *in, index_t left, index_t mid, index_t right) {
@@ -114,4 +110,4 @@ TRL merge_sort_timing(AdjacencyGraph<Index> *G, void *dummy) {
 
 
 
-#endif //_QSORT_H
+#endif 
