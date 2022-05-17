@@ -8,7 +8,7 @@ namespace fh1 {
 
 // This is very ugly... But I don't want to deal with templates simply for a global variable...
 #ifndef HASH_NULL_NUMBER
-#define HASH_NULL_NUMBER ((Index) (-1))
+#define HASH_NULL_NUMBER ((Index) (-1))  // cast to the max number and can't be equal to any Index
 #endif
 
 static constexpr size_t HASH_CONTAINER_SIZE = 4U;
