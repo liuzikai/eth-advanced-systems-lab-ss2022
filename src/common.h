@@ -7,4 +7,5 @@
 typedef uint32_t index_t;
 #define INDEX_FMT "%" PRIu32
 
+
 #endif //TEAM02_COMMON_H
