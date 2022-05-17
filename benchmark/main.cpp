@@ -21,15 +21,29 @@
 #include "instrumented_index.h"
 #include "triangle_lister.h"
 
+#include "dummy_helper.hpp"
+#include "quick_sort.h"
+#include "merge_sort.h"
+#include "avx2-quicksort.h"
+
 static constexpr size_t default_num_warmups = 1;
 static constexpr size_t default_num_runs = 5;
 static constexpr size_t default_num_phases = 5;
 
 template<class Index, class Counter, class TLR>
 static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_function = {
-        {"edge_iterator",  TriangleFunctions(edge_iterator<Index, Counter, TLR>, edge_iterator_get_dummy_helper<Index, Counter>, edge_iterator_free_dummy_helper<Index, Counter>)},
+        {"edge_iterator",  TriangleFunctions(edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
         {"forward",        TriangleFunctions(forward<Index, Counter, TLR>, forward_create_neighbor_container<Index, Counter>, forward_delete_neighbor_container<Index, Counter>)},
         {"forward_hashed", TriangleFunctions(forward_hashed<Index, Counter, TLR>, forward_hashed_create_neighbor_container<Index, Counter>, forward_hashed_delete_neighbor_container<Index, Counter>)},
+        // Sorting
+        {"quick_sort",  TriangleFunctions(quick_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>)},
+        {"merge_sort",  TriangleFunctions(merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>)},
+        {"std_sort",  TriangleFunctions(std_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>)},
+};
+
+template<class Counter, class TLR>
+static std::map<std::string, TriangleFunctions<index_t, Counter, TLR>> name_to_function_no_instrumentation = {
+        {"WojciechMula",  TriangleFunctions(WojciechMula_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>)},
 };
 
 BenchParams parse_arguments(arg_parser &parser) {
@@ -70,7 +84,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
     {
         auto *instrumented_graph = create_graph_from_file<InstrumentedIndex>(params.graph_file.c_str());
 
-        static const auto test_translator = name_to_function<InstrumentedIndex, index_t , TriangleListing::Collect<InstrumentedIndex>>;
+        auto test_translator = name_to_function<InstrumentedIndex, index_t , TriangleListing::Collect<InstrumentedIndex>>;
 
         TriangleListing::Collect<InstrumentedIndex>::TriangleSet last_result;
         bool has_last_result = false;
@@ -79,26 +93,33 @@ void run(const BenchParams &params, std::ofstream &out_file) {
 
             uintptr_t op_count;
             {
-                const auto &functions = test_translator.at(algo_name);  // throw error if no matched name
-                void *helper = functions.get_helper(instrumented_graph);
-
-                // List triangles and get op count
-                OpCounter::ResetOpCount();
-                auto result = functions.count(instrumented_graph, helper);
-                op_count = OpCounter::GetOpCount();
-
-                // Compare triangles with the result of the last algorithm (if available)
-                if (has_last_result) {
-                    if (result.triangles != last_result) {
-                        throw std::runtime_error("different triangles");
-                    }
+                auto functions_it = test_translator.find(algo_name);
+                if (functions_it == test_translator.end()) {
+                    // Skip and report 0 as
+                    std::cerr << "Skip instrumentation for: " << algo_name << std::endl;
+                    op_count = 0;
                 } else {
-                    last_result = std::move(result.triangles);
-                    has_last_result = true;
-                    triangle_count = last_result.size();
-                }
+                    const auto &functions = functions_it->second;
+                    void *helper = functions.get_helper(instrumented_graph);
 
-                functions.free_helper(helper);
+                    // List triangles and get op count
+                    OpCounter::ResetOpCount();
+                    auto result = functions.count(instrumented_graph, helper);
+                    op_count = OpCounter::GetOpCount();
+
+                    // Compare triangles with the result of the last algorithm (if available)
+                    if (has_last_result) {
+                        if (result.triangles != last_result) {
+                            throw std::runtime_error("different triangles");
+                        }
+                    } else {
+                        last_result = std::move(result.triangles);
+                        has_last_result = true;
+                        triangle_count = last_result.size();
+                    }
+
+                    functions.free_helper(helper);
+                }
             }
             op_counts[algo_name] = op_count;
             std::cout << algo_name << ": " << op_count << " ops, verified, " << last_result.size() << " triangles" << std::endl;
@@ -117,7 +138,9 @@ void run(const BenchParams &params, std::ofstream &out_file) {
         benchmark_graphs.emplace_back(create_graph_copy(benchmark_graph_original));
     }
 
-    static const auto benchmark_translator = name_to_function<index_t, index_t, TriangleListing::Count<index_t>>;
+    auto benchmark_translator = name_to_function<index_t, index_t, TriangleListing::Count<index_t>>;
+    auto translator_no_instrumentation = name_to_function_no_instrumentation<index_t, TriangleListing::Count<index_t>>;
+    benchmark_translator.insert(translator_no_instrumentation.begin(), translator_no_instrumentation.end());
 
     for (const auto &algo_name: params.algos) {
 
