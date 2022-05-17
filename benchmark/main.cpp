@@ -26,6 +26,7 @@
 #include "dummy_helper.hpp"
 #include "quick_sort.h"
 #include "merge_sort.h"
+#include "merge_sort_v2.h"
 #include "avx2-quicksort.h"
 
 static constexpr size_t default_num_warmups = 1;
@@ -34,20 +35,21 @@ static constexpr size_t default_num_phases = 5;
 
 template<class Index, class Counter, class TLR>
 static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_function = {
-        {"edge_iterator",  TriangleFunctions(edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
-        {"forward",        TriangleFunctions(forward<Index, Counter, TLR>, forward_create_neighbor_container<Index, Counter>, forward_delete_neighbor_container<Index, Counter>)},
-        {"forward_hashed", TriangleFunctions(fh0::forward_hashed<Index, Counter, TLR>, fh0::forward_hashed_create_neighbor_container<Index, Counter>, fh0::forward_hashed_delete_neighbor_container<Index, Counter>)},
-        {"fh1", TriangleFunctions(fh1::forward_hashed<Index, Counter, TLR>, fh1::forward_hashed_create_neighbor_container<Index, Counter>, fh1::forward_hashed_delete_neighbor_container<Index, Counter>)},
-        {"fh2", TriangleFunctions(fh2::forward_hashed<Index, Counter, TLR>, fh2::forward_hashed_create_neighbor_container<Index, Counter>, fh2::forward_hashed_delete_neighbor_container<Index, Counter>)},
-        // Sorting
-        {"quick_sort",  TriangleFunctions(quick_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
-        {"merge_sort",  TriangleFunctions(merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
-        {"std_sort",  TriangleFunctions(std_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"edge_iterator",  TriangleFunctions(edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"forward",        TriangleFunctions(forward<Index, Counter, TLR>, forward_create_neighbor_container<Index, Counter>, forward_delete_neighbor_container<Index, Counter>)},
+    {"forward_hashed", TriangleFunctions(fh0::forward_hashed<Index, Counter, TLR>, fh0::forward_hashed_create_neighbor_container<Index, Counter>, fh0::forward_hashed_delete_neighbor_container<Index, Counter>)},
+    {"fh1", TriangleFunctions(fh1::forward_hashed<Index, Counter, TLR>, fh1::forward_hashed_create_neighbor_container<Index, Counter>, fh1::forward_hashed_delete_neighbor_container<Index, Counter>)},
+    {"fh2", TriangleFunctions(fh2::forward_hashed<Index, Counter, TLR>, fh2::forward_hashed_create_neighbor_container<Index, Counter>, fh2::forward_hashed_delete_neighbor_container<Index, Counter>)},
+    // Sorting
+    {"quick_sort",  TriangleFunctions(quick_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"merge_sort_v1",  TriangleFunctions(merge_sort_v1::merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"std_sort",  TriangleFunctions(std_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
 };
 
 template<class Counter, class TLR>
 static std::map<std::string, TriangleFunctions<index_t, Counter, TLR>> name_to_function_no_instrumentation = {
-        {"WojciechMula",  TriangleFunctions(WojciechMula_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
+    {"WojciechMula",  TriangleFunctions(WojciechMula_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
+    {"merge_sort_v2",  TriangleFunctions(merge_sort_v2::merge_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
 };
 
 BenchParams parse_arguments(arg_parser &parser) {
@@ -170,7 +172,6 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                 }
 
                 TriangleListing::Count<index_t> result;
-
                 // Start benchmark
                 size_t cycles = start_tsc();
                 for (size_t run = 0; run < params.num_runs; run++) {
@@ -190,8 +191,9 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                 for (size_t i = 0; i < params.num_runs; i++) {
                     copy_graph(benchmark_graphs[i], benchmark_graph_original);
                 }
-                copy_graph(warmup_graph, benchmark_graph_original);
-
+                if (warmup_graph) {
+                    copy_graph(warmup_graph, benchmark_graph_original);
+                }
             }
 
             functions.free_helper(helper);
@@ -201,7 +203,9 @@ void run(const BenchParams &params, std::ofstream &out_file) {
     std::cout << "All Benchmarking Completed" << std::endl;
 
     free_graph(benchmark_graph_original);
-    free_graph(warmup_graph);
+    if (warmup_graph) {
+        free_graph(warmup_graph);
+    }
     for (size_t i = 0; i < params.num_warmups; i++) {
         free_graph(benchmark_graphs[i]);
     }
