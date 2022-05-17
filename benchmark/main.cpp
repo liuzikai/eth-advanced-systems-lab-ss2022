@@ -36,14 +36,14 @@ static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_fun
         {"forward",        TriangleFunctions(forward<Index, Counter, TLR>, forward_create_neighbor_container<Index, Counter>, forward_delete_neighbor_container<Index, Counter>)},
         {"forward_hashed", TriangleFunctions(forward_hashed<Index, Counter, TLR>, forward_hashed_create_neighbor_container<Index, Counter>, forward_hashed_delete_neighbor_container<Index, Counter>)},
         // Sorting
-        {"quick_sort",  TriangleFunctions(quick_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>)},
-        {"merge_sort",  TriangleFunctions(merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>)},
-        {"std_sort",  TriangleFunctions(std_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>)},
+        {"quick_sort",  TriangleFunctions(quick_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+        {"merge_sort",  TriangleFunctions(merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+        {"std_sort",  TriangleFunctions(std_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
 };
 
 template<class Counter, class TLR>
 static std::map<std::string, TriangleFunctions<index_t, Counter, TLR>> name_to_function_no_instrumentation = {
-        {"WojciechMula",  TriangleFunctions(WojciechMula_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>)},
+        {"WojciechMula",  TriangleFunctions(WojciechMula_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
 };
 
 BenchParams parse_arguments(arg_parser &parser) {
