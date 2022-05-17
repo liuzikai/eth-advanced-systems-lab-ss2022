@@ -8,5 +8,7 @@ void *get_dummy_helper(const AdjacencyGraph<Index> *) {
     return nullptr;
 }
 
+template<class Index, class Counter = index_t>
+void free_dummy_helper(void *) {}
 
 #endif
