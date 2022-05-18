@@ -33,6 +33,10 @@ private:
     index_t val;
 };
 
+namespace AVX2{
+    void increment_op_count_by(uint64_t count);
+}
+
 namespace OpCounter {
     uint64_t GetOpCount();
     void ResetOpCount();

@@ -5,7 +5,9 @@
 #include "triangle_lister.h"
 #include "adjacency_graph.h"
 #include <stdio.h>
-#include <immintrin.h>
+
+#include "instrumented_immintrin.h"
+
 
 namespace ms4 {
 
@@ -88,12 +90,13 @@ inline __m256i sort_singel_vec(__m256i vec)
   return vec;
 }
 
-
-inline __m256i load_reg256(index_t *a) {
+template<class Index>
+inline __m256i load_reg256(Index *a) {
   return *(__m256i*)a;
 }
 
-inline void store_reg256(index_t *a, __m256i& b) {
+template<class Index>
+inline void store_reg256(Index *a, __m256i& b) {
   *((__m256i*)a) = b;
 }
 

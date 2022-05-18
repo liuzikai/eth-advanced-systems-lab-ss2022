@@ -1,3 +1,4 @@
+#define INSTRUMENTED
 #include "merge_sort_base.h"
 #include "merge_sort_v2.h"
 #include "merge_sort_v3.h"
