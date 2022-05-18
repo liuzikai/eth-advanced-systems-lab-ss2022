@@ -25,10 +25,7 @@
 
 #include "dummy_helper.hpp"
 #include "quick_sort.h"
-#include "merge_sort_base.h"
-#include "merge_sort_v2.h"
-#include "merge_sort_v3.h"
-#include "merge_sort_v4.h"
+#include "merge_sort_all_versions.h"
 #include "avx2-quicksort.h"
 
 static constexpr size_t default_num_warmups = 1;

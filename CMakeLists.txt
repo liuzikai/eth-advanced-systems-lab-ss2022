@@ -51,7 +51,13 @@ set(BENCH_SOURCES
         benchmark/main.cpp)
 
 set(TRIANGLE_SOURCES
-        src/instrumented_index.cpp)
+        src/instrumented_index.cpp
+        src/merge_sort_base.cpp
+        src/merge_sort_base_instrumented.cpp
+        src/merge_sort_v2.cpp
+        src/merge_sort_v2_instrumented.cpp
+        src/merge_sort_v3.cpp
+        src/merge_sort_v4.cpp)
 
 set(THIRD_PARTY_SOURCES
         third_party/arg_parser.cpp
