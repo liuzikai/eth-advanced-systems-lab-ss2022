@@ -7,6 +7,7 @@
 #include "triangle_lister.h"
 
 TEST_CASE("forward_hashed: example graph") {
+    using namespace fh0;
     AdjacencyGraph<index_t> *G = create_graph_from_file<index_t>(INPUT_DIR "sample_undirected.txt");
     ForwardHashedNeighborContainer<index_t> *A = forward_hashed_create_neighbor_container(G);
     forward_hashed_reset_neighbor_container(G, A);
@@ -30,6 +31,7 @@ TEST_CASE("forward_hashed: example graph") {
 }
 
 TEST_CASE("forward_hashed: WWW_NOTRE_DAME graph") {
+    using namespace fh0;
     std::string generate_graph = "./graph_generation -gt www_notre_dame -o notre.txt -shuffle_edges";
     std::string delete_graph = "rm notre.txt";
     std::ignore = system(generate_graph.c_str());
@@ -43,6 +45,7 @@ TEST_CASE("forward_hashed: WWW_NOTRE_DAME graph") {
 }
 
 TEST_CASE("forward_hashed: US Patents graph") {
+    using namespace fh0;
     std::string generate_graph = "./graph_generation -gt us_patents -o us_patents.txt -shuffle_edges";
     std::string delete_graph = "rm us_patents.txt";
     std::ignore = system(generate_graph.c_str());

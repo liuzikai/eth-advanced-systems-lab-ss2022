@@ -27,13 +27,14 @@ TEST_CASE("InstrumentedIndex") {
     REQUIRE(OpCounter::GetOpCount() == 5);
 
     REQUIRE(i2 == InstrumentedIndex(0));
-    REQUIRE(OpCounter::GetOpCount() == 6);
+    REQUIRE(i2 != InstrumentedIndex(42));
+    REQUIRE(OpCounter::GetOpCount() == 7);
 
     bool comp = i2 < i;
+    REQUIRE(OpCounter::GetOpCount() == 8);
     REQUIRE(comp == true);
-    REQUIRE(OpCounter::GetOpCount() == 7);
 
     REQUIRE(i2 == InstrumentedIndex(0));
     REQUIRE(!(i2 == i));
-    REQUIRE(OpCounter::GetOpCount() == 9);
+    REQUIRE(OpCounter::GetOpCount() == 10);
 }

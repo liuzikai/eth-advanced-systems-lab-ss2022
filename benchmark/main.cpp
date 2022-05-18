@@ -17,6 +17,8 @@
 
 #include "forward.hpp"
 #include "forward_hashed.hpp"
+#include "forward_hashed_v1.hpp"
+#include "forward_hashed_v2.hpp"
 
 #include "instrumented_index.h"
 #include "triangle_lister.h"
@@ -34,7 +36,9 @@ template<class Index, class Counter, class TLR>
 static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_function = {
         {"edge_iterator",  TriangleFunctions(edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
         {"forward",        TriangleFunctions(forward<Index, Counter, TLR>, forward_create_neighbor_container<Index, Counter>, forward_delete_neighbor_container<Index, Counter>)},
-        {"forward_hashed", TriangleFunctions(forward_hashed<Index, Counter, TLR>, forward_hashed_create_neighbor_container<Index, Counter>, forward_hashed_delete_neighbor_container<Index, Counter>)},
+        {"forward_hashed", TriangleFunctions(fh0::forward_hashed<Index, Counter, TLR>, fh0::forward_hashed_create_neighbor_container<Index, Counter>, fh0::forward_hashed_delete_neighbor_container<Index, Counter>)},
+        {"fh1", TriangleFunctions(fh1::forward_hashed<Index, Counter, TLR>, fh1::forward_hashed_create_neighbor_container<Index, Counter>, fh1::forward_hashed_delete_neighbor_container<Index, Counter>)},
+        {"fh2", TriangleFunctions(fh2::forward_hashed<Index, Counter, TLR>, fh2::forward_hashed_create_neighbor_container<Index, Counter>, fh2::forward_hashed_delete_neighbor_container<Index, Counter>)},
         // Sorting
         {"quick_sort",  TriangleFunctions(quick_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
         {"merge_sort",  TriangleFunctions(merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
