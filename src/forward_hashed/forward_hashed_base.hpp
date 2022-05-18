@@ -7,7 +7,7 @@
 #include "hash_table.hpp"
 #include "quick_sort.h"
 
-namespace fh0 {
+namespace forward_hashed_base {
 
 /// Accessory container
 

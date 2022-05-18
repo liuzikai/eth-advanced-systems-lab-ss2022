@@ -80,7 +80,7 @@ static inline unsigned long upper_power_of_two(index_t v) {
 
 
 template<class Index>
-static inline void merge_sort(Index *arr, Index* other, index_t total_size) {
+void merge_sort(Index *arr, Index* other, index_t total_size) {
   bool in_arr = merge_sort_internal(arr, other, upper_power_of_two(total_size), total_size);
   if (!in_arr) {
     // We just merged ito into other so lets copy it back.

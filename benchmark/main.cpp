@@ -15,18 +15,20 @@
 
 #include "adjacency_graph.h"
 
-#include "forward.hpp"
-#include "forward_hashed.hpp"
-#include "forward_hashed_v1.hpp"
-#include "forward_hashed_v2.hpp"
-
 #include "instrumented_index.h"
 #include "triangle_lister.h"
 
 #include "dummy_helper.hpp"
-#include "quick_sort.h"
-#include "merge_sort_all_versions.h"
+
+#include "edge_iterator/edge_iterator_all_versions.h"
+
+#include "forward/forward_all_versions.h"
+
+#include "forward_hashed/forward_hashed_all_versions.h"
+
+#include "merge_sort/merge_sort_all_versions.h"
 #include "avx2-quicksort.h"
+#include "quick_sort.h"
 
 static constexpr size_t default_num_warmups = 1;
 static constexpr size_t default_num_runs = 5;
@@ -34,9 +36,9 @@ static constexpr size_t default_num_phases = 5;
 
 template<class Index, class Counter, class TLR>
 static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_function = {
-    {"edge_iterator",  TriangleFunctions(edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
-    {"forward",        TriangleFunctions(forward<Index, Counter, TLR>, forward_create_neighbor_container<Index, Counter>, forward_delete_neighbor_container<Index, Counter>)},
-    {"forward_hashed", TriangleFunctions(fh0::forward_hashed<Index, Counter, TLR>, fh0::forward_hashed_create_neighbor_container<Index, Counter>, fh0::forward_hashed_delete_neighbor_container<Index, Counter>)},
+    {"edge_iterator",  TriangleFunctions(edge_iterator_base::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"forward",        TriangleFunctions(forward_base::forward<Index, Counter, TLR>, forward_base::forward_create_neighbor_container<Index, Counter>, forward_base::forward_delete_neighbor_container<Index, Counter>)},
+    {"forward_hashed", TriangleFunctions(forward_hashed_base::forward_hashed<Index, Counter, TLR>, forward_hashed_base::forward_hashed_create_neighbor_container<Index, Counter>, forward_hashed_base::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh1", TriangleFunctions(fh1::forward_hashed<Index, Counter, TLR>, fh1::forward_hashed_create_neighbor_container<Index, Counter>, fh1::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh2", TriangleFunctions(fh2::forward_hashed<Index, Counter, TLR>, fh2::forward_hashed_create_neighbor_container<Index, Counter>, fh2::forward_hashed_delete_neighbor_container<Index, Counter>)},
     // Sorting
@@ -213,6 +215,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
 }
 
 int main(int argc, char *argv[]) {
+    merge_sort_v3::merge_sort<index_t>(nullptr, nullptr, (index_t) 0);
     arg_parser parser(argc, argv);
     BenchParams params = parse_arguments(parser);
 
