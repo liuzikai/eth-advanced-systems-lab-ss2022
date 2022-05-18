@@ -51,7 +51,27 @@ set(BENCH_SOURCES
         benchmark/main.cpp)
 
 set(TRIANGLE_SOURCES
-        src/instrumented_index.cpp)
+        src/instrumented_index.cpp
+        
+        src/edge_iterator/edge_iterator_base.cpp
+        src/edge_iterator/edge_iterator_base_instrumented.cpp
+
+        src/forward/forward_base.cpp
+        src/forward/forward_base_instrumented.cpp
+
+        src/forward_hashed/forward_hashed_base.cpp
+        src/forward_hashed/forward_hashed_base_instrumented.cpp
+        src/forward_hashed/forward_hashed_v1.cpp
+        src/forward_hashed/forward_hashed_v1_instrumented.cpp
+        src/forward_hashed/forward_hashed_v2.cpp
+        src/forward_hashed/forward_hashed_v2_instrumented.cpp
+
+        src/merge_sort/merge_sort_base.cpp
+        src/merge_sort/merge_sort_base_instrumented.cpp
+        src/merge_sort/merge_sort_v2.cpp
+        src/merge_sort/merge_sort_v2_instrumented.cpp
+        src/merge_sort/merge_sort_v3.cpp
+        src/merge_sort/merge_sort_v4.cpp)
 
 set(THIRD_PARTY_SOURCES
         third_party/arg_parser.cpp
@@ -80,7 +100,8 @@ target_link_libraries(graph_generation graph_lib)
 
 add_executable(tests
         ${TEST_SOURCES})
-target_include_directories(tests PRIVATE src)
 target_link_libraries(tests triangle_lib)
+target_include_directories(tests PRIVATE src)
+
 target_link_libraries(tests graph_lib)
 add_dependencies(tests graph_generation)

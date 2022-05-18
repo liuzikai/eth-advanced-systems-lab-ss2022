@@ -1,9 +1,5 @@
-//
-// Reference：[QuickSort - GeeksforGeeks](https://www.geeksforgeeks.org/quick-sort/)
-//
-
-#ifndef _MSORT_V2_H
-#define _MSORT_V2_H
+#ifndef _MSORT_H
+#define _MSORT_H
 
 #include "common.h"
 #include "triangle_lister.h"
@@ -11,7 +7,7 @@
 #include <stdio.h>
 #include <immintrin.h>
 
-namespace merge_sort_v2 {
+namespace merge_sort_base {
 
 template<class Index>
 static inline void merge(Index* out, Index *in, index_t left, index_t mid, index_t right) {
@@ -44,37 +40,10 @@ static inline void merge(Index* out, Index *in, index_t left, index_t mid, index
 }
 
 template<class Index>
-void insertionSort(Index* arr, index_t n)
-{
-    index_t i, j;
-    Index key;
-    for (i = 1; i < n; i++)
-    {
-        key = arr[i];
-        j = i - 1;
- 
-        while (arr[j] > key)
-        {
-            arr[j + 1] = arr[j];
-            if (j == 0) {
-                break;
-            }
-            j = j - 1;
-        }
-        arr[j] = key;
-    }
-}
-
-template<class Index>
 static inline bool merge_sort_internal(Index *arr, Index* other, index_t bucket_size, index_t total_size) {
-    if (bucket_size == 8) {
-        index_t i;
-        for (i = 0; i + 7 < total_size; i+= 8) {
-            insertionSort(arr + i, 8);
-        }
-        if (i < total_size) {
-            insertionSort(arr + i, total_size - i);
-        }
+    if (bucket_size == 1) {
+        // Size 1 is already sorted.
+        // True means data is now in arr.
         return true;
     }
 
@@ -99,30 +68,26 @@ static inline bool merge_sort_internal(Index *arr, Index* other, index_t bucket_
 }
 
 static inline unsigned long upper_power_of_two(index_t v) {
-    v--;
-    v |= v >> 1;
-    v |= v >> 2;
-    v |= v >> 4;
-    v |= v >> 8;
-    v |= v >> 16;
-    v++;
-    return v;
+  v--;
+  v |= v >> 1;
+  v |= v >> 2;
+  v |= v >> 4;
+  v |= v >> 8;
+  v |= v >> 16;
+  v++;
+  return v;
 }
 
 
 template<class Index>
-static inline void merge_sort(Index *arr, Index* other, index_t total_size) {
-    if (total_size < 8) {
-        insertionSort(arr, total_size);
-        return;
-    }
-    bool in_arr = merge_sort_internal(arr, other, upper_power_of_two(total_size), total_size);
-    if (!in_arr) {
+void merge_sort(Index *arr, Index* other, index_t total_size) {
+  bool in_arr = merge_sort_internal(arr, other, upper_power_of_two(total_size), total_size);
+  if (!in_arr) {
     // We just merged ito into other so lets copy it back.
-        for (index_t j = 0; j < total_size; j++ ) {
-            arr[j] = other[j];
-        }
+    for (index_t j = 0; j < total_size; j++ ) {
+      arr[j] = other[j];
     }
+  }
 }
 
 // This is for testing

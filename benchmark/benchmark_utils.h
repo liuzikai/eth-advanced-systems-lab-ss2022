@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "adjacency_graph.h"
-#include "edge_iterator.hpp"
 #include "common.h"
 
 

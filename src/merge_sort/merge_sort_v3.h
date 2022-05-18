@@ -167,7 +167,7 @@ static inline unsigned long upper_power_of_two(index_t v) {
 
 
 template<class Index>
-static inline void merge_sort(Index *arr, Index* other, index_t total_size) {
+void merge_sort(Index *arr, Index* other, index_t total_size) {
     if (total_size < 8) {
         insertionSort(arr, total_size);
         return;
@@ -180,6 +180,7 @@ static inline void merge_sort(Index *arr, Index* other, index_t total_size) {
             arr[j] = other[j];
         }
     }
+    return;
 }
 
 
