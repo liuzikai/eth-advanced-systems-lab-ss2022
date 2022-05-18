@@ -5,7 +5,7 @@
 #include "triangle_lister.h"
 #include "adjacency_graph.h"
 
-namespace merge_sort_base {
+namespace ms0 {
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
     TRL merge_sort_timing(AdjacencyGraph<Index> *G, void *dummy); 
 
@@ -13,7 +13,7 @@ namespace merge_sort_base {
     void merge_sort(Index *arr, Index* other, index_t total_size); 
 }
 
-namespace merge_sort_v2 {
+namespace ms2 {
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
     TRL merge_sort_timing(AdjacencyGraph<Index> *G, void *dummy); 
 
@@ -21,7 +21,7 @@ namespace merge_sort_v2 {
     void merge_sort(Index *arr, Index* other, index_t total_size); 
 }
 
-namespace merge_sort_v3 {
+namespace ms3 {
     template<class Index>
     void merge_sort(Index *arr, Index* other, index_t total_size); 
 
@@ -31,7 +31,7 @@ namespace merge_sort_v3 {
     
 }
 
-namespace merge_sort_v4 {
+namespace ms4 {
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
     TRL merge_sort_timing(AdjacencyGraph<Index> *G, void *dummy); 
 

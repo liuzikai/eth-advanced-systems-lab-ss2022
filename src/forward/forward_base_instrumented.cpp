@@ -2,7 +2,7 @@
 #include "instrumented_index.h"
 
 
-namespace forward_base {
+namespace f0 {
     
     template struct ForwardNeighborContainer<InstrumentedIndex>;
 

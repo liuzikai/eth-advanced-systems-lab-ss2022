@@ -7,7 +7,7 @@
 #include "triangle_lister.h"
 #include "quick_sort.h"
 
-namespace forward_base {
+namespace f0 {
 
 /// Accessory container (array A in the paper)
 template<class Index, class Counter = index_t>

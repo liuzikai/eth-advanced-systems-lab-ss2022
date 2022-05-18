@@ -1,6 +1,6 @@
 #include "forward/forward_base.hpp"
 
-namespace forward_base {
+namespace f0 {
     template struct ForwardNeighborContainer<index_t, index_t>;
 
     template ForwardNeighborContainer<index_t> *forward_create_neighbor_container(const AdjacencyGraph<index_t> *G);

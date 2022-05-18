@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <immintrin.h>
 
-namespace merge_sort_base {
+namespace ms0 {
 
 template<class Index>
 static inline void merge(Index* out, Index *in, index_t left, index_t mid, index_t right) {

@@ -6,7 +6,7 @@
 #include "triangle_lister.h"
 #include "quick_sort.h"
 
-namespace edge_iterator_base {
+namespace ei0 {
 
 template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
 TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {

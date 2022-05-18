@@ -1,6 +1,6 @@
 #include "forward_hashed/forward_hashed_base.hpp"
 
-namespace forward_hashed_base {
+namespace fh0 {
     template struct ForwardHashedNeighborContainer<index_t, index_t>;
 
     template ForwardHashedNeighborContainer<index_t> *forward_hashed_create_neighbor_container(const AdjacencyGraph<index_t> *G);

@@ -6,7 +6,7 @@
 #include "adjacency_graph.h"
 
 
-namespace forward_hashed_base {
+namespace fh0 {
 
     template<class Index, class Counter = index_t>
     struct ForwardHashedNeighborContainer;

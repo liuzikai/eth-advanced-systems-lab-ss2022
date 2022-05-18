@@ -36,23 +36,23 @@ static constexpr size_t default_num_phases = 5;
 
 template<class Index, class Counter, class TLR>
 static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_function = {
-    {"edge_iterator",  TriangleFunctions(edge_iterator_base::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
-    {"forward",        TriangleFunctions(forward_base::forward<Index, Counter, TLR>, forward_base::forward_create_neighbor_container<Index, Counter>, forward_base::forward_delete_neighbor_container<Index, Counter>)},
-    {"forward_hashed", TriangleFunctions(forward_hashed_base::forward_hashed<Index, Counter, TLR>, forward_hashed_base::forward_hashed_create_neighbor_container<Index, Counter>, forward_hashed_base::forward_hashed_delete_neighbor_container<Index, Counter>)},
+    {"edge_iterator",  TriangleFunctions(ei0::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"forward",        TriangleFunctions(f0::forward<Index, Counter, TLR>, f0::forward_create_neighbor_container<Index, Counter>, f0::forward_delete_neighbor_container<Index, Counter>)},
+    {"forward_hashed", TriangleFunctions(fh0::forward_hashed<Index, Counter, TLR>, fh0::forward_hashed_create_neighbor_container<Index, Counter>, fh0::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh1", TriangleFunctions(fh1::forward_hashed<Index, Counter, TLR>, fh1::forward_hashed_create_neighbor_container<Index, Counter>, fh1::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh2", TriangleFunctions(fh2::forward_hashed<Index, Counter, TLR>, fh2::forward_hashed_create_neighbor_container<Index, Counter>, fh2::forward_hashed_delete_neighbor_container<Index, Counter>)},
     // Sorting
     {"quick_sort",  TriangleFunctions(quick_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
-    {"merge_sort_base",  TriangleFunctions(merge_sort_base::merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
-    {"merge_sort_v2",  TriangleFunctions(merge_sort_v2::merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"merge_sort_base",  TriangleFunctions(ms0::merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"merge_sort_v2",  TriangleFunctions(ms2::merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
     {"std_sort",  TriangleFunctions(std_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
 };
 
 template<class Counter, class TLR>
 static std::map<std::string, TriangleFunctions<index_t, Counter, TLR>> name_to_function_no_instrumentation = {
     {"WojciechMula",  TriangleFunctions(WojciechMula_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
-    {"merge_sort_v3",  TriangleFunctions(merge_sort_v3::merge_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
-    {"merge_sort_v4",  TriangleFunctions(merge_sort_v4::merge_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
+    {"merge_sort_v3",  TriangleFunctions(ms3::merge_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
+    {"merge_sort_v4",  TriangleFunctions(ms4::merge_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
 };
 
 BenchParams parse_arguments(arg_parser &parser) {
@@ -215,7 +215,6 @@ void run(const BenchParams &params, std::ofstream &out_file) {
 }
 
 int main(int argc, char *argv[]) {
-    merge_sort_v3::merge_sort<index_t>(nullptr, nullptr, (index_t) 0);
     arg_parser parser(argc, argv);
     BenchParams params = parse_arguments(parser);
 

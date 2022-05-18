@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <immintrin.h>
 
-namespace merge_sort_v3 {
+namespace ms3 {
 
 
 

@@ -2,7 +2,7 @@
 #include "instrumented_index.h"
 
 
-namespace forward_hashed_base {
+namespace fh0 {
     template struct ForwardHashedNeighborContainer<InstrumentedIndex>;
 
     template ForwardHashedNeighborContainer<InstrumentedIndex> *forward_hashed_create_neighbor_container(const AdjacencyGraph<InstrumentedIndex> *G);

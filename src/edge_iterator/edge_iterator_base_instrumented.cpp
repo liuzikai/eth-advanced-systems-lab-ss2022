@@ -2,7 +2,7 @@
 #include "instrumented_index.h"
 
 
-namespace edge_iterator_base {
+namespace ei0 {
     template TriangleListing::Count<InstrumentedIndex> edge_iterator(AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
     template TriangleListing::Collect<InstrumentedIndex> edge_iterator(AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
 }

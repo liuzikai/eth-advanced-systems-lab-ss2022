@@ -4,7 +4,7 @@
 #include "common.h"
 #include <cstring>
 
-namespace forward_hashed_base {
+namespace fh0 {
 
 static constexpr size_t HASH_CONTAINER_SIZE = 4U;
 
