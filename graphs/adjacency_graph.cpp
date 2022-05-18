@@ -34,13 +34,19 @@ AdjacencyGraph<Index> *create_graph_from_file(const char *filename) {
         }
         adj->count = read_val;
 
-        adj->neighbors = new Index[adj->count];
+        index_t rounded_up_size = roundUp(adj->count, 32);
+        adj->neighbors = new(std::align_val_t(32)) Index[rounded_up_size];
 
-        for (Counter i = 0; i < adj->count; i++) {
+        Counter i;
+        for (i = 0; i < adj->count; i++) {
             res = fscanf(f, INDEX_FMT, &read_val);
             if (res != 1) throw std::runtime_error("Invalid input: missing target node");
             *(adj->neighbors + i) = (Index) read_val;
         }
+        for (; i < rounded_up_size; i++) {
+            *(adj->neighbors + i) = (Index) -1;
+        }
+        
     }
 
     return G;
@@ -57,10 +63,15 @@ AdjacencyGraph<Index> *create_graph_copy(const AdjacencyGraph<Index> *graph) {
         AdjacencyList<Index> *adj = G->adjacency + u;
 
         adj->count = graph->adjacency[u].count;
-        adj->neighbors = new Index[adj->count];
+        index_t rounded_up_size = roundUp(adj->count, 32);
+        adj->neighbors = new(std::align_val_t(32)) Index[rounded_up_size];
 
-        for (Counter i = 0; i < adj->count; i++) {
+        Counter i;
+        for (i = 0; i < adj->count; i++) {
             *(adj->neighbors + i) = (Index) graph->adjacency[u].neighbors[i];
+        }
+        for (; i < rounded_up_size; i++) {
+            *(adj->neighbors + i) = (Index) -1;
         }
     }
 

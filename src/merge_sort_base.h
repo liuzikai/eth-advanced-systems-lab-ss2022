@@ -1,7 +1,3 @@
-//
-// Reference：[QuickSort - GeeksforGeeks](https://www.geeksforgeeks.org/quick-sort/)
-//
-
 #ifndef _MSORT_H
 #define _MSORT_H
 
@@ -9,6 +5,9 @@
 #include "triangle_lister.h"
 #include "adjacency_graph.h"
 #include <stdio.h>
+#include <immintrin.h>
+
+namespace merge_sort_base {
 
 template<class Index>
 static inline void merge(Index* out, Index *in, index_t left, index_t mid, index_t right) {
@@ -50,30 +49,21 @@ static inline bool merge_sort_internal(Index *arr, Index* other, index_t bucket_
 
     index_t  child_bucket_size = bucket_size / 2;
     bool in_arr = merge_sort_internal(arr, other, child_bucket_size, total_size);
+    if (in_arr) {
+      Index* tmp = arr;
+      arr = other;
+      other = tmp;
+    }
     index_t i;
     for (i = 0; i + child_bucket_size * 2 < total_size  + 1; i+= child_bucket_size * 2) {
-        if (in_arr) {
-            merge(other, arr, i, i + child_bucket_size, i + 2 * child_bucket_size);
-        } else {
-            merge(arr, other,  i, i + child_bucket_size, i + 2 * child_bucket_size);
-        }
+        merge(arr, other,  i, i + child_bucket_size, i + 2 * child_bucket_size);
     }
     index_t diff = total_size - i;
     if (diff > child_bucket_size) {
-      if (in_arr) {
-        merge(other, arr, i, i + child_bucket_size, total_size);
-      } else {
-        merge(arr, other, i, i + child_bucket_size, total_size);
-      }
+      merge(arr, other, i, i + child_bucket_size, total_size);
     } else if (diff > 0) {
-        if (in_arr) {
-          merge(other, arr, i, total_size, total_size);
-        } else {
-          merge(arr, other, i, total_size, total_size);
-      }
+      merge(arr, other, i, total_size, total_size);
     }
-
-
     return !in_arr;
 }
 
@@ -100,7 +90,6 @@ static inline void merge_sort(Index *arr, Index* other, index_t total_size) {
   }
 }
 
-
 // This is for testing
 template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
 TRL merge_sort_timing(AdjacencyGraph<Index> *G, void *dummy) {
@@ -117,4 +106,8 @@ TRL merge_sort_timing(AdjacencyGraph<Index> *G, void *dummy) {
 }
 
 
-#endif //_QSORT_H
+}
+
+
+
+#endif 
