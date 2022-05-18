@@ -98,38 +98,14 @@ inline void store_reg256(index_t *a, __m256i& b) {
 }
 
 template<class Index>
-void insertionSort(Index* arr, index_t n)
-{
-    index_t i, j;
-    Index key;
-    for (i = 1; i < n; i++)
-    {
-        key = arr[i];
-        j = i - 1;
- 
-        while (arr[j] > key)
-        {
-            arr[j + 1] = arr[j];
-            if (j == 0) {
-                break;
-            }
-            j = j - 1;
-        }
-        arr[j] = key;
-    }
-}
-
-template<class Index>
 static inline bool merge_sort_internal(Index *arr, Index* other, index_t bucket_size, index_t total_size) {
     if (bucket_size == 8) {
         index_t i;
-        for (i = 0; i + 7 < total_size; i+= 8) {
+        // We do not have overhang anymore in this version.
+        for (i = 0; i < total_size; i+= 8) {
             __m256i vec = load_reg256(arr + i);
             __m256i sorted_vec  = sort_singel_vec(vec);
             store_reg256(arr + i, sorted_vec);
-        }
-        if (i < total_size) {
-            insertionSort(arr + i, total_size - i);
         }
         return true;
     }
@@ -169,10 +145,6 @@ static inline unsigned long upper_power_of_two(index_t v) {
 template<class Index>
 static inline void merge_sort(Index *arr, Index* other, index_t total_size) {
     total_size = roundUp(total_size, 8);
-    if (total_size < 8) {
-        insertionSort(arr, total_size);
-        return;
-    }
     index_t bucket_size = upper_power_of_two(total_size);
     bool in_arr = merge_sort_internal(arr, other, bucket_size, total_size);
     if (!in_arr) {
