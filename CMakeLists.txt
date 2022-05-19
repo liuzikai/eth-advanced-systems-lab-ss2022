@@ -60,7 +60,8 @@ set(TRIANGLE_SOURCES
         src/instrumented_index.cpp
         
         src/edge_iterator/edge_iterator_base.cpp
-        src/edge_iterator/edge_iterator_base_instrumented.cpp
+        src/edge_iterator/edge_iterator_all_versions_instrumented.cpp
+        src/edge_iterator/edge_iterator_v1.cpp
 
         src/forward/forward_base.cpp
         src/forward/forward_base_instrumented.cpp

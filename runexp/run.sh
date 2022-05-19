@@ -218,7 +218,7 @@ else
     echo "+ $graph"
     # generate graph if doesn't exist
     if [ ! -f $INPUTDIR/$graph.txt ]; then
-        ./graph_generation -gt $GRAPHTYPE -shuffle_edges -o $INPUTDIR/$graph.txt
+        ./graph_generation -gt $GRAPHTYPE -shuffle_edges -seed 0 -o $INPUTDIR/$graph.txt
     fi
     ./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPNUM/$graph.csv -algorithm $ALGO -graph $INPUTDIR/$graph.txt
 fi

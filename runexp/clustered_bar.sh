@@ -43,4 +43,4 @@ if [ -z $NUMBER ]; then NUMBER="1"; fi
 
 # python $RUNEXP/clustered_bar.py -m $METADATA -d $DATADIR -p $DATADIR -c $COMMIT -f $WARMUP"-"$RUN"-"$PHASE -n $NUMBER
 
-python3 $RUNEXP/clustered_bar.py -m $METADATA -d $DATADIR -p $DATADIR -c $COMMIT -f $WARMUP"-"$RUN"-"$PHASE -n $NUMBER -g $GRAPHS
+python $RUNEXP/clustered_bar.py -m $METADATA -d $DATADIR -p $DATADIR -c $COMMIT -f $WARMUP"-"$RUN"-"$PHASE -n $NUMBER -g $GRAPHS
