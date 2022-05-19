@@ -123,7 +123,7 @@ if [ -z $PHASE ]; then PHASE="5"; fi
 # create experiment dir and save exp config
 COMMIT=$(git rev-parse --short HEAD)
 if [ $GRAPHTYPE = "GENERATED" ]; then
-    EXPDIR=$DATADIR/$COMMIT"-"$GRAPHTYPE"-"$LOWEDGE"-"$HIGHEDGE"-"$INTERVAL"-"$NODE
+    EXPDIR=$DATADIR/$ALGO"-"$COMMIT"-"$GRAPHTYPE"-"$LOWEDGE"-"$HIGHEDGE"-"$INTERVAL"-"$NODE
     if [ ! -z $SEED ]; then
         EXPDIR=$EXPDIR"-"$SEED
     fi
@@ -137,7 +137,8 @@ if [ ! -d $EXP ]; then
     # the first run of the exp config
     mkdir $EXP
     NUMBER=1
-    JSON_STR='{"commit_hash":"'"$(git rev-parse HEAD)"'",
+    JSON_STR='{"algo":"'"$ALGO"'",
+            "commit_hash":"'"$(git rev-parse HEAD)"'",
             "graph_type":"'"$GRAPHTYPE"'",
             "num_warmup":'$WARMUP',
             "num_runs":'$RUN',
