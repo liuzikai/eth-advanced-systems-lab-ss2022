@@ -45,14 +45,15 @@ static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_fun
     {"quick_sort",  TriangleFunctions(quick_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
     {"merge_sort_base",  TriangleFunctions(ms0::merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
     {"merge_sort_v2",  TriangleFunctions(ms2::merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"merge_sort_v3",  TriangleFunctions(ms3::merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"merge_sort_v4",  TriangleFunctions(ms4::merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
     {"std_sort",  TriangleFunctions(std_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
 };
 
 template<class Counter, class TLR>
 static std::map<std::string, TriangleFunctions<index_t, Counter, TLR>> name_to_function_no_instrumentation = {
     {"WojciechMula",  TriangleFunctions(WojciechMula_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
-    {"merge_sort_v3",  TriangleFunctions(ms3::merge_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
-    {"merge_sort_v4",  TriangleFunctions(ms4::merge_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
+    
 };
 
 BenchParams parse_arguments(arg_parser &parser) {

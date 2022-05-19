@@ -1,0 +1,37 @@
+{
+    "functions" : [
+        {
+            "fname": "_mm256_set_epi32",
+            "num_args" : 8,
+            "num_ops" : 0,
+            "is_void" : false
+        },
+        {
+            "fname": "_mm256_permutevar8x32_epi32",
+            "num_args" : 2,
+            "num_ops" : 0,
+            "is_void" : false
+        },
+        {
+            "fname": "_mm256_min_epu32",
+            "num_args" : 2,
+            "num_ops" : 0,
+            "is_void" : false
+        },
+        {
+            "fname": "_mm256_max_epu32",
+            "num_args" : 2,
+            "num_ops" : 4,
+            "is_void" : false
+        },
+        {
+            "fname": "_mm256_blend_epi32",
+            "num_args" : 3,
+            "num_ops" : 4,
+            "is_void" : false
+        }
+    ],
+    "type_defs" : [
+        "__m256i"
+    ]
+}

@@ -65,6 +65,12 @@ InstrumentedIndex::operator index_t() const {
     return val;
 }
 
+namespace AVX2{
+    void increment_op_count_by(uint64_t count){
+        op_count += count;
+    }
+}
+
 namespace OpCounter {
     uint64_t GetOpCount() {
         return op_count;

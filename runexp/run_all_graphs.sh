@@ -5,4 +5,8 @@
 ./run.sh -g hep -w 0 -r 1 -p 1
 ./run.sh -g www -w 0 -r 1 -p 1
 ./run.sh -g us -w 0 -r 1 -p 1
-#./clustered_bar.sh -c COMMIT_SHA -w 0 -r 1 -p 1 -n 10
+COMMIT=$(git rev-parse --short HEAD)
+./clustered_bar.sh -c $COMMIT -w 0 -r 1 -p 1 -n 1
+cd ../data
+rm -r $COMMIT*
+cd ../RUNEXP

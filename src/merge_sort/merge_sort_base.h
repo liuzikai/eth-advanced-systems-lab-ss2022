@@ -5,7 +5,6 @@
 #include "triangle_lister.h"
 #include "adjacency_graph.h"
 #include <stdio.h>
-#include <immintrin.h>
 
 namespace ms0 {
 

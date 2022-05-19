@@ -13,7 +13,7 @@ set(CMAKE_CXX_STANDARD 20)
 # Enable Warnings
 set(WARNING_FLAGS "-Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wpedantic -Werror")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARNING_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARNING_FLAGS} -fconcepts")
 set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} ${WARNING_FLAGS}")
 
 # Release Flags
@@ -29,7 +29,13 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer")
 include_directories(third_party)
 include_directories(graphs)
 include_directories(src)
+include_directories(generated)
 add_compile_definitions(INPUT_DIR="${PROJECT_SOURCE_DIR}/input/")
+
+ADD_CUSTOM_COMMAND( OUTPUT generated/instrumented_immintrin.h
+                    COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/generated && python3 ${CMAKE_SOURCE_DIR}/code_generator/code_generator.py ${CMAKE_SOURCE_DIR}/generated/instrumented_immintrin.h
+                    DEPENDS code_generator/instrumented_intrinsics.json
+                    COMMENT "Generating instrumented_intrinsics." )
 
 set(GRAPH_SOURCES
         graphs/graph_generation.cpp
@@ -60,18 +66,18 @@ set(TRIANGLE_SOURCES
         src/forward/forward_base_instrumented.cpp
 
         src/forward_hashed/forward_hashed_base.cpp
-        src/forward_hashed/forward_hashed_base_instrumented.cpp
+        src/forward_hashed/forward_hashed_all_versions_instrumented.cpp
         src/forward_hashed/forward_hashed_v1.cpp
-        src/forward_hashed/forward_hashed_v1_instrumented.cpp
         src/forward_hashed/forward_hashed_v2.cpp
-        src/forward_hashed/forward_hashed_v2_instrumented.cpp
 
+        src/merge_sort/merge_sort_all_versions_instrumented.cpp
         src/merge_sort/merge_sort_base.cpp
-        src/merge_sort/merge_sort_base_instrumented.cpp
         src/merge_sort/merge_sort_v2.cpp
-        src/merge_sort/merge_sort_v2_instrumented.cpp
         src/merge_sort/merge_sort_v3.cpp
-        src/merge_sort/merge_sort_v4.cpp)
+        src/merge_sort/merge_sort_v4.cpp
+        
+        generated/instrumented_immintrin.h
+        )
 
 set(THIRD_PARTY_SOURCES
         third_party/arg_parser.cpp
