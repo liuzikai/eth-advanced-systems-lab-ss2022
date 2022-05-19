@@ -32,9 +32,9 @@ include_directories(src)
 include_directories(generated)
 add_compile_definitions(INPUT_DIR="${PROJECT_SOURCE_DIR}/input/")
 
-ADD_CUSTOM_COMMAND( OUTPUT generated/instrumented_immintrin.h
+ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/generated/instrumented_immintrin.h
                     COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/generated && python3 ${CMAKE_SOURCE_DIR}/code_generator/code_generator.py ${CMAKE_SOURCE_DIR}/generated/instrumented_immintrin.h
-                    DEPENDS code_generator/instrumented_intrinsics.json
+                    DEPENDS code_generator/instrumented_intrinsics.json code_generator/code_generator.py
                     COMMENT "Generating instrumented_intrinsics." )
 
 set(GRAPH_SOURCES
@@ -75,6 +75,7 @@ set(TRIANGLE_SOURCES
         src/merge_sort/merge_sort_v2.cpp
         src/merge_sort/merge_sort_v3.cpp
         src/merge_sort/merge_sort_v4.cpp
+        src/merge_sort/merge_sort_v5.cpp
         
         generated/instrumented_immintrin.h
         )
