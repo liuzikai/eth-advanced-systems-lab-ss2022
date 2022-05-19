@@ -132,7 +132,7 @@ def plot(x, width, algos, data, ylabel, gne, title, figname, yscale="linear"):
 
 #---x axis---
 x = np.arange(len(gs))  # the label locations
-width = len(gs)/30  # the width of the bars
+width = len(gs)/40  # the width of the bars
 
 #---op count---
 plot(x, width, algos, ops_df, "ops", gne, 'Op Count', f"{PLOTDIR}/large_graphs_ops.png", yscale="log")
