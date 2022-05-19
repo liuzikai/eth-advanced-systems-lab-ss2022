@@ -7,6 +7,8 @@
 #include "hash_table.hpp"
 #include "quick_sort.h"
 
+namespace fh0 {
+
 /// Accessory container
 
 template<class Index, class Counter = index_t>
@@ -16,13 +18,13 @@ struct ForwardHashedNeighborList {
 };
 
 template<class Index, class Counter = index_t>
-struct ForwardHashedNeighborContainer{
+struct ForwardHashedNeighborContainer {
     Counter n;  // node count
     ForwardHashedNeighborList<Index> *adjacency;
 };
 
 template<class Index, class Counter = index_t>
-ForwardHashedNeighborContainer<Index>  *forward_hashed_create_neighbor_container(const AdjacencyGraph<Index> *G) {
+ForwardHashedNeighborContainer<Index> *forward_hashed_create_neighbor_container(const AdjacencyGraph<Index> *G) {
     auto *A = new ForwardHashedNeighborContainer<Index>;
     A->adjacency = new ForwardHashedNeighborList<Index>[G->n];
     for (Counter u = 0; u < G->n; u++) {
@@ -32,7 +34,8 @@ ForwardHashedNeighborContainer<Index>  *forward_hashed_create_neighbor_container
 }
 
 template<class Index, class Counter = index_t>
-static void forward_hashed_reset_neighbor_container(AdjacencyGraph<Index> *G, ForwardHashedNeighborContainer<Index>  *A) {
+static void
+forward_hashed_reset_neighbor_container(AdjacencyGraph<Index> *G, ForwardHashedNeighborContainer<Index> *A) {
     A->n = G->n;
     for (Counter u = 0; u < G->n; u++) {
         ForwardHashedNeighborList<Index> &a = A->adjacency[u];
@@ -42,7 +45,7 @@ static void forward_hashed_reset_neighbor_container(AdjacencyGraph<Index> *G, Fo
 }
 
 template<class Index, class Counter = index_t>
-void forward_hashed_delete_neighbor_container(ForwardHashedNeighborContainer<Index>  *A) {
+void forward_hashed_delete_neighbor_container(ForwardHashedNeighborContainer<Index> *A) {
     for (Counter u = 0; u < A->n; u++) {
         free_hashtable(A->adjacency[u].neighbors);
     }
@@ -58,7 +61,7 @@ void forward_hashed_delete_neighbor_container(ForwardHashedNeighborContainer<Ind
  * @note     Triangles are printed using print_triangle if it is defined.
  */
 template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedNeighborContainer<Index>  *A) {
+TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedNeighborContainer<Index> *A) {
     TRL lister;
     forward_hashed_reset_neighbor_container(G, A);
 
@@ -97,4 +100,6 @@ TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedNeighborContainer<Inde
     return lister;
 }
 
+
+}
 #endif //TEAM02_FORWARD_HASHED_H

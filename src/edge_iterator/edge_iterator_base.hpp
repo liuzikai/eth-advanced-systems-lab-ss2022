@@ -6,10 +6,7 @@
 #include "triangle_lister.h"
 #include "quick_sort.h"
 
-template<class Index, class Counter = index_t>
-void *edge_iterator_get_dummy_helper(const AdjacencyGraph<Index> *) {
-    return nullptr;
-}
+namespace ei0 {
 
 template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
 TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
@@ -54,6 +51,8 @@ TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
     }
 
     return lister;
+}
+
 }
 
 #endif //TEAM02_EDGE_ITER_H

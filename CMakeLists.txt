@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(ASL-Team02)
+project(ASL-Team02 LANGUAGES CXX)
 
 if (NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
     set(CMAKE_BUILD_TYPE "Release")
@@ -17,20 +17,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARNING_FLAGS}")
 set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} ${WARNING_FLAGS}")
 
 # Release Flags
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  -O3")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  -O3 -march=native")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  ${WARNING_FLAGS}")
-
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}  -O3")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}  ${WARNING_FLAGS}")
 
 # Debug Flags
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${WARNING_FLAGS}")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer")
 
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${WARNING_FLAGS}")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fno-omit-frame-pointer")
 
 include_directories(third_party)
 include_directories(graphs)
@@ -50,16 +44,38 @@ set(TEST_SOURCES
         tests/forward_test.cpp
         tests/edge_iterator_test.cpp
         tests/forward_hashed_test.cpp
+        tests/merge_sort_test.cpp
         tests/instrumented_index_test.cpp)
 
 set(BENCH_SOURCES
         benchmark/main.cpp)
 
 set(TRIANGLE_SOURCES
-        src/instrumented_index.cpp)
+        src/instrumented_index.cpp
+        
+        src/edge_iterator/edge_iterator_base.cpp
+        src/edge_iterator/edge_iterator_base_instrumented.cpp
+
+        src/forward/forward_base.cpp
+        src/forward/forward_base_instrumented.cpp
+
+        src/forward_hashed/forward_hashed_base.cpp
+        src/forward_hashed/forward_hashed_base_instrumented.cpp
+        src/forward_hashed/forward_hashed_v1.cpp
+        src/forward_hashed/forward_hashed_v1_instrumented.cpp
+        src/forward_hashed/forward_hashed_v2.cpp
+        src/forward_hashed/forward_hashed_v2_instrumented.cpp
+
+        src/merge_sort/merge_sort_base.cpp
+        src/merge_sort/merge_sort_base_instrumented.cpp
+        src/merge_sort/merge_sort_v2.cpp
+        src/merge_sort/merge_sort_v2_instrumented.cpp
+        src/merge_sort/merge_sort_v3.cpp
+        src/merge_sort/merge_sort_v4.cpp)
 
 set(THIRD_PARTY_SOURCES
-        third_party/arg_parser.cpp)
+        third_party/arg_parser.cpp
+        third_party/avx2-quicksort.cpp)
 
 add_library(triangle_lib STATIC
         ${TRIANGLE_SOURCES})
@@ -84,7 +100,8 @@ target_link_libraries(graph_generation graph_lib)
 
 add_executable(tests
         ${TEST_SOURCES})
-target_include_directories(tests PRIVATE src)
 target_link_libraries(tests triangle_lib)
+target_include_directories(tests PRIVATE src)
+
 target_link_libraries(tests graph_lib)
 add_dependencies(tests graph_generation)

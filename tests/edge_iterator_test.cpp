@@ -1,10 +1,11 @@
 #include <catch.hpp>
-#include "edge_iterator.hpp"
+#include "edge_iterator/edge_iterator_all_versions.h"
 #include "common.h"
 #include <set>
 #include "triangle_lister.h"
 
-TEST_CASE("edge_iterator: example graph") {  
+TEST_CASE("edge_iterator: example graph") { 
+    using namespace ei0; 
     AdjacencyGraph<index_t> *graph = create_graph_from_file<index_t>(INPUT_DIR "sample_undirected.txt");
     auto triangle_listing = edge_iterator<index_t, index_t, TriangleListing::Collect<index_t>>(graph);
     REQUIRE(triangle_listing.triangles.size() == 3);
@@ -13,6 +14,7 @@ TEST_CASE("edge_iterator: example graph") {
 }
 
 TEST_CASE("edge_iterator: WWW_NOTRE_DAME graph") {
+    using namespace ei0; 
     std::string generate_graph = "./graph_generation -gt www_notre_dame -o notre.txt -shuffle_edges";
     std::string delete_graph = "rm notre.txt";
     std::ignore = system(generate_graph.c_str());
@@ -24,6 +26,7 @@ TEST_CASE("edge_iterator: WWW_NOTRE_DAME graph") {
 }
 
 TEST_CASE("edge_iterator: US Patents graph") {
+    using namespace ei0; 
     std::string generate_graph = "./graph_generation -gt us_patents -o us_patents.txt -shuffle_edges";
     std::string delete_graph = "rm us_patents.txt";
     std::ignore = system(generate_graph.c_str());
