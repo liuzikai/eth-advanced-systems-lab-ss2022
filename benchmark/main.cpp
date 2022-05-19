@@ -92,7 +92,8 @@ void run(const BenchParams &params, std::ofstream &out_file) {
 
     // Instrumented runs
     {
-        auto *instrumented_graph = create_graph_from_file<InstrumentedIndex>(params.graph_file.c_str());
+        auto *instrumented_graph_original = create_graph_from_file<InstrumentedIndex>(params.graph_file.c_str());
+        auto instrumented_graph_copy = create_graph_copy(instrumented_graph_original);
 
         auto test_translator = name_to_function<InstrumentedIndex, index_t , TriangleListing::Collect<InstrumentedIndex>>;
 
@@ -110,11 +111,11 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                     op_count = 0;
                 } else {
                     const auto &functions = functions_it->second;
-                    void *helper = functions.get_helper(instrumented_graph);
+                    void *helper = functions.get_helper(instrumented_graph_copy);
 
                     // List triangles and get op count
                     OpCounter::ResetOpCount();
-                    auto result = functions.count(instrumented_graph, helper);
+                    auto result = functions.count(instrumented_graph_copy, helper);
                     op_count = OpCounter::GetOpCount();
 
                     // Compare triangles with the result of the last algorithm (if available)
@@ -127,15 +128,15 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                         has_last_result = true;
                         triangle_count = last_result.size();
                     }
-
+                    copy_graph(instrumented_graph_copy, instrumented_graph_original);
                     functions.free_helper(helper);
                 }
             }
             op_counts[algo_name] = op_count;
             std::cout << algo_name << ": " << op_count << " ops, verified, " << last_result.size() << " triangles" << std::endl;
         }
-
-        free_graph(instrumented_graph);
+        free_graph(instrumented_graph_original);
+        free_graph(instrumented_graph_copy);
     }
 
     // Declare as const to avoid misuse that change the graph
