@@ -75,7 +75,6 @@ set(TRIANGLE_SOURCES
         src/merge_sort/merge_sort_v2.cpp
         src/merge_sort/merge_sort_v3.cpp
         src/merge_sort/merge_sort_v4.cpp
-        src/merge_sort/merge_sort_v5.cpp
         
         generated/instrumented_immintrin.h
         )
