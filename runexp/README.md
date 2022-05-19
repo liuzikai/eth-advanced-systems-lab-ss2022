@@ -2,6 +2,8 @@
 1. Modify env.sh
 2. Run run.sh: -h for help
 
+Update: list the algorithms: -l algo1,algo2,algo3
+
 ## Output directory
 random graph: data/`commit_hash`-`graph_type`-`low_edge_count`-`high_edge_count`-`interval-node_degree`(-`seed`)/`num_warmups`-`num_runs`-`num_phases`/`number`/\
 real-world graph: data/`commit_hash`-`graph_type`/`num_warmups`-`num_runs`-`num_phases`/`number`/\

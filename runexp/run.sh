@@ -33,21 +33,22 @@ Usage:
     -w ... num warmups, default 5
     -r ... num runs, default 10
     -p ... num phases, default 5
+    -l ... list of algorithms algo1,algo2,algo3
 EOF
 }
 
 graph_type() {
 cat << EOF
 -g:
-	german ... GERMAN_ROAD_NETWORK
-	actor ... ACTOR_MOVIE_GRAPH
-	comp ... COMP_SCIENCE_AUTHORS
-	google ... GOOGLE_CONTEST
-	hep ... HEP_LITERATURE
-	router ... ROUTER_NETWORK
-	www ... WWW_NOTRE_DAME
-	us ... US_PATENTS
-	gen or [remove -g] ... GENERATED
+    german ... GERMAN_ROAD_NETWORK
+    actor ... ACTOR_MOVIE_GRAPH
+    comp ... COMP_SCIENCE_AUTHORS
+    google ... GOOGLE_CONTEST
+    hep ... HEP_LITERATURE
+    router ... ROUTER_NETWORK
+    www ... WWW_NOTRE_DAME
+    us ... US_PATENTS
+    gen or [remove -g] ... GENERATED
 EOF
 }
 
@@ -55,55 +56,62 @@ echo "!!! Configure your environment: env.sh !!!"
 
 # check if directories exist
 if [ ! -d $PROJECT ]; then
-	echo "$PROJECT doesn't exist!"; exit 1
+    echo "$PROJECT doesn't exist!"; exit 1
 fi
 if [ ! -d $RUNEXP ]; then
-	echo "$RUNEXP doesn't exist!"; exit 1
+    echo "$RUNEXP doesn't exist!"; exit 1
 fi
 if [ ! -d $BUILDDIR ]; then
-	mkdir $BUILDDIR
+    mkdir $BUILDDIR
 fi
 if [ ! -d $DATADIR ]; then
-	mkdir $DATADIR
+    mkdir $DATADIR
 fi
 
 # read opts
-while getopts ":hg:a:b:i:n:s:w:r:p:" opt
+while getopts ":hg:a:b:i:n:s:w:r:p:l:" opt
 do
     case $opt in
         h) help; exit 1;;
         g) GRAPHTYPE=$OPTARG;;
-		a) LOWEDGE=$OPTARG;;
+        a) LOWEDGE=$OPTARG;;
         b) HIGHEDGE=$OPTARG;;
         i) INTERVAL=$OPTARG;;
-		n) NODE=$OPTARG;;
-		s) SEED=$OPTARG;;
-		w) WARMUP=$OPTARG;;
-		r) RUN=$OPTARG;;
-		p) PHASE=$OPTARG;;
+        n) NODE=$OPTARG;;
+        s) SEED=$OPTARG;;
+        w) WARMUP=$OPTARG;;
+        r) RUN=$OPTARG;;
+        p) PHASE=$OPTARG;;
+        l) ALGO=$OPTARG;;
         \?) help; exit 1;;
     esac
 done
 
+# algos
+if [ -z $ALGO ]; then
+    ALGO="edge_iterator,forward,forward_hashed"
+fi
+echo $ALGO
+
 # read opt graph type
 if [ -z $GRAPHTYPE ]; then
-	GRAPHTYPE="GENERATED"
-	if [ -z $LOWEDGE ]; then LOWEDGE="1000"; fi
-	if [ -z $HIGHEDGE ]; then HIGHEDGE="5000"; fi
-	if [ -z $INTERVAL ]; then INTERVAL="500"; fi
-	if [ -z $NODE ]; then NODE="10"; fi
+    GRAPHTYPE="GENERATED"
+    if [ -z $LOWEDGE ]; then LOWEDGE="1000"; fi
+    if [ -z $HIGHEDGE ]; then HIGHEDGE="5000"; fi
+    if [ -z $INTERVAL ]; then INTERVAL="500"; fi
+    if [ -z $NODE ]; then NODE="10"; fi
 fi
 case $GRAPHTYPE in
     german) GRAPHTYPE="GERMAN_ROAD_NETWORK";;
-	actor) GRAPHTYPE="ACTOR_MOVIE_GRAPH";;
+    actor) GRAPHTYPE="ACTOR_MOVIE_GRAPH";;
     comp) GRAPHTYPE="COMP_SCIENCE_AUTHORS";;
     google) GRAPHTYPE="GOOGLE_CONTEST";;
-	hep) GRAPHTYPE="HEP_LITERATURE";;
-	router) GRAPHTYPE="ROUTER_NETWORK";;
-	www) GRAPHTYPE="WWW_NOTRE_DAME";;
-	us) GRAPHTYPE="US_PATENTS";;
+    hep) GRAPHTYPE="HEP_LITERATURE";;
+    router) GRAPHTYPE="ROUTER_NETWORK";;
+    www) GRAPHTYPE="WWW_NOTRE_DAME";;
+    us) GRAPHTYPE="US_PATENTS";;
     gen) GRAPHTYPE="GENERATED";;
-	GENERATED) ;;
+    GENERATED) ;;
     ?) graph_type; exit 1;;
 esac
 
@@ -115,12 +123,12 @@ if [ -z $PHASE ]; then PHASE="5"; fi
 # create experiment dir and save exp config
 COMMIT=$(git rev-parse --short HEAD)
 if [ $GRAPHTYPE = "GENERATED" ]; then
-	EXPDIR=$DATADIR/$COMMIT"-"$GRAPHTYPE"-"$LOWEDGE"-"$HIGHEDGE"-"$INTERVAL"-"$NODE
-	if [ ! -z $SEED ]; then
+    EXPDIR=$DATADIR/$COMMIT"-"$GRAPHTYPE"-"$LOWEDGE"-"$HIGHEDGE"-"$INTERVAL"-"$NODE
+    if [ ! -z $SEED ]; then
         EXPDIR=$EXPDIR"-"$SEED
-	fi
+    fi
 else
-	EXPDIR=$DATADIR/$COMMIT"-"$GRAPHTYPE
+    EXPDIR=$DATADIR/$COMMIT"-"$GRAPHTYPE
 fi
 if [ ! -d $EXPDIR ]; then mkdir $EXPDIR; fi
 
@@ -139,9 +147,9 @@ if [ ! -d $EXP ]; then
                             "high_edge":'$HIGHEDGE',
                             "interval":'$INTERVAL',
                             "node":'$NODE','
-    	if [ ! -z $SEED ]; then
+        if [ ! -z $SEED ]; then
             JSON_STR=$JSON_STR'"seed":'$SEED','
-    	fi
+        fi
     fi
     JSON_STR=$JSON_STR'"number":'$NUMBER'}'
     echo $JSON_STR > $EXP/config.json
@@ -174,29 +182,29 @@ echo ">>> You are in $BUILDDIR"
 
 echo ">>> building $BUILDTYPE... Check if the compiler is GNU"
 cmake $PROJECT -DCMAKE_C_COMPILER=$GCC -DCMAKE_CXX_COMPILER=$GXX -DCMAKE_BUILD_TYPE=$BUILDTYPE
-make
+make -j$(nproc)
 
 echo ">>> running..."
 if [ $GRAPHTYPE = "GENERATED" ]; then
-	for (( i=$(($LOWEDGE)); i<$(($HIGHEDGE)); i+=$(($INTERVAL)) ))
-	do
-		if [ -z $SEED ]; then
-			graph="generated_"$(($i/$NODE))"_"$i
-		else
+    for (( i=$(($LOWEDGE)); i<$(($HIGHEDGE)); i+=$(($INTERVAL)) ))
+    do
+        if [ -z $SEED ]; then
+            graph="generated_"$(($i/$NODE))"_"$i
+        else
             graph="generated_"$SEED"_"$(($i/$NODE))"_"$i
-		fi
-		echo "+ $graph"
-		if [ -z $SEED ]; then
+        fi
+        echo "+ $graph"
+        if [ -z $SEED ]; then
             # always generate random graph without seed
-			./graph_generation -gt $GRAPHTYPE -num_nodes $(($i/$NODE)) -num_edges $i -shuffle_edges -o $INPUTDIR/$graph.txt
-		else
+            ./graph_generation -gt $GRAPHTYPE -num_nodes $(($i/$NODE)) -num_edges $i -shuffle_edges -o $INPUTDIR/$graph.txt
+        else
             # generate graph if doesn't exist
             if [ ! -f $INPUTDIR/$graph.txt ]; then
                 ./graph_generation -gt $GRAPHTYPE -num_nodes $(($i/$NODE)) -num_edges $i -seed $SEED -shuffle_edges -o $INPUTDIR/$graph.txt
             fi
-		fi
-		./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPNUM/$graph.csv -algorithm edge_iterator,forward,forward_hashed -graph $INPUTDIR/$graph.txt
-	done
+        fi
+        ./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPNUM/$graph.csv -algorithm $ALGO -graph $INPUTDIR/$graph.txt
+    done
 
     cd $RUNEXP
     echo "Your are in $RUNEXP"
@@ -206,11 +214,11 @@ if [ $GRAPHTYPE = "GENERATED" ]; then
         python3 plot.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL -s $SEED
     fi
 else
-	graph=$GRAPHTYPE
-	echo "+ $graph"
-	# generate graph if doesn't exist
-	if [ ! -f $INPUTDIR/$graph.txt ]; then
-		./graph_generation -gt $GRAPHTYPE -shuffle_edges -o $INPUTDIR/$graph.txt
-	fi
-	./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPNUM/$graph.csv -algorithm edge_iterator,forward,forward_hashed -graph $INPUTDIR/$graph.txt
+    graph=$GRAPHTYPE
+    echo "+ $graph"
+    # generate graph if doesn't exist
+    if [ ! -f $INPUTDIR/$graph.txt ]; then
+        ./graph_generation -gt $GRAPHTYPE -shuffle_edges -o $INPUTDIR/$graph.txt
+    fi
+    ./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPNUM/$graph.csv -algorithm $ALGO -graph $INPUTDIR/$graph.txt
 fi
