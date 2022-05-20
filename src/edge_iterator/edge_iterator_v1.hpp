@@ -13,9 +13,8 @@ TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
     (void) dummy;
     Index s, t;
     //Counter i, j_lower_bound, j_upper_bound, j_current, j_inc, j_next;
-    Counter i, j_lower_bound, j_inc, j_next;
-    //const AdjacencyList<Index> *t_adj, *s_adj, *swap;
-    const AdjacencyList<Index> *t_adj, *s_adj; 
+    Counter i, j, j_lower_bound, j_inc, j_next;
+    const AdjacencyList<Index> *t_adj, *s_adj, *swap = NULL;
 
     TRL lister;
     // According to sec. 4, the sorting is included in the execution time
@@ -36,26 +35,54 @@ TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
             t_adj = &G->adjacency[(index_t) t];
 
             if (s < t) {
-                i = 0;
-                j_lower_bound = 0;
-                // find the intersection of s's and t's neighbors
-                // we will perform a binary search on the intersection
-                for(;i < s_adj->count; i++) {
-                    //Perform an exponential search on t_adj->neighbors
-                    j_inc = 1;
-                    j_next = j_lower_bound + 2*j_inc;
-
-                    while(j_next < t_adj->count && s_adj->neighbors[i] > t_adj->neighbors[j_next]) {
-                        j_inc *= 2;
+                if(t_adj->count < s_adj->count) {
+                    swap = t_adj;
+                    t_adj = s_adj;
+                    s_adj = swap;
+                }
+                if(s_adj->count << 3 < t_adj->count) {
+                    i = 0;
+                    j_lower_bound = 0;
+                    // find the intersection of s's and t's neighbors
+                    // we will perform a binary search on the intersection
+                    for(;i < s_adj->count; i++) {
+                        //Perform an exponential search on t_adj->neighbors
+                        j_inc = 1;
                         j_next = j_lower_bound + 2*j_inc;
+
+                        while(j_next < t_adj->count && s_adj->neighbors[i] > t_adj->neighbors[j_next]) {
+                            j_inc *= 2;
+                            j_next = j_lower_bound + 2*j_inc;
+                        }
+                        j_lower_bound += (j_inc -1);
+                        while(j_lower_bound < t_adj->count && s_adj->neighbors[i] > t_adj->neighbors[j_lower_bound]) {
+                            j_lower_bound += 1;
+                        }
+                        if(s_adj->neighbors[i] == t_adj->neighbors[j_lower_bound] && t_adj->neighbors[j_lower_bound] > t) {
+                            lister.list_triangle(s, t, t_adj->neighbors[j_lower_bound]);
+                        }
                     }
-                    j_lower_bound += (j_inc -1);
-                    while(j_lower_bound < t_adj->count && s_adj->neighbors[i] > t_adj->neighbors[j_lower_bound]) {
-                        j_lower_bound += 1;
+                } else {
+                    i = 0, j = 0;
+                    while (i < s_adj->count && j < t_adj->count) {
+                        if (s_adj->neighbors[i] == t_adj->neighbors[j] &&
+                            t_adj->neighbors[j] > t) {
+                            lister.list_triangle(s, t, t_adj->neighbors[j]);
+                            i++;
+                            j++;
+                        } else if (s_adj->neighbors[i] < t_adj->neighbors[j]) {
+                            i++;
+                        } else {
+                            j++;
+                        }
                     }
-                    if(s_adj->neighbors[i] == t_adj->neighbors[j_lower_bound] && t_adj->neighbors[j_lower_bound] > t) {
-                        lister.list_triangle(s, t, t_adj->neighbors[j_lower_bound]);
-                    }
+                }
+                //swap back if swapped
+                if(swap != NULL) {
+                    swap = t_adj;
+                    t_adj = s_adj;
+                    s_adj = swap;
+                    swap = NULL;
                 }
                 /*i = 0;
                 j_lower_bound = 0;
