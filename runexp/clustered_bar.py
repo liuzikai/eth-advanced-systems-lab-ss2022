@@ -15,7 +15,7 @@ parser.add_argument('--plotdir', '-p', help='plot directory', required=True)
 parser.add_argument('--commit_hash', '-c', help='commit hash', required=True)
 parser.add_argument('--config', '-f', help='warmups-runs-phases', required=True)
 parser.add_argument('--number', '-n', help='nth exp of the config', required=True)
-parser.add_argument('--graphs', '-g', help='realworld graph types', default="GERMAN_ROAD_NETWORK,ACTOR_MOVIE_GRAPH,COMP_SCIENCE_AUTHORS,GOOGLE_CONTEST,HEP_LITERATURE,ROUTER_NETWORK,WWW_NOTRE_DAME,US_PATENTS", required=False)
+parser.add_argument('--graphs', '-g', help='realworld graph types', default="GERMAN_ROAD_NETWORK,COMP_SCIENCE_AUTHORS,GOOGLE_CONTEST,HEP_LITERATURE,ROUTER_NETWORK,WWW_NOTRE_DAME,US_PATENTS", required=False)
 args = parser.parse_args()
 
 
@@ -128,7 +128,7 @@ def plot(x, width, algos, data, ylabel, gne, title, figname, yscale="linear"):
     # ax.grid(color='gray', linestyle='-', linewidth=0.5)
     ax.legend(loc='best')
     plt.savefig(figname, bbox_inches="tight")
-    
+
 
 #---x axis---
 x = np.arange(len(gs))  # the label locations
