@@ -2,5 +2,5 @@
 
 # compiler
 GCC=/usr/local/bin/gcc
-GXX=/usr/local/bin/g++
+GXX=/usr/bin/g++
 BUILDTYPE=Release
