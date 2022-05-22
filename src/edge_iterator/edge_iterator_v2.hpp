@@ -74,7 +74,6 @@ TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
                     i = i_start;
                     j_lower_bound = j_start;
                     // find the intersection of s's and t's neighbors
-                    // we will perform a binary search on the intersection
                     for(;i < s_adj->count; i++) {
                         //Perform an exponential search on t_adj->neighbors
                         j_inc = 1;

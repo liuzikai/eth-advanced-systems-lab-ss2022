@@ -44,7 +44,6 @@ TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
                     i = 0;
                     j_lower_bound = 0;
                     // find the intersection of s's and t's neighbors
-                    // we will perform a binary search on the intersection
                     for(;i < s_adj->count; i++) {
                         //Perform an exponential search on t_adj->neighbors
                         j_inc = 1;
@@ -84,40 +83,6 @@ TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
                     s_adj = swap;
                     swap = NULL;
                 }
-                /*i = 0;
-                j_lower_bound = 0;
-                // find the intersection of s's and t's neighbors
-                // we will perform a binary search on the intersection
-                for(;i < s_adj->count; i++) {
-                    j_upper_bound = t_adj->count - 1;
-                    if(s_adj->neighbors[i] < t_adj->neighbors[j_lower_bound])
-                    while(j_lower_bound != j_upper_bound) {
-                        j_current = (j_lower_bound + j_upper_bound) / 2;
-                        if (s_adj->neighbors[i] < t_adj->neighbors[j_current]) {
-                            j_upper_bound = j_current;
-                        } else if (s_adj->neighbors[i] > t_adj->neighbors[j_current]) {
-                            j_lower_bound = j_current + 1;
-                        } else {
-                            j_lower_bound = j_current;
-                            break;
-                        }
-                    }
-                    if(s_adj->neighbors[i] == t_adj->neighbors[j_lower_bound] && t_adj->neighbors[j_lower_bound] > t) {
-                        lister.list_triangle(s, t, t_adj->neighbors[j_lower_bound]);
-                    }
-                }*/
-                /*while (i < s_adj->count && j < t_adj->count) {
-                    if (s_adj->neighbors[i] == t_adj->neighbors[j] &&
-                        t_adj->neighbors[j] > t) {
-                        lister.list_triangle(s, t, t_adj->neighbors[j]);
-                        i++;
-                        j++;
-                    } else if (s_adj->neighbors[i] < t_adj->neighbors[j]) {
-                        i++;
-                    } else {
-                        j++;
-                    }
-                }*/
             }
         }
     }
