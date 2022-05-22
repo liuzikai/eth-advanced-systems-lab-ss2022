@@ -36,7 +36,9 @@ static constexpr size_t default_num_phases = 5;
 
 template<class Index, class Counter, class TLR>
 static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_function = {
-    {"edge_iterator",  TriangleFunctions(ei0::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"ei_base",  TriangleFunctions(ei0::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"ei_v1",  TriangleFunctions(ei1::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"ei_v2",  TriangleFunctions(ei2::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
     {"forward",        TriangleFunctions(f0::forward<Index, Counter, TLR>, f0::forward_create_neighbor_container<Index, Counter>, f0::forward_delete_neighbor_container<Index, Counter>)},
     {"forward_hashed", TriangleFunctions(fh0::forward_hashed<Index, Counter, TLR>, fh0::forward_hashed_create_neighbor_container<Index, Counter>, fh0::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh1", TriangleFunctions(fh1::forward_hashed<Index, Counter, TLR>, fh1::forward_hashed_create_neighbor_container<Index, Counter>, fh1::forward_hashed_delete_neighbor_container<Index, Counter>)},

@@ -11,6 +11,8 @@ public:
 
     bool operator<(const InstrumentedIndex& other) const;
 
+    bool operator<=(const InstrumentedIndex& other) const;
+
     bool operator>(const InstrumentedIndex& other) const;
 
     bool operator==(const InstrumentedIndex& other) const;

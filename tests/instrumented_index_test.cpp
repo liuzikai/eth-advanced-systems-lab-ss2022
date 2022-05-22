@@ -37,4 +37,8 @@ TEST_CASE("InstrumentedIndex") {
     REQUIRE(i2 == InstrumentedIndex(0));
     REQUIRE(!(i2 == i));
     REQUIRE(OpCounter::GetOpCount() == 10);
+
+    REQUIRE(i2 <= InstrumentedIndex(0));
+    REQUIRE(i2 <= i);
+    REQUIRE(OpCounter::GetOpCount() == 12);
 }
