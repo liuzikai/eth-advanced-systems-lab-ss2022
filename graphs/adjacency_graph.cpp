@@ -33,6 +33,7 @@ AdjacencyGraph<Index> *create_graph_from_file(const char *filename) {
             throw std::invalid_argument("Invalid input: missing node count");
         }
         adj->count = read_val;
+        adj->orig_count = read_val;
 
         index_t rounded_up_size = roundUp(adj->count, 32);
         adj->neighbors = new(std::align_val_t(32)) Index[rounded_up_size];
@@ -63,11 +64,12 @@ AdjacencyGraph<Index> *create_graph_copy(const AdjacencyGraph<Index> *graph) {
         AdjacencyList<Index> *adj = G->adjacency + u;
 
         adj->count = graph->adjacency[u].count;
-        index_t rounded_up_size = roundUp(adj->count, 32);
+        adj->orig_count = graph->adjacency[u].orig_count;
+        index_t rounded_up_size = roundUp(adj->orig_count, 32);
         adj->neighbors = new(std::align_val_t(32)) Index[rounded_up_size];
 
         Counter i;
-        for (i = 0; i < adj->count; i++) {
+        for (i = 0; i < adj->orig_count; i++) {
             *(adj->neighbors + i) = (Index) graph->adjacency[u].neighbors[i];
         }
         for (; i < rounded_up_size; i++) {
@@ -83,7 +85,8 @@ void copy_graph(AdjacencyGraph<Index> *dest, const AdjacencyGraph<Index> *src) {
     dest->n = src->n;
     for (Counter u = 0; u < src->n; u++) {
         dest->adjacency[u].count = src->adjacency[u].count;
-        for (Counter i = 0; i < src->adjacency[u].count; i++) {
+        dest->adjacency[u].orig_count = src->adjacency[u].orig_count;
+        for (Counter i = 0; i < src->adjacency[u].orig_count; i++) {
             dest->adjacency[u].neighbors[i] = src->adjacency[u].neighbors[i];
         }
     }

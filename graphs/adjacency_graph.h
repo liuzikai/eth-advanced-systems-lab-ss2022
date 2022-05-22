@@ -6,6 +6,7 @@
 template<class Index, class Counter = index_t>
 struct AdjacencyList {
     Counter count;
+    Counter orig_count;  // original node count
     Index *neighbors;
 };
 
