@@ -71,7 +71,7 @@ TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedHelper<Index> *A) {
                 // set intersection: use the smaller hash table to probe the larger one.
                 HashTable<Index> *probe;
                 HashTable<Index> *build;
-                if (s_table->count < s_table->count) {
+                if (s_table->count < t_table->count) {
                     probe = s_table;
                     build = t_table;
                 } else {
