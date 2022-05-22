@@ -54,6 +54,8 @@ struct BenchParams {
     std::string file_name;
     std::string graph_file;
     std::vector<std::string> algos;
+    bool pre_sort_edge_lists;
+    bool pre_cut_edge_lists;
 };
 
 
