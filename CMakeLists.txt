@@ -66,6 +66,7 @@ set(TRIANGLE_SOURCES
 
         src/forward/forward_base.cpp
         src/forward/forward_v1.cpp
+        src/forward/forward_v2.cpp
         src/forward/forward_base_instrumented.cpp
 
         src/forward_hashed/forward_hashed_base.cpp
