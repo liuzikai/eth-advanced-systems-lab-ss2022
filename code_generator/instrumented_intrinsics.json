@@ -29,6 +29,60 @@
             "num_args" : 3,
             "num_ops" : 4,
             "is_void" : false
+        },
+        {
+            "fname": "_mm256_set_epi64x",
+            "num_args" : 4,
+            "num_ops" : 0,
+            "is_void" : false
+        },
+        {
+            "fname": "_mm256_set1_epi64x",
+            "num_args" : 1,
+            "num_ops" : 0,
+            "is_void" : false
+        },
+        {
+            "fname": "_mm256_store_si256",
+            "num_args" : 2,
+            "num_ops" : 0,
+            "is_void" : true
+        },
+        {
+            "fname": "_mm256_set1_epi64x",
+            "num_args" : 3,
+            "num_ops" : 0,
+            "is_void" : false
+        },
+        {
+            "fname": "_mm256_cmpgt_epi64",
+            "num_args" : 2,
+            "num_ops" : 4,
+            "is_void" : false
+        },
+        {
+            "fname": "_mm256_cmpeq_epi64",
+            "num_args" : 2,
+            "num_ops" : 4,
+            "is_void" : false
+        },
+        {
+            "fname": "_mm256_and_si256",
+            "num_args" : 2,
+            "num_ops" : 4,
+            "is_void" : false
+        },
+        {
+            "fname": "_mm256_or_si256",
+            "num_args" : 2,
+            "num_ops" : 4,
+            "is_void" : false
+        },
+        {
+            "fname": "_mm256_add_epi64",
+            "num_args" : 2,
+            "num_ops" : 4,
+            "is_void" : false
         }
     ],
     "type_defs" : [
