@@ -27,6 +27,11 @@ bool InstrumentedIndex::operator<=(const InstrumentedIndex& other) const {
     return val <= other.val;
 }
 
+bool InstrumentedIndex::operator>=(const InstrumentedIndex& other) const {
+    op_count++;
+    return val >= other.val;
+}
+
 bool InstrumentedIndex::operator==(const InstrumentedIndex& other) const {
     op_count++;
     return val == other.val;
@@ -40,6 +45,11 @@ bool InstrumentedIndex::operator!=(const InstrumentedIndex& other) const {
 InstrumentedIndex InstrumentedIndex::operator+(const InstrumentedIndex& other) const {
     op_count++;
     return InstrumentedIndex(val + other.val);
+}
+
+InstrumentedIndex InstrumentedIndex::operator+(const bool& other) const {
+    op_count++;
+    return InstrumentedIndex(val + other);
 }
 
 InstrumentedIndex InstrumentedIndex::operator-(const InstrumentedIndex& other) const {
