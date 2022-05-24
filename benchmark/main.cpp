@@ -30,6 +30,8 @@
 #include "avx2-quicksort.h"
 #include "quick_sort.h"
 
+#include "quick_cut_sort.h"
+
 static constexpr size_t default_num_warmups = 1;
 static constexpr size_t default_num_runs = 5;
 static constexpr size_t default_num_phases = 5;
@@ -58,6 +60,32 @@ static std::map<std::string, TriangleFunctions<index_t, Counter, TLR>> name_to_f
     
 };
 
+// This is used to presort the edges and remove the unused ones.
+template<class Index>
+static auto pre_sort_function = quick_cut_sort<Index>;
+
+template<class Index>
+static auto pre_cut_function = quick_cut<Index>;
+
+
+template<class Index>
+static void pre_sort_graph(AdjacencyGraph<Index> *G) {
+    for (index_t u = 0; u < G->n; u++) {
+        if (G->adjacency[u].count > 0) {
+            pre_sort_function<Index>(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1, (Index) u, &G->adjacency[u].count);
+        }
+    }
+}
+
+template<class Index>
+static void pre_cut_graph(AdjacencyGraph<Index> *G) {
+    for (index_t u = 0; u < G->n; u++) {
+        if (G->adjacency[u].count > 0) {
+            pre_cut_function<Index>(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1, (Index) u, &G->adjacency[u].count);
+        }
+    }
+}
+
 BenchParams parse_arguments(arg_parser &parser) {
     BenchParams params;
     params.num_warmups = parser.getCmdOptionAsInt("-num_warmups").value_or(default_num_warmups);
@@ -66,6 +94,8 @@ BenchParams parse_arguments(arg_parser &parser) {
     params.file_name = parser.getCmdOption("-o").value_or("default.csv");
     std::optional<std::string_view> graph_file = parser.getCmdOption("-graph");
     std::optional<std::string_view> algos_opt = parser.getCmdOption("-algorithm");
+    params.pre_sort_edge_lists = !parser.cmdOptionExists("-no_pre_sort");
+    params.pre_cut_edge_lists = parser.cmdOptionExists("-pre_cut");
 
     // TODO: Maybe we want to benchmark time later as well?
     // std::string_view timing_method_string = parser.getCmdOption("-timing").value_or("cycles");
@@ -95,7 +125,13 @@ void run(const BenchParams &params, std::ofstream &out_file) {
     // Instrumented runs
     {
         auto *instrumented_graph_original = create_graph_from_file<InstrumentedIndex>(params.graph_file.c_str());
+        if(params.pre_cut_edge_lists) {
+            pre_cut_graph<InstrumentedIndex>(instrumented_graph_original);
+        } else if(params.pre_sort_edge_lists) {
+            pre_sort_graph<InstrumentedIndex>(instrumented_graph_original);
+        }
         auto instrumented_graph_copy = create_graph_copy(instrumented_graph_original);
+        
 
         auto test_translator = name_to_function<InstrumentedIndex, index_t , TriangleListing::Collect<InstrumentedIndex>>;
 
@@ -123,7 +159,10 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                     // Compare triangles with the result of the last algorithm (if available)
                     if (has_last_result) {
                         if (result.triangles != last_result) {
-                            throw std::runtime_error("different triangles");
+                            // Convert an int to a string
+                            std::stringstream ss;
+                            ss << "Different triangles! Count is: " << result.triangles.size() << " expected: " << last_result.size();
+                            throw std::runtime_error(ss.str());
                         }
                     } else {
                         last_result = std::move(result.triangles);
@@ -142,13 +181,21 @@ void run(const BenchParams &params, std::ofstream &out_file) {
     }
 
     // Declare as const to avoid misuse that change the graph
-    const auto *benchmark_graph_original = create_graph_from_file<index_t>(params.graph_file.c_str());
+    auto *benchmark_graph_original = create_graph_from_file<index_t>(params.graph_file.c_str());
+    if(params.pre_cut_edge_lists) {
+        pre_cut_graph<index_t>(benchmark_graph_original);
+    } else if(params.pre_sort_edge_lists) {
+        pre_sort_graph<index_t>(benchmark_graph_original);
+    }
 
     // Make copies of the benchmark graph
     std::vector<AdjacencyGraph<index_t>*> benchmark_graphs;
     benchmark_graphs.reserve(params.num_runs);
-    for (size_t i = 0; i < params.num_runs; i++) {
-        benchmark_graphs.emplace_back(create_graph_copy(benchmark_graph_original));
+    if(!params.pre_sort_edge_lists) {
+        // We dont need copies if we presort the edge lists.
+        for (size_t i = 0; i < params.num_runs; i++) {
+            benchmark_graphs.emplace_back(create_graph_copy(benchmark_graph_original));
+        }
     }
 
     AdjacencyGraph<index_t>* warmup_graph = nullptr;
@@ -180,12 +227,22 @@ void run(const BenchParams &params, std::ofstream &out_file) {
 
                 TriangleListing::Count<index_t> result;
                 // Start benchmark
-                size_t cycles = start_tsc();
-                for (size_t run = 0; run < params.num_runs; run++) {
-                    result = functions.count(benchmark_graphs[run], helper);
-                }
-                cycles = stop_tsc(cycles);
+                size_t cycles;
+                if(params.pre_sort_edge_lists) { 
+                    cycles = start_tsc();
+                    for (size_t run = 0; run < params.num_runs; run++) {
+                        result = functions.count(benchmark_graph_original, helper);
+                    }
+                    cycles = stop_tsc(cycles);
+                } else {
+                    cycles = start_tsc();
+                    for (size_t run = 0; run < params.num_runs; run++) {
+                        result = functions.count(benchmark_graphs[run], helper);
+                    }
+                    cycles = stop_tsc(cycles);
 
+                }
+                
                 if (result.count != triangle_count) {
                     throw std::runtime_error("count of triangles differs from the instrumented run");
                 }
@@ -195,8 +252,10 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                           << (double) op_counts[algo_name] / (double) cycle_per_run << " ops/cycle" << std::endl;
 
                 // Restore the graphs
-                for (size_t i = 0; i < params.num_runs; i++) {
-                    copy_graph(benchmark_graphs[i], benchmark_graph_original);
+                if(!params.pre_sort_edge_lists) {
+                    for (size_t i = 0; i < params.num_runs; i++) {
+                        copy_graph(benchmark_graphs[i], benchmark_graph_original);
+                    }
                 }
                 if (warmup_graph) {
                     copy_graph(warmup_graph, benchmark_graph_original);
@@ -213,26 +272,37 @@ void run(const BenchParams &params, std::ofstream &out_file) {
     if (warmup_graph) {
         free_graph(warmup_graph);
     }
-    for (size_t i = 0; i < params.num_warmups; i++) {
-        free_graph(benchmark_graphs[i]);
+    if(!params.pre_sort_edge_lists) {
+        for (size_t i = 0; i < params.num_warmups; i++) {
+            free_graph(benchmark_graphs[i]);
+        }
     }
 }
 
+#define RESET   "\033[0m"
+#define RED     "\033[31m"  
+
 int main(int argc, char *argv[]) {
-    arg_parser parser(argc, argv);
-    BenchParams params = parse_arguments(parser);
+    try {
+        arg_parser parser(argc, argv);
+        BenchParams params = parse_arguments(parser);
 
-    std::ofstream out_file;
-    out_file.open(std::string(params.file_name));
-    out_file << std::fixed;
-    out_file << "algorithm,ops";
-    for (size_t i = 0; i < params.num_phases; i++) {
-        out_file << ",cycles_" << i;
+        std::ofstream out_file;
+        out_file.open(std::string(params.file_name));
+        out_file << std::fixed;
+        out_file << "algorithm,ops";
+        for (size_t i = 0; i < params.num_phases; i++) {
+            out_file << ",cycles_" << i;
+        }
+        out_file << std::endl;
+
+        std::cout << std::fixed;
+        run(params, out_file);
+
+        out_file.close();
+    } catch (const std::exception &e) {
+        std::cerr << RED << "Error: " << e.what() << RESET << std::endl;
+        return 1;
     }
-    out_file << std::endl;
-
-    std::cout << std::fixed;
-    run(params, out_file);
-
-    out_file.close();
+    
 }
