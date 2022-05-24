@@ -35,13 +35,13 @@ struct Print {
 
 template<class Index, class Counter = index_t>
 struct Collect {
-    using Triangle = std::set<Index>;
+    using Triangle = std::set<index_t>;
     using TriangleSet = std::set<Triangle>;
 
     TriangleSet triangles;
 
     void list_triangle(Index a, Index b, Index c) {
-        triangles.insert({a, b, c});
+        triangles.insert({(index_t)a, (index_t)b, (index_t)c});
     }
 };
 
