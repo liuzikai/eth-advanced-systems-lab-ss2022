@@ -51,6 +51,7 @@ GraphType string_to_graphType(std::string s) {
 enum class Density {
     NONE,
     SPARSE,
+    EXIST,
     DENSE
 };
 
@@ -62,6 +63,8 @@ Density string_to_density(std::string s) {
         return Density::SPARSE;
     } else if (s == "DENSE") {
         return Density::DENSE;
+    } else if (s == "EXIST") {
+        return Density::EXIST;
     } else {
         throw std::invalid_argument("Invalid Density");
     }

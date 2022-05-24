@@ -123,7 +123,7 @@ if [ -z $PHASE ]; then PHASE="5"; fi
 # create experiment dir and save exp config
 COMMIT=$(git rev-parse --short HEAD)
 if [ $GRAPHTYPE = "GENERATED" ]; then
-    EXPDIR=$DATADIR/$ALGO"-"$COMMIT"-"$GRAPHTYPE"-"$LOWEDGE"-"$HIGHEDGE"-"$INTERVAL"-"$NODE
+    EXPDIR=$DATADIR/"edge-"$ALGO"-"$COMMIT"-"$GRAPHTYPE"-"$LOWEDGE"-"$HIGHEDGE"-"$INTERVAL"-"$NODE
     if [ ! -z $SEED ]; then
         EXPDIR=$EXPDIR"-"$SEED
     fi

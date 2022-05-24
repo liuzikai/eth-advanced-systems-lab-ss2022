@@ -71,6 +71,60 @@ void generate_random_graph(const GraphDefinition &graph_definition, std::ofstrea
 }
 
 
+// JZ: random graph generator that selects edges from a complete graph: can handle any density
+void generate_random_graph_edge_selector(const GraphDefinition &graph_definition, std::ofstream &outfile)
+{
+    // create complete graph (directed)
+    std::vector<std::pair<uint64_t, uint64_t>> edges;
+    for (uint64_t i = 0; i < graph_definition.nodes; i++) {
+        for (uint64_t j = i+1; j < graph_definition.nodes; j++) {
+            edges.emplace_back(i,j);
+        }
+    }
+    // shuffle edges
+    std::default_random_engine gen(graph_definition.random_seed);
+    std::shuffle(edges.begin(), edges.end(), gen);
+    // std::random_shuffle(edges.begin(), edges.end());
+
+    // create graph and output it
+    std::vector<std::vector<uint64_t>> adjacency_matrix(graph_definition.nodes, std::vector<uint64_t>(graph_definition.nodes, 0));
+    for (uint64_t i = 0; i < graph_definition.edges; i++) {
+        uint64_t src = edges[i].first;
+        uint64_t dst = edges[i].second;
+        adjacency_matrix[src][dst] = 1;
+        adjacency_matrix[src][src] += 1;
+        adjacency_matrix[dst][src] = 1;
+        adjacency_matrix[dst][dst] += 1;
+    }
+
+    outfile << graph_definition.nodes << std::endl;
+    for (uint64_t i = 0; i < graph_definition.nodes; i++)
+    {
+        outfile << adjacency_matrix[i][i] << " ";
+        //get all indecies of non-zero elements in row i of adjacency_matrix
+        std::vector<uint64_t> non_zero_indecies;
+        adjacency_matrix[i][i] = 0;
+        for (uint64_t j = 0; j < graph_definition.nodes; j++)
+        {
+            if (adjacency_matrix[i][j]) {
+                non_zero_indecies.push_back(j);
+            }
+        }
+
+        //shuffle non_zero_indecies if shuffle_edges is true
+        if (graph_definition.shuffle_edges) {
+            std::shuffle(non_zero_indecies.begin(), non_zero_indecies.end(), gen);
+        }
+
+        for (uint64_t j = 0; j < non_zero_indecies.size(); j++)
+        {
+            outfile << non_zero_indecies[j] << " ";
+        }
+        outfile << std::endl;
+    }
+}
+
+
 uint64_t num_nodes_snap_stanford_ds(std::ifstream &infile) {
     std::string line;
     while (line.find("Nodes") == std::string::npos)
@@ -92,7 +146,7 @@ void generate_graph_from_snap_stanford_ds(const GraphDefinition &graph_definitio
 
     //skip a line to get to the Data Section
     std::getline(infile, line);
-    
+
     uint64_t edges = parse_edge_list(infile, adjacency_list, true);
     std::cout << "Nodes: " << nodes << " Edges: " << edges << std::endl;
 
@@ -176,6 +230,9 @@ void generate_graph(const GraphDefinition &graph_definition)
         case Density::SPARSE:
             break;
         case Density::DENSE:
+            break;
+        case Density::EXIST:
+            generate_random_graph_edge_selector(graph_definition, outfile);
             break;
         case Density::NONE:
             generate_random_graph(graph_definition, outfile);
