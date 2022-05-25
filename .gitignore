@@ -10,3 +10,4 @@ input/**
 !input/sample*.txt
 graphs/graph_data/*.txt
 generated/
+runexp/env.sh

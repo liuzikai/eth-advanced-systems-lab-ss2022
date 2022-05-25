@@ -1,5 +1,12 @@
 #!/bin/bash
 
+#--------------------------------------------#
+#| constant density = n%                    |
+#| node count variable= V                   |
+#| avg degree D = V * n / 100               |
+#| edge count = V * D / 2 = V^2 * n / 200   |
+#--------------------------------------------#
+
 source env.sh
 
 # directories
@@ -28,7 +35,7 @@ Usage:
     -b ... end edge count, default 5000
     -i ... interval (step), default 50
         for edge_count in range(l,r,i)
-    -n ... n such that edge_count = node * n, default 10
+    -n ... n such that avg directed degree = node * (n/100), adj list len after cut
     -s ... seed for random graph, optional
     -w ... num warmups, default 5
     -r ... num runs, default 10
@@ -74,10 +81,10 @@ do
     case $opt in
         h) help; exit 1;;
         g) GRAPHTYPE=$OPTARG;;
-        a) LOWEDGE=$OPTARG;;
-        b) HIGHEDGE=$OPTARG;;
+        a) LOWNODE=$OPTARG;;
+        b) HIGHNODE=$OPTARG;;
         i) INTERVAL=$OPTARG;;
-        n) NODE=$OPTARG;;
+        n) DEGREE=$OPTARG;;
         s) SEED=$OPTARG;;
         w) WARMUP=$OPTARG;;
         r) RUN=$OPTARG;;
@@ -96,10 +103,10 @@ echo $ALGO
 # read opt graph type
 if [ -z $GRAPHTYPE ]; then
     GRAPHTYPE="GENERATED"
-    if [ -z $LOWEDGE ]; then LOWEDGE="1000"; fi
-    if [ -z $HIGHEDGE ]; then HIGHEDGE="5000"; fi
+    if [ -z $LOWNODE ]; then LOWNODE="1000"; fi
+    if [ -z $HIGHNODE ]; then HIGHNODE="5000"; fi
     if [ -z $INTERVAL ]; then INTERVAL="500"; fi
-    if [ -z $NODE ]; then NODE="10"; fi
+    if [ -z $DEGREE ]; then DEGREE="10"; fi
 fi
 case $GRAPHTYPE in
     german) GRAPHTYPE="GERMAN_ROAD_NETWORK";;
@@ -123,7 +130,7 @@ if [ -z $PHASE ]; then PHASE="5"; fi
 # create experiment dir and save exp config
 COMMIT=$(git rev-parse --short HEAD)
 if [ $GRAPHTYPE = "GENERATED" ]; then
-    EXPDIR=$DATADIR/"node-"$ALGO"-"$COMMIT"-"$GRAPHTYPE"-"$LOWEDGE"-"$HIGHEDGE"-"$INTERVAL"-"$NODE
+    EXPDIR=$DATADIR/"density-"$ALGO"-"$COMMIT"-"$GRAPHTYPE"-"$LOWNODE"-"$HIGHNODE"-"$INTERVAL"-"$DEGREE
     if [ ! -z $SEED ]; then
         EXPDIR=$EXPDIR"-"$SEED
     fi
@@ -144,10 +151,10 @@ if [ ! -d $EXP ]; then
             "num_runs":'$RUN',
             "num_phases":'$PHASE','
     if [ $GRAPHTYPE = "GENERATED" ]; then
-        JSON_STR=$JSON_STR'"low_edge":'$LOWEDGE',
-                            "high_edge":'$HIGHEDGE',
+        JSON_STR=$JSON_STR'"low_node":'$LOWNODE',
+                            "high_node":'$HIGHNODE',
                             "interval":'$INTERVAL',
-                            "node":'$NODE','
+                            "degree":'$DEGREE','
         if [ ! -z $SEED ]; then
             JSON_STR=$JSON_STR'"seed":'$SEED','
         fi
@@ -187,21 +194,26 @@ make -j$(nproc)
 
 echo ">>> running..."
 if [ $GRAPHTYPE = "GENERATED" ]; then
-    for (( i=$(($LOWEDGE)); i<$(($HIGHEDGE)); i+=$(($INTERVAL)) ))
+    for (( i=$(($LOWNODE)); i<$(($HIGHNODE)); i+=$(($INTERVAL)) ))
     do
+        AVG_D=$(($i * $DEGREE / 100))
+        if [ $AVG_D = $i ]; then
+            AVG_D=$(($AVG_D - 1))
+        fi
+        EDGE=$(($i * $AVG_D / 2))
         if [ -z $SEED ]; then
-            graph="generated_"$i"_"$(($i*$NODE))
+            graph="generated_"$i"_"$EDGE
         else
-            graph="generated_"$SEED"_"$i"_"$(($i*$NODE))
+            graph="generated_"$SEED"_"$i"_"$EDGE
         fi
         echo "+ $graph"
         if [ -z $SEED ]; then
             # always generate random graph without seed
-            ./graph_generation -gt $GRAPHTYPE -num_nodes $i -num_edges $(($i*$NODE)) -shuffle_edges -o $INPUTDIR/$graph.txt
+            ./graph_generation -gt $GRAPHTYPE -num_nodes $i -num_edges $EDGE -shuffle_edges -density EXIST -o $INPUTDIR/$graph.txt
         else
             # generate graph if doesn't exist
             if [ ! -f $INPUTDIR/$graph.txt ]; then
-                ./graph_generation -gt $GRAPHTYPE -num_nodes $i -num_edges $(($i*$NODE)) -seed $SEED -shuffle_edges -o $INPUTDIR/$graph.txt
+                ./graph_generation -gt $GRAPHTYPE -num_nodes $i -num_edges $EDGE -seed $SEED -shuffle_edges -density EXIST -o $INPUTDIR/$graph.txt
             fi
         fi
         ./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPNUM/$graph.csv -algorithm $ALGO -graph $INPUTDIR/$graph.txt
@@ -210,9 +222,9 @@ if [ $GRAPHTYPE = "GENERATED" ]; then
     cd $RUNEXP
     echo "Your are in $RUNEXP"
     if [ -z $SEED ]; then
-        python3 plot_node.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL
+        python3 plot_density.py -d $EXPNUM -p $EXPNUM -n $DEGREE -l $LOWNODE -r $HIGHNODE -i $INTERVAL
     else
-        python3 plot_node.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL -s $SEED
+        python3 plot_density.py -d $EXPNUM -p $EXPNUM -n $DEGREE -l $LOWNODE -r $HIGHNODE -i $INTERVAL -s $SEED
     fi
 else
     graph=$GRAPHTYPE
