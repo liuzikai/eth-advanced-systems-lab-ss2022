@@ -33,7 +33,7 @@ include_directories(generated)
 add_compile_definitions(INPUT_DIR="${PROJECT_SOURCE_DIR}/input/")
 
 ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_SOURCE_DIR}/generated/instrumented_immintrin.h
-                    COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/generated && python3 ${CMAKE_SOURCE_DIR}/code_generator/code_generator.py ${CMAKE_SOURCE_DIR}/generated/instrumented_immintrin.h
+                    COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/generated && python ${CMAKE_SOURCE_DIR}/code_generator/code_generator.py ${CMAKE_SOURCE_DIR}/generated/instrumented_immintrin.h
                     DEPENDS code_generator/instrumented_intrinsics.json code_generator/code_generator.py
                     COMMENT "Generating instrumented_intrinsics." )
 
@@ -63,6 +63,7 @@ set(TRIANGLE_SOURCES
         src/edge_iterator/edge_iterator_all_versions_instrumented.cpp
         src/edge_iterator/edge_iterator_v1.cpp
         src/edge_iterator/edge_iterator_v2.cpp
+        src/edge_iterator/edge_iterator_v3.cpp
         src/edge_iterator/edge_iterator_u4.cpp
         src/edge_iterator/edge_iterator_va.cpp
 
