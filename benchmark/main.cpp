@@ -44,6 +44,7 @@ static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_fun
     {"forward0",        TriangleFunctions(f0::forward<Index, Counter, TLR>, f0::forward_create_neighbor_container<Index, Counter>, f0::forward_delete_neighbor_container<Index, Counter>)},
     {"forward1",        TriangleFunctions(f1::forward<Index, Counter, TLR>, f1::forward_create_neighbor_container<Index, Counter>, f1::forward_delete_neighbor_container<Index, Counter>)},
     {"forward2",        TriangleFunctions(f2::forward<Index, Counter, TLR>, f2::forward_create_neighbor_container<Index, Counter>, f2::forward_delete_neighbor_container<Index, Counter>)},
+    {"forward3",        TriangleFunctions(f3::forward<Index, Counter, TLR>, f3::forward_create_neighbor_container<Index, Counter>, f3::forward_delete_neighbor_container<Index, Counter>)},
     {"forward_hashed", TriangleFunctions(fh0::forward_hashed<Index, Counter, TLR>, fh0::forward_hashed_create_neighbor_container<Index, Counter>, fh0::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh1", TriangleFunctions(fh1::forward_hashed<Index, Counter, TLR>, fh1::forward_hashed_create_neighbor_container<Index, Counter>, fh1::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh2", TriangleFunctions(fh2::forward_hashed<Index, Counter, TLR>, fh2::forward_hashed_create_neighbor_container<Index, Counter>, fh2::forward_hashed_delete_neighbor_container<Index, Counter>)},
