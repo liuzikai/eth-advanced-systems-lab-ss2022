@@ -26,4 +26,8 @@ namespace eu4 {
     TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr);
 }
 
+namespace eia {
+    template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
+    TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr);
+}
 #endif //_EDGE_ITER_ALL_H

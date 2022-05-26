@@ -58,18 +58,20 @@ set(BENCH_SOURCES
 
 set(TRIANGLE_SOURCES
         src/instrumented_index.cpp
-        
+
         src/edge_iterator/edge_iterator_base.cpp
         src/edge_iterator/edge_iterator_all_versions_instrumented.cpp
         src/edge_iterator/edge_iterator_v1.cpp
         src/edge_iterator/edge_iterator_v2.cpp
         src/edge_iterator/edge_iterator_u4.cpp
+        src/edge_iterator/edge_iterator_va.cpp
 
         src/forward/forward_base.cpp
         src/forward/forward_v1.cpp
         src/forward/forward_v2.cpp
         src/forward/forward_v3.cpp
         src/forward/forward_v4.cpp
+        src/forward/forward_va.cpp
         src/forward/forward_base_instrumented.cpp
 
         src/forward_hashed/forward_hashed_base.cpp
@@ -78,13 +80,14 @@ set(TRIANGLE_SOURCES
         src/forward_hashed/forward_hashed_v2.cpp
         src/forward_hashed/forward_hashed_v3.cpp
         src/forward_hashed/forward_hashed_v4.cpp
+        src/forward_hashed/forward_hashed_va.cpp
 
         src/merge_sort/merge_sort_all_versions_instrumented.cpp
         src/merge_sort/merge_sort_base.cpp
         src/merge_sort/merge_sort_v2.cpp
         src/merge_sort/merge_sort_v3.cpp
         src/merge_sort/merge_sort_v4.cpp
-        
+
         generated/instrumented_immintrin.h
         )
 

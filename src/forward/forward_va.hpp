@@ -1,5 +1,5 @@
-#ifndef TEAM02_FORWARD_H
-#define TEAM02_FORWARD_H
+#ifndef TEAM02_FORWARD_VA_H
+#define TEAM02_FORWARD_VA_H
 
 #include "common.h"
 #include "adjacency_graph.h"
@@ -7,7 +7,7 @@
 #include "triangle_lister.h"
 #include "quick_sort.h"
 
-namespace f0 {
+namespace fa {
 
 /// Accessory container (array A in the paper)
 template<class Index, class Counter = index_t>
@@ -28,14 +28,7 @@ ForwardNeighborContainer<Index> *forward_create_neighbor_container(const Adjacen
     auto *A = new ForwardNeighborContainer<Index>;
     A->adjacency = new ForwardNeighbourList<Index>[G->n];
     for (Counter u = 0; u < G->n; u++) {
-        index_t container_size;
-        if(G->adjacency[u].orig_count == G->adjacency[u].count) {
-            // No cutting happened.
-            container_size = G->adjacency[u].orig_count;
-        } else {
-            container_size = G->adjacency[u].orig_count - G->adjacency[u].count;
-        }
-        A->adjacency[u].neighbors = new Index[container_size];
+        A->adjacency[u].neighbors = new Index[G->adjacency[u].orig_count - G->adjacency[u].count];
     }
     return A;
 }
@@ -72,7 +65,7 @@ TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
     // According to sec. 4, the sorting is included in the execution time
     // for (Counter u = 0; u < G->n; u++) {
     //     if (G->adjacency[u].count > 0) {
-    //         //quick_sort(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1);
+    //         quick_sort(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1);
     //     }
     // }
 
@@ -82,24 +75,22 @@ TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
         for (Counter ti = 0; ti < G->adjacency[(index_t) s].count; ti++) {
             Index t = G->adjacency[(index_t) s].neighbors[ti];
 
-            if (s < t) {
-                Counter i = 0, j = 0;
-                ForwardNeighbourList<Index> *As = &A->adjacency[(index_t) s];
-                ForwardNeighbourList<Index> *At = &A->adjacency[(index_t) t];
-                while (i < As->count && j < At->count) {
-                    if (As->neighbors[i] == At->neighbors[j]) {
-                        lister.list_triangle(s, t, As->neighbors[i]);
-                        i++;
-                        j++;
-                    } else if (As->neighbors[i] < At->neighbors[j]) {
-                        i++;
-                    } else {
-                        j++;
-                    }
+            Counter i = 0, j = 0;
+            ForwardNeighbourList<Index> *As = &A->adjacency[(index_t) s];
+            ForwardNeighbourList<Index> *At = &A->adjacency[(index_t) t];
+            while (i < As->count && j < At->count) {
+                if (As->neighbors[i] == At->neighbors[j]) {
+                    lister.list_triangle(s, t, As->neighbors[i]);
+                    i++;
+                    j++;
+                } else if (As->neighbors[i] < At->neighbors[j]) {
+                    i++;
+                } else {
+                    j++;
                 }
-
-                At->neighbors[At->count++] = s;
             }
+
+            At->neighbors[At->count++] = s;
         }
     }
 
@@ -108,4 +99,4 @@ TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
 
 }
 
-#endif //TEAM02_FORWARD_H
+#endif //TEAM02_FORWARD_VA_H
