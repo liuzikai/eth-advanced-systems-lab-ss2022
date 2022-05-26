@@ -164,6 +164,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                             // Convert an int to a string
                             std::stringstream ss;
                             ss << "Different triangles! Count is: " << result.triangles.size() << " expected: " << last_result.size();
+                            std::cout << ss.str() << std::endl;
                             //throw std::runtime_error(ss.str());
                         }
                     } else {
