@@ -52,4 +52,34 @@ namespace fh2 {
     TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedHelper<Index> *A);
 }
 
+namespace fh3 {
+
+    template<class Index, class Counter = index_t>
+    struct ForwardHashedHelper;
+
+    template<class Index, class Counter = index_t>
+    ForwardHashedHelper<Index> *forward_hashed_create_neighbor_container(const AdjacencyGraph<Index> *G);
+
+    template<class Index, class Counter = index_t>
+    void forward_hashed_delete_neighbor_container(ForwardHashedHelper<Index> *A);
+
+    template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
+    TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedHelper<Index> *A);
+}
+
+namespace fh4 {
+
+    template<class Index, class Counter = index_t>
+    struct ForwardHashedHelper;
+
+    template<class Index, class Counter = index_t>
+    ForwardHashedHelper<Index> *forward_hashed_create_neighbor_container(const AdjacencyGraph<Index> *G);
+
+    template<class Index, class Counter = index_t>
+    void forward_hashed_delete_neighbor_container(ForwardHashedHelper<Index> *A);
+
+    template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
+    TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedHelper<Index> *A);
+}
+
 #endif //_FORWARD_ALL_H

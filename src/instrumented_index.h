@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-class InstrumentedIndex {
+struct InstrumentedIndex {
 public:
     InstrumentedIndex();
 

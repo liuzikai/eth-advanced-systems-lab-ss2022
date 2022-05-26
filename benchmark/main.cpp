@@ -48,6 +48,8 @@ static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_fun
     {"forward_hashed", TriangleFunctions(fh0::forward_hashed<Index, Counter, TLR>, fh0::forward_hashed_create_neighbor_container<Index, Counter>, fh0::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh1", TriangleFunctions(fh1::forward_hashed<Index, Counter, TLR>, fh1::forward_hashed_create_neighbor_container<Index, Counter>, fh1::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh2", TriangleFunctions(fh2::forward_hashed<Index, Counter, TLR>, fh2::forward_hashed_create_neighbor_container<Index, Counter>, fh2::forward_hashed_delete_neighbor_container<Index, Counter>)},
+    {"fh3", TriangleFunctions(fh3::forward_hashed<Index, Counter, TLR>, fh3::forward_hashed_create_neighbor_container<Index, Counter>, fh3::forward_hashed_delete_neighbor_container<Index, Counter>)},
+    {"fh4", TriangleFunctions(fh4::forward_hashed<Index, Counter, TLR>, fh4::forward_hashed_create_neighbor_container<Index, Counter>, fh4::forward_hashed_delete_neighbor_container<Index, Counter>)},
     // Sorting
     {"quick_sort",  TriangleFunctions(quick_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
     {"merge_sort_base",  TriangleFunctions(ms0::merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
