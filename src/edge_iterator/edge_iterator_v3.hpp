@@ -39,7 +39,7 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
             t = s_adj->neighbors[ti];
             t_adj = &G->adjacency[(index_t) t];
 
-            if (s < t) {
+            if (s < t && t_adj->count > 0) {
                 if(t_adj->count < s_adj->count) {
                     swap = t_adj;
                     t_adj = s_adj;
