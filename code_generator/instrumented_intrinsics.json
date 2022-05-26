@@ -97,12 +97,6 @@
             "is_void" : true
         },
         {
-            "fname": "_mm256_set1_epi64x",
-            "num_args" : 3,
-            "num_ops" : 0,
-            "is_void" : false
-        },
-        {
             "fname": "_mm256_cmpgt_epi64",
             "num_args" : 2,
             "num_ops" : 4,
@@ -131,9 +125,90 @@
             "num_args" : 2,
             "num_ops" : 4,
             "is_void" : false
+        },
+        {
+            "fname": "_mm256_set1_epi32",
+            "num_args" : 1,
+            "num_ops" : 0,
+            "is_void" : false
+        },
+        {
+            "fname": "_mm256_cmpgt_epi32",
+            "num_args" : 2,
+            "num_ops" : 8,
+            "is_void" : false
+        },
+        {
+            "fname": "_mm256_cmpeq_epi32",
+            "num_args" : 2,
+            "num_ops" : 8,
+            "is_void" : false
+        },
+        {
+            "fname": "_mm256_add_epi32",
+            "num_args" : 2,
+            "num_ops" : 8,
+            "is_void" : false
+        },
+        {
+            "fname": "_mm256_i32gather_epi32",
+            "num_args" : 3,
+            "num_ops" : 0,
+            "is_void" : false
+            
+        },
+        {
+            "fname": "_mm_add_epi32",
+            "num_args" : 2,
+            "num_ops" : 2,
+            "is_void" : false
+            
+        },
+        {
+            "fname": "_mm_or_si128",
+            "num_args" : 2,
+            "num_ops" : 2,
+            "is_void" : false
+            
+        },
+        {
+            "fname": "_mm256_castsi256_si128",
+            "num_args" : 1,
+            "num_ops" : 0,
+            "is_void" : false
+            
+        },
+        {
+            "fname": "_mm256_extracti128_si256",
+            "num_args" : 2,
+            "num_ops" : 0,
+            "is_void" : false
+            
+        },
+        {
+            "fname": "_mm_unpackhi_epi64",
+            "num_args" : 2,
+            "num_ops" : 0,
+            "is_void" : false
+            
+        },
+        {
+            "fname": "_mm_shuffle_epi32",
+            "num_args" : 2,
+            "num_ops" : 0,
+            "is_void" : false
+            
+        },
+        {
+            "fname": "_mm_cvtsi128_si32",
+            "num_args" : 1,
+            "num_ops" : 0,
+            "is_void" : false
+            
         }
     ],
     "type_defs" : [
-        "__m256i"
+        "__m256i",
+        "__m128i"
     ]
 }
