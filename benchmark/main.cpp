@@ -42,16 +42,19 @@ static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_fun
     {"ei_v1",  TriangleFunctions(ei1::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
     {"ei_v2",  TriangleFunctions(ei2::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
     {"ei_u4",  TriangleFunctions(eu4::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
-    {"forward0",        TriangleFunctions(f0::forward<Index, Counter, TLR>, f0::forward_create_neighbor_container<Index, Counter>, f0::forward_delete_neighbor_container<Index, Counter>)},
-    {"forward1",        TriangleFunctions(f1::forward<Index, Counter, TLR>, f1::forward_create_neighbor_container<Index, Counter>, f1::forward_delete_neighbor_container<Index, Counter>)},
-    {"forward2",        TriangleFunctions(f2::forward<Index, Counter, TLR>, f2::forward_create_neighbor_container<Index, Counter>, f2::forward_delete_neighbor_container<Index, Counter>)},
-    {"forward3",        TriangleFunctions(f3::forward<Index, Counter, TLR>, f3::forward_create_neighbor_container<Index, Counter>, f3::forward_delete_neighbor_container<Index, Counter>)},
-    {"forward4",        TriangleFunctions(f4::forward<Index, Counter, TLR>, f4::forward_create_neighbor_container<Index, Counter>, f4::forward_delete_neighbor_container<Index, Counter>)},
-    {"forward_hashed", TriangleFunctions(fh0::forward_hashed<Index, Counter, TLR>, fh0::forward_hashed_create_neighbor_container<Index, Counter>, fh0::forward_hashed_delete_neighbor_container<Index, Counter>)},
-    {"fh1", TriangleFunctions(fh1::forward_hashed<Index, Counter, TLR>, fh1::forward_hashed_create_neighbor_container<Index, Counter>, fh1::forward_hashed_delete_neighbor_container<Index, Counter>)},
-    {"fh2", TriangleFunctions(fh2::forward_hashed<Index, Counter, TLR>, fh2::forward_hashed_create_neighbor_container<Index, Counter>, fh2::forward_hashed_delete_neighbor_container<Index, Counter>)},
-    {"fh3", TriangleFunctions(fh3::forward_hashed<Index, Counter, TLR>, fh3::forward_hashed_create_neighbor_container<Index, Counter>, fh3::forward_hashed_delete_neighbor_container<Index, Counter>)},
-    {"fh4", TriangleFunctions(fh4::forward_hashed<Index, Counter, TLR>, fh4::forward_hashed_create_neighbor_container<Index, Counter>, fh4::forward_hashed_delete_neighbor_container<Index, Counter>)},
+    {"ei_va",  TriangleFunctions(eia::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"f_base",        TriangleFunctions(f0::forward<Index, Counter, TLR>, f0::forward_create_neighbor_container<Index, Counter>, f0::forward_delete_neighbor_container<Index, Counter>)},
+    {"f_v1",        TriangleFunctions(f1::forward<Index, Counter, TLR>, f1::forward_create_neighbor_container<Index, Counter>, f1::forward_delete_neighbor_container<Index, Counter>)},
+    {"f_v2",        TriangleFunctions(f2::forward<Index, Counter, TLR>, f2::forward_create_neighbor_container<Index, Counter>, f2::forward_delete_neighbor_container<Index, Counter>)},
+    {"f_v3",        TriangleFunctions(f3::forward<Index, Counter, TLR>, f3::forward_create_neighbor_container<Index, Counter>, f3::forward_delete_neighbor_container<Index, Counter>)},
+    {"f_v4",        TriangleFunctions(f4::forward<Index, Counter, TLR>, f4::forward_create_neighbor_container<Index, Counter>, f4::forward_delete_neighbor_container<Index, Counter>)},
+    {"f_va",        TriangleFunctions(fa::forward<Index, Counter, TLR>, fa::forward_create_neighbor_container<Index, Counter>, fa::forward_delete_neighbor_container<Index, Counter>)},
+    {"fh_base", TriangleFunctions(fh0::forward_hashed<Index, Counter, TLR>, fh0::forward_hashed_create_neighbor_container<Index, Counter>, fh0::forward_hashed_delete_neighbor_container<Index, Counter>)},
+    {"fh_v1", TriangleFunctions(fh1::forward_hashed<Index, Counter, TLR>, fh1::forward_hashed_create_neighbor_container<Index, Counter>, fh1::forward_hashed_delete_neighbor_container<Index, Counter>)},
+    {"fh_v2", TriangleFunctions(fh2::forward_hashed<Index, Counter, TLR>, fh2::forward_hashed_create_neighbor_container<Index, Counter>, fh2::forward_hashed_delete_neighbor_container<Index, Counter>)},
+    {"fh_v3", TriangleFunctions(fh3::forward_hashed<Index, Counter, TLR>, fh3::forward_hashed_create_neighbor_container<Index, Counter>, fh3::forward_hashed_delete_neighbor_container<Index, Counter>)},
+    {"fh_v4", TriangleFunctions(fh4::forward_hashed<Index, Counter, TLR>, fh4::forward_hashed_create_neighbor_container<Index, Counter>, fh4::forward_hashed_delete_neighbor_container<Index, Counter>)},
+    {"fh_va", TriangleFunctions(fha::forward_hashed<Index, Counter, TLR>, fha::forward_hashed_create_neighbor_container<Index, Counter>, fha::forward_hashed_delete_neighbor_container<Index, Counter>)},
     // Sorting
     {"quick_sort",  TriangleFunctions(quick_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
     {"merge_sort_base",  TriangleFunctions(ms0::merge_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
@@ -64,26 +67,43 @@ static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_fun
 template<class Counter, class TLR>
 static std::map<std::string, TriangleFunctions<index_t, Counter, TLR>> name_to_function_no_instrumentation = {
     {"WojciechMula",  TriangleFunctions(WojciechMula_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
-    
+
 };
 
-// This is used to presort the edges and remove the unused ones.
+//***** sort, cut *****
+// sort+cut This is used to presort the edges and remove the unused ones.
 template<class Index>
-static auto pre_sort_function = quick_cut_sort<Index>;
+static auto pre_sort_cut_function = quick_cut_sort<Index>;
 
+// sort only
+template<class Index>
+static auto pre_sort_function = quick_sort<Index>;
+
+// cut only
 template<class Index>
 static auto pre_cut_function = quick_cut<Index>;
 
-
+// sort + cut
 template<class Index>
-static void pre_sort_graph(AdjacencyGraph<Index> *G) {
+static void pre_sort_cut_graph(AdjacencyGraph<Index> *G) {
     for (index_t u = 0; u < G->n; u++) {
         if (G->adjacency[u].count > 0) {
-            pre_sort_function<Index>(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1, (Index) u, &G->adjacency[u].count);
+            pre_sort_cut_function<Index>(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1, (Index) u, &G->adjacency[u].count);
         }
     }
 }
 
+// sort only
+template<class Index>
+static void pre_sort_graph(AdjacencyGraph<Index> *G) {
+    for (index_t u = 0; u < G->n; u++) {
+        if (G->adjacency[u].count > 0) {
+            pre_sort_function<Index>(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1);
+        }
+    }
+}
+
+// cut only
 template<class Index>
 static void pre_cut_graph(AdjacencyGraph<Index> *G) {
     for (index_t u = 0; u < G->n; u++) {
@@ -92,6 +112,7 @@ static void pre_cut_graph(AdjacencyGraph<Index> *G) {
         }
     }
 }
+//***** sort, cut *****
 
 BenchParams parse_arguments(arg_parser &parser) {
     BenchParams params;
@@ -102,7 +123,7 @@ BenchParams parse_arguments(arg_parser &parser) {
     std::optional<std::string_view> graph_file = parser.getCmdOption("-graph");
     std::optional<std::string_view> algos_opt = parser.getCmdOption("-algorithm");
     params.pre_sort_edge_lists = !parser.cmdOptionExists("-no_pre_sort");
-    params.pre_cut_edge_lists = parser.cmdOptionExists("-pre_cut");
+    params.pre_cut_edge_lists = !parser.cmdOptionExists("-no_pre_cut");
 
     // TODO: Maybe we want to benchmark time later as well?
     // std::string_view timing_method_string = parser.getCmdOption("-timing").value_or("cycles");
@@ -134,19 +155,21 @@ void run(const BenchParams &params, std::ofstream &out_file) {
     // Instrumented runs
     {
         auto *instrumented_graph_original = create_graph_from_file<InstrumentedIndex>(params.graph_file.c_str());
-        if(params.pre_cut_edge_lists) {
+        if (params.pre_sort_edge_lists && params.pre_cut_edge_lists) {
+            pre_sort_cut_graph<InstrumentedIndex>(instrumented_graph_original);
+        } else if (params.pre_cut_edge_lists) {
             pre_cut_graph<InstrumentedIndex>(instrumented_graph_original);
-        } else if(params.pre_sort_edge_lists) {
+        } else if (params.pre_sort_edge_lists) {
             pre_sort_graph<InstrumentedIndex>(instrumented_graph_original);
         }
+
         auto instrumented_graph_copy = create_graph_copy(instrumented_graph_original);
-        
+
 
         auto test_translator = name_to_function<InstrumentedIndex, index_t , TriangleListing::Collect<InstrumentedIndex>>;
 
         TriangleListing::Collect<InstrumentedIndex>::TriangleSet last_result;
         bool has_last_result = false;
-
         for (const auto &algo_name: params.algos) {
 
             uintptr_t op_count;
@@ -164,14 +187,13 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                     OpCounter::ResetOpCount();
                     auto result = functions.count(instrumented_graph_copy, helper);
                     op_count = OpCounter::GetOpCount();
-
                     // Compare triangles with the result of the last algorithm (if available)
                     if (has_last_result) {
                         if (result.triangles != last_result) {
                             // Convert an int to a string
                             std::stringstream ss;
                             ss << "Different triangles! Count is: " << result.triangles.size() << " expected: " << last_result.size();
-                            std::cout << ss.str() << std::endl;
+                            std::cerr << ss.str() << std::endl;
                             //throw std::runtime_error(ss.str());
                         }
                     } else {
@@ -179,6 +201,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                         has_last_result = true;
                         triangle_count = last_result.size();
                     }
+
                     copy_graph(instrumented_graph_copy, instrumented_graph_original);
                     functions.free_helper(helper);
                 }
@@ -192,9 +215,11 @@ void run(const BenchParams &params, std::ofstream &out_file) {
 
     // Declare as const to avoid misuse that change the graph
     auto *benchmark_graph_original = create_graph_from_file<index_t>(params.graph_file.c_str());
-    if(params.pre_cut_edge_lists) {
+    if (params.pre_sort_edge_lists && params.pre_cut_edge_lists) {
+        pre_sort_cut_graph<index_t>(benchmark_graph_original);
+    } else if (params.pre_cut_edge_lists) {
         pre_cut_graph<index_t>(benchmark_graph_original);
-    } else if(params.pre_sort_edge_lists) {
+    } else if (params.pre_sort_edge_lists) {
         pre_sort_graph<index_t>(benchmark_graph_original);
     }
 
@@ -217,6 +242,8 @@ void run(const BenchParams &params, std::ofstream &out_file) {
     auto translator_no_instrumentation = name_to_function_no_instrumentation<index_t, TriangleListing::Count<index_t>>;
     benchmark_translator.insert(translator_no_instrumentation.begin(), translator_no_instrumentation.end());
 
+
+
     for (const auto &algo_name: params.algos) {
 
         out_file << algo_name << "," << op_counts[algo_name];
@@ -238,7 +265,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                 TriangleListing::Count<index_t> result;
                 // Start benchmark
                 size_t cycles;
-                if(params.pre_sort_edge_lists) { 
+                if(params.pre_sort_edge_lists) {
                     cycles = start_tsc();
                     for (size_t run = 0; run < params.num_runs; run++) {
                         result = functions.count(benchmark_graph_original, helper);
@@ -253,7 +280,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                     cycles = stop_tsc(cycles);
 
                 }
-                
+
                 if (result.count != triangle_count) {
                     std::stringstream ss;
                     ss << "Count of triangles differs from the instrumented run! Count is: " << result.count << " expected: " << triangle_count;
@@ -274,7 +301,6 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                     copy_graph(warmup_graph, benchmark_graph_original);
                 }
             }
-
             functions.free_helper(helper);
         }
         out_file << "\n";
@@ -293,7 +319,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
 }
 
 #define RESET   "\033[0m"
-#define RED     "\033[31m"  
+#define RED     "\033[31m"
 
 int main(int argc, char *argv[]) {
     try {
@@ -317,5 +343,5 @@ int main(int argc, char *argv[]) {
         std::cerr << RED << "Error: " << e.what() << RESET << std::endl;
         return 1;
     }
-    
+
 }
