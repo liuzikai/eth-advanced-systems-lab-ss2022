@@ -4,7 +4,7 @@ import os
 
 
 if len(sys.argv) != 2:
-    print("Usage: python3 code_generator.py <json_file>")
+    print("Usage: python code_generator.py <json_file>")
     sys.exit(1)
 
 # read in json file
