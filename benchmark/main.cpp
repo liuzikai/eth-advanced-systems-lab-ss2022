@@ -45,6 +45,7 @@ static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_fun
     {"forward1",        TriangleFunctions(f1::forward<Index, Counter, TLR>, f1::forward_create_neighbor_container<Index, Counter>, f1::forward_delete_neighbor_container<Index, Counter>)},
     {"forward2",        TriangleFunctions(f2::forward<Index, Counter, TLR>, f2::forward_create_neighbor_container<Index, Counter>, f2::forward_delete_neighbor_container<Index, Counter>)},
     {"forward3",        TriangleFunctions(f3::forward<Index, Counter, TLR>, f3::forward_create_neighbor_container<Index, Counter>, f3::forward_delete_neighbor_container<Index, Counter>)},
+    {"forward4",        TriangleFunctions(f4::forward<Index, Counter, TLR>, f4::forward_create_neighbor_container<Index, Counter>, f4::forward_delete_neighbor_container<Index, Counter>)},
     {"forward_hashed", TriangleFunctions(fh0::forward_hashed<Index, Counter, TLR>, fh0::forward_hashed_create_neighbor_container<Index, Counter>, fh0::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh1", TriangleFunctions(fh1::forward_hashed<Index, Counter, TLR>, fh1::forward_hashed_create_neighbor_container<Index, Counter>, fh1::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh2", TriangleFunctions(fh2::forward_hashed<Index, Counter, TLR>, fh2::forward_hashed_create_neighbor_container<Index, Counter>, fh2::forward_hashed_delete_neighbor_container<Index, Counter>)},
@@ -238,6 +239,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                         result = functions.count(benchmark_graph_original, helper);
                     }
                     cycles = stop_tsc(cycles);
+                    std::cout << result.count << std::endl;
                 } else {
                     cycles = start_tsc();
                     for (size_t run = 0; run < params.num_runs; run++) {

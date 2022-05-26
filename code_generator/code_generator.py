@@ -28,9 +28,6 @@ namespace real_intrinsics {
 
 namespace mocked_intrinsics {
 
-typedef real_intrinsics::__m256i __m256i;
-
-
 """
 
 for type_def in data["type_defs"]:
