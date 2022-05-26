@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e  # exit on error
+
 #--------------------------------------------#
 #| constant density = n%                    |
 #| node count variable= V                   |

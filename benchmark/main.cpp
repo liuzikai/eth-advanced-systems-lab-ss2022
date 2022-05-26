@@ -120,6 +120,8 @@ void run(const BenchParams &params, std::ofstream &out_file) {
     std::cout << "num_warmups = " << params.num_warmups << std::endl;
     std::cout << "num_phases = " << params.num_phases << std::endl;
     std::cout << "num_runs = " << params.num_runs << std::endl;
+    std::cout << "pre_cut_edge_lists = " << params.pre_cut_edge_lists << std::endl;
+    std::cout << "pre_sort_edge_lists = " << params.pre_sort_edge_lists << std::endl;
 
     std::map<std::string, size_t> op_counts;
     size_t triangle_count = -1;
@@ -248,7 +250,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                 if (result.count != triangle_count) {
                     std::stringstream ss;
                     ss << "Count of triangles differs from the instrumented run! Count is: " << result.count << " expected: " << triangle_count;
-                    //throw std::runtime_error(ss.str());
+                    throw std::runtime_error(ss.str());
                 }
                 size_t cycle_per_run = cycles / params.num_runs;
                 out_file << "," << cycle_per_run;
