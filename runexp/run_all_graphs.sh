@@ -1,3 +1,7 @@
+#!/bin/bash
+
+set -e  # exit on error
+
 # german: GERMAN_ROAD_NETWORK
 # DOESN'T WORK actor: ACTOR_MOVIE_GRAPH
 # comp: COMP_SCIENCE_AUTHORS
