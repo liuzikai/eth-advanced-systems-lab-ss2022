@@ -78,7 +78,7 @@ if [ ! -d $DATADIR ]; then
 fi
 
 # read opts
-while getopts ":hg:a:b:i:n:s:w:r:p:l:" opt
+while getopts ":hg:a:b:i:n:s:w:r:p:l:c:" opt
 do
     case $opt in
         h) help; exit 1;;
@@ -92,14 +92,14 @@ do
         r) RUN=$OPTARG;;
         p) PHASE=$OPTARG;;
         l) ALGO=$OPTARG;;
+        c) BASE=$OPTARG;;
         \?) help; exit 1;;
     esac
 done
 
 # algos
-if [ -z $ALGO ]; then
-    ALGO="ei_base,forward0,fh0"
-fi
+if [ -z $ALGO ]; then ALGO="ei_base"; fi
+if [ -z $BASE ]; then BASE="va"; fi
 
 
 # read opt graph type
@@ -221,40 +221,15 @@ if [ $GRAPHTYPE = "GENERATED" ]; then
                 ./graph_generation -gt $GRAPHTYPE -num_nodes $i -num_edges $EDGE -seed $SEED -shuffle_edges -density EXIST -o $INPUTDIR/$graph.txt
             fi
         fi
-        IFS=',' read -ra ADDR <<< "$ALGO"
-        for AL in "${ADDR[@]}"; do
-            # run every algo, data in separate dirs
-            # create data dir
-            EXPDATA=$EXPNUM/$AL
-            if [ ! -d $EXPDATA ]; then mkdir $EXPDATA; fi
-
-            # run algo
-            if [[ $AL = *_base && $AL != fh* ]]; then
-                # sort
-                echo "$AL sort"
-                ./benchmark -no_pre_cut -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPDATA/$graph.csv -algorithm $AL -graph $INPUTDIR/$graph.txt
-            elif [[ $AL != *_base && $AL != fh* ]]; then
-                # sort + cut
-                echo "$AL sort+cut"
-                ./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPDATA/$graph.csv -algorithm $AL -graph $INPUTDIR/$graph.txt
-            elif [[ $AL = *_base && $AL = fh* ]]; then
-                # nothing
-                echo "$AL"
-                ./benchmark -no_pre_sort -no_pre_cut -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPDATA/$graph.csv -algorithm $AL -graph $INPUTDIR/$graph.txt
-            elif [[ $AL != *_base && $AL = fh* ]]; then
-                # cut
-                echo "$AL cut"
-                ./benchmark -no_pre_sort -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPDATA/$graph.csv -algorithm $AL -graph $INPUTDIR/$graph.txt
-            fi
-        done
+        ./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPNUM/$graph.csv -algorithm $ALGO -graph $INPUTDIR/$graph.txt
     done
 
     cd $RUNEXP
     echo "Your are in $RUNEXP"
     if [ -z $SEED ]; then
-        python3 plot_density.py -d $EXPNUM -p $EXPNUM -n $DEGREE -a $LOWNODE -b $HIGHNODE -l $ALGO -i $INTERVAL
+        python3 plot_speedup.py -d $EXPNUM -p $EXPNUM -n $DEGREE -l $LOWNODE -r $HIGHNODE -i $INTERVAL -t -b $BASE
     else
-        python3 plot_density.py -d $EXPNUM -p $EXPNUM -n $DEGREE -a $LOWNODE -b $HIGHNODE -l $ALGO -i $INTERVAL -s $SEED
+        python3 plot_speedup.py -d $EXPNUM -p $EXPNUM -n $DEGREE -l $LOWNODE -r $HIGHNODE -i $INTERVAL -s $SEED -t -b $BASE
     fi
 else
     graph=$GRAPHTYPE
@@ -264,28 +239,5 @@ else
         ./graph_generation -gt $GRAPHTYPE -shuffle_edges -seed 0 -o $INPUTDIR/$graph.txt
     fi
     # run algo
-    IFS=',' read -ra ADDR <<< "$ALGO"
-    for AL in "${ADDR[@]}"; do
-        # run every algo, data in separate dirs
-        # create data dir
-        EXPDATA=$EXPNUM/$AL
-        if [ ! -d $EXPDATA ]; then mkdir $EXPDATA; fi
-        if [[ $AL = *_base && $AL != fh* ]]; then
-            # sort
-            echo "$AL sort"
-            ./benchmark -no_pre_cut -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPDATA/$graph.csv -algorithm $AL -graph $INPUTDIR/$graph.txt
-        elif [[ $AL != *_base && $AL != fh* ]]; then
-            # sort + cut
-            echo "$AL sort+cut"
-            ./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPDATA/$graph.csv -algorithm $AL -graph $INPUTDIR/$graph.txt
-        elif [[ $AL = *_base && $AL = fh* ]]; then
-            # nothing
-            echo "$AL"
-            ./benchmark -no_pre_sort -no_pre_cut -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPDATA/$graph.csv -algorithm $AL -graph $INPUTDIR/$graph.txt
-        elif [[ $AL != *_base && $AL = fh* ]]; then
-            # cut
-            echo "$AL cut"
-            ./benchmark -no_pre_sort -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPDATA/$graph.csv -algorithm $AL -graph $INPUTDIR/$graph.txt
-        fi
-    done
+    ./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPNUM/$graph.csv -algorithm $ALGO -graph $INPUTDIR/$graph.txt
 fi

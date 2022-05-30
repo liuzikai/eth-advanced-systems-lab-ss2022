@@ -71,7 +71,7 @@ if [ ! -d $DATADIR ]; then
 fi
 
 # read opts
-while getopts ":hg:a:b:i:n:s:w:r:p:l:" opt
+while getopts ":hg:a:b:i:n:s:w:r:p:l:c:" opt
 do
     case $opt in
         h) help; exit 1;;
@@ -85,15 +85,14 @@ do
         r) RUN=$OPTARG;;
         p) PHASE=$OPTARG;;
         l) ALGO=$OPTARG;;
+        c) BASE=$OPTARG;;
         \?) help; exit 1;;
     esac
 done
 
 # algos
-if [ -z $ALGO ]; then
-    ALGO="edge_iterator,forward,forward_hashed"
-fi
-echo $ALGO
+if [ -z $ALGO ]; then ALGO="ei_base"; fi
+if [ -z $BASE ]; then BASE="va"; fi
 
 # read opt graph type
 if [ -z $GRAPHTYPE ]; then
@@ -212,9 +211,9 @@ if [ $GRAPHTYPE = "GENERATED" ]; then
     cd $RUNEXP
     echo "Your are in $RUNEXP"
     if [ -z $SEED ]; then
-        python3 plot.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL
+        python3 plot_speedup.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL -b $BASE
     else
-        python3 plot.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL -s $SEED
+        python3 plot_speedup.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL -s $SEED -b $BASE
     fi
 else
     graph=$GRAPHTYPE
