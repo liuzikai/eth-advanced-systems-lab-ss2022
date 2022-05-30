@@ -91,7 +91,6 @@ done
 if [ -z $ALGO ]; then
     ALGO="edge_iterator,forward,forward_hashed"
 fi
-echo $ALGO
 
 # read opt graph type
 if [ -z $GRAPHTYPE ]; then
@@ -179,6 +178,7 @@ for a,v in config.items():
     else
         sed -i 's/"number":'$NUMBER'/"number":'$(($NUMBER+1))'/' $EXP/config.json
     fi
+fi
 
 EXPNUM=$EXP/$NUMBER
 if [ ! -d $EXPNUM ]; then mkdir $EXPNUM; fi

@@ -11,10 +11,9 @@ parser = argparse.ArgumentParser(description='argparse')
 parser.add_argument('--datadir', '-d', help='data directory', required=True)
 parser.add_argument('--plotdir', '-p', help='plot directory', required=True)
 parser.add_argument('--degree', '-n', type=int, help='avg directed degree = node*n/100 = adj list len after cut', required=True)
-parser.add_argument('--low_node', '-a', type=int, help='start node count', required=True)
-parser.add_argument('--high_node', '-b', type=int, help='end node count', required=True)
+parser.add_argument('--low_node', '-l', type=int, help='start node count', required=True)
+parser.add_argument('--high_node', '-r', type=int, help='end node count', required=True)
 parser.add_argument('--interval', '-i', type=int, help='interval (step)', required=True)
-parser.add_argument('--algos', '-l', type=str, help='algos', required=True)
 parser.add_argument('--seed', '-s', type=int, help='seed for random graph', required=False)
 args = parser.parse_args()
 
@@ -23,7 +22,6 @@ PLOTDIR = args.plotdir
 degree = args.degree
 low_node = args.low_node
 high_node = args.high_node
-algos = args.algos.split(",")
 interval = args.interval
 seed = args.seed
 
@@ -50,22 +48,21 @@ node_counts = []
 ops_data = []
 cycles_data = []
 perf_data = []
-for algo in algos:
-    for graph_name in random_graphs:
-        df = pd.read_csv(f"{DATADIR}/{algo}/{graph_name}.csv", index_col=None)
+for graph_name in random_graphs:
+    df = pd.read_csv(f"{DATADIR}/{graph_name}.csv", index_col=None)
 
-        # Take median of phrases
-        cols = list(df.columns)
-        cols.remove("algorithm")
-        cols.remove("ops")
-        cycles = np.median(df[cols], axis=1)
-        perf = df["ops"] / cycles
+    # Take median of phrases
+    cols = list(df.columns)
+    cols.remove("algorithm")
+    cols.remove("ops")
+    cycles = np.median(df[cols], axis=1)
+    perf = df["ops"] / cycles
 
-        # edge_counts.append(int(graph_name.split("_")[-1]))
-        node_counts.append(int(graph_name.split("_")[-2]))
-        ops_data.append(dict(zip(df["algorithm"], df["ops"])))
-        cycles_data.append(dict(zip(df["algorithm"], cycles)))
-        perf_data.append(dict(zip(df["algorithm"], perf)))
+    # edge_counts.append(int(graph_name.split("_")[-1]))
+    node_counts.append(int(graph_name.split("_")[-2]))
+    ops_data.append(dict(zip(df["algorithm"], df["ops"])))
+    cycles_data.append(dict(zip(df["algorithm"], cycles)))
+    perf_data.append(dict(zip(df["algorithm"], perf)))
 
 # Construct the data frames
 ops_df = pd.DataFrame(ops_data, index=node_counts)
