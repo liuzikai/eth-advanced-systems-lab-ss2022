@@ -40,7 +40,7 @@ for edge_count in range(low_edge, high_edge, interval):
     else:
         random_graphs.append(f"generated_{node_count}_{edge_count}")
 
-edge_counts = []
+node_counts = []
 ops_data = []
 cycles_data = []
 perf_data = []
@@ -54,15 +54,15 @@ for graph_name in random_graphs:
     cycles = np.median(df[cols], axis=1)
     perf = df["ops"] / cycles
 
-    edge_counts.append(int(graph_name.split("_")[-1]))
+    node_counts.append(int(graph_name.split("_")[-2]))
     ops_data.append(dict(zip(df["algorithm"], df["ops"])))
     cycles_data.append(dict(zip(df["algorithm"], cycles)))
     perf_data.append(dict(zip(df["algorithm"], perf)))
 
 # Construct the data frames
-ops_df = pd.DataFrame(ops_data, index=edge_counts)
-cycles_df = pd.DataFrame(cycles_data, index=edge_counts)
-perf_df = pd.DataFrame(perf_data, index=edge_counts)
+ops_df = pd.DataFrame(ops_data, index=node_counts)
+cycles_df = pd.DataFrame(cycles_data, index=node_counts)
+perf_df = pd.DataFrame(perf_data, index=node_counts)
 
 algos = list(cycles_df.columns)
 
@@ -103,11 +103,11 @@ sns.set_style('darkgrid') # darkgrid, white grid, dark, white and ticks
 sns.color_palette('pastel')
 
 
-def plot(algos, edge_counts, data, n, ylabel, title, figname):
+def plot(algos, node_counts, data, n, ylabel, title, figname):
     fig, ax = plt.subplots()
     for algo in algos:
-        ax.plot(edge_counts, data[algo], ".-", label=algo)
-    ax.set_xlabel(f"Edge Count of the Random Graph (Node count = edge/{n})")
+        ax.plot(node_counts, data[algo], ".-", label=algo)
+    ax.set_xlabel(f"Node Count (|E| = |V| * {n})")
     ax.set_ylabel(ylabel, loc="top", rotation="horizontal")
     # ax.set_ylabel(ylabel)
     ax.legend(loc='best')
@@ -116,10 +116,10 @@ def plot(algos, edge_counts, data, n, ylabel, title, figname):
 
 
 #---op count---
-plot(algos, edge_counts, ops_df, n, "ops", "Op Count", f"{PLOTDIR}/ops.png")
+plot(algos, node_counts, ops_df, n, "ops", "Op Count", f"{PLOTDIR}/ops.png")
 
 #---runtime cycles---
-plot(algos, edge_counts, cycles_df, n, "cycles", "Runtime", f"{PLOTDIR}/cycles.png")
+plot(algos, node_counts, cycles_df, n, "cycles", "Runtime", f"{PLOTDIR}/cycles.png")
 
 #---perf ops/cycle---
-plot(algos, edge_counts, perf_df, n, "ops/cycle", "Performance", f"{PLOTDIR}/perf.png")
+plot(algos, node_counts, perf_df, n, "ops/cycle", "Performance", f"{PLOTDIR}/perf.png")

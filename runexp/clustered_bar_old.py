@@ -129,27 +129,6 @@ def plot(x, width, algos, data, ylabel, gne, title, figname, yscale="linear"):
     ax.legend(loc='best')
     plt.savefig(figname, bbox_inches="tight")
 
-def plot_separate(x, width, algos, data, ylabel, gne, title, figname, format=".png", yscale="linear"):
-    for i in range(len(algos)):
-        fig, ax = plt.subplots(figsize=(12, 6))
-        rects=[]
-
-        rects.append(ax.bar(x, data[algos[i]].values.tolist(), width, label=algos[i]))
-
-        ax.set_xlabel("Graphs\nnodes,edges")
-        ax.set_ylabel(ylabel, loc="top", rotation="horizontal")
-        ax.set_xticks(x)
-        ax.set_xticklabels(gne)
-        ax.set_title(title)
-        ax.set_yscale(yscale)
-        # for i in range(len(algos)):
-        #     ax.bar_label(rects2[i], padding=3)
-        fig.tight_layout()
-        # ax.set_axisbelow(True)
-        # ax.grid(color='gray', linestyle='-', linewidth=0.5)
-        ax.legend(loc='best')
-        plt.savefig(f"{figname}-{algos[i]}{format}", bbox_inches="tight")
-
 
 #---x axis---
 x = np.arange(len(gs))  # the label locations
@@ -162,4 +141,4 @@ plot(x, width, algos, ops_df, "ops", gne, 'Op Count', f"{PLOTDIR}/large_graphs_o
 plot(x, width, algos, cycles_df, "cycles", gne, 'Runtime', f"{PLOTDIR}/large_graphs_cycles.png", yscale="log")
 
 #---perf ops/cycle---
-plot_separate(x, width, algos, perf_df, "ops/cycle", gne, 'Performance', f"{PLOTDIR}/large_graphs_perf", ".png", yscale="log")
+plot(x, width, algos, perf_df, "ops/cycle", gne, 'Performance', f"{PLOTDIR}/large_graphs_perf.png", yscale="log")

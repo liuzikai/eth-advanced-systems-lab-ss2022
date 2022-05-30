@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e  # exit on error
-
 source env.sh
 
 # directories
@@ -71,7 +69,7 @@ if [ ! -d $DATADIR ]; then
 fi
 
 # read opts
-while getopts ":hg:a:b:i:n:s:w:r:p:l:c:" opt
+while getopts ":hg:a:b:i:n:s:w:r:p:l:" opt
 do
     case $opt in
         h) help; exit 1;;
@@ -85,14 +83,14 @@ do
         r) RUN=$OPTARG;;
         p) PHASE=$OPTARG;;
         l) ALGO=$OPTARG;;
-        c) BASE=$OPTARG;;
         \?) help; exit 1;;
     esac
 done
 
 # algos
-if [ -z $ALGO ]; then ALGO="ei_base"; fi
-if [ -z $BASE ]; then BASE="va"; fi
+if [ -z $ALGO ]; then
+    ALGO="edge_iterator,forward,forward_hashed"
+fi
 
 # read opt graph type
 if [ -z $GRAPHTYPE ]; then
@@ -161,7 +159,11 @@ config = json.load(sys.stdin)
 for a,v in config.items():
     print(f'\t{a}: {v}')
 "
-    sed -i '' -e 's/"number":'$NUMBER'/"number":'$(($NUMBER+1))'/' $EXP/config.json
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' -e 's/"number":'$NUMBER'/"number":'$(($NUMBER+1))'/' $EXP/config.json
+    else
+        sed -i 's/"number":'$NUMBER'/"number":'$(($NUMBER+1))'/' $EXP/config.json
+    fi
 else
     # more runs of the exp config
     cat $EXP/config.json | python3 -c "
@@ -171,7 +173,11 @@ for a,v in config.items():
     print(f'\t{a}: {v}')
 "
     NUMBER=$(cat $EXP/config.json | python3 -c "import sys, json; print(json.load(sys.stdin)['number'])")
-    sed -i '' -e 's/"number":'$NUMBER'/"number":'$(($NUMBER+1))'/' $EXP/config.json
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' -e 's/"number":'$NUMBER'/"number":'$(($NUMBER+1))'/' $EXP/config.json
+    else
+        sed -i 's/"number":'$NUMBER'/"number":'$(($NUMBER+1))'/' $EXP/config.json
+    fi
 fi
 
 EXPNUM=$EXP/$NUMBER
@@ -205,15 +211,15 @@ if [ $GRAPHTYPE = "GENERATED" ]; then
                 ./graph_generation -gt $GRAPHTYPE -num_nodes $(($i/$NODE)) -num_edges $i -seed $SEED -shuffle_edges -o $INPUTDIR/$graph.txt
             fi
         fi
-        ./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPNUM/$graph.csv -algorithm $ALGO -graph $INPUTDIR/$graph.txt
+        ./benchmark -pre_cut -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPNUM/$graph.csv -algorithm $ALGO -graph $INPUTDIR/$graph.txt
     done
 
     cd $RUNEXP
     echo "Your are in $RUNEXP"
     if [ -z $SEED ]; then
-        python3 plot_speedup.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL -b $BASE
+        python3 plot.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL
     else
-        python3 plot_speedup.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL -s $SEED -b $BASE
+        python3 plot.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL -s $SEED
     fi
 else
     graph=$GRAPHTYPE
@@ -222,5 +228,5 @@ else
     if [ ! -f $INPUTDIR/$graph.txt ]; then
         ./graph_generation -gt $GRAPHTYPE -shuffle_edges -seed 0 -o $INPUTDIR/$graph.txt
     fi
-    ./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPNUM/$graph.csv -algorithm $ALGO -graph $INPUTDIR/$graph.txt
+    ./benchmark -pre_cut -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPNUM/$graph.csv -algorithm $ALGO -graph $INPUTDIR/$graph.txt
 fi
