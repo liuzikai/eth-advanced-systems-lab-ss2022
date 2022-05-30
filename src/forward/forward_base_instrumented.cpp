@@ -4,6 +4,7 @@
 #include <forward/forward_v2.hpp>
 #include <forward/forward_v3.hpp>
 #include <forward/forward_v4.hpp>
+#include <forward/forward_v5.hpp>
 #include <forward/forward_va.hpp>
 #include "instrumented_index.h"
 
@@ -75,6 +76,19 @@ namespace f3 {
 
 
 namespace f4 {
+    
+    template struct ForwardNeighborContainer<InstrumentedIndex>;
+
+    template ForwardNeighborContainer<InstrumentedIndex> *forward_create_neighbor_container(const AdjacencyGraph<InstrumentedIndex> *G);
+
+    template void forward_delete_neighbor_container(ForwardNeighborContainer<InstrumentedIndex> *A);
+
+    template void forward(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+    template void forward(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+
+}
+
+namespace f5 {
     
     template struct ForwardNeighborContainer<InstrumentedIndex>;
 
