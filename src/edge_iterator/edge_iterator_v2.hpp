@@ -14,8 +14,6 @@ TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
     Index s, t;
     //Counter i, j_lower_bound, j_upper_bound, j_current, j_inc, j_next;
     Counter i, j, j_lower_bound, j_inc, j_next, i_start, j_start;
-    Counter highest_i, highest_j;
-    Counter mid_i, mid_j;
     const AdjacencyList<Index> *t_adj, *s_adj, *swap = NULL;
 
     Index s_neighbor1, s_neighbor2;
@@ -39,31 +37,13 @@ TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
             t = s_adj->neighbors[ti];
             t_adj = &G->adjacency[(index_t) t];
 
-            if (s < t && t_adj->count > 0) {
+            if (t_adj->count > 0) {
                 if(t_adj->count < s_adj->count) {
                     swap = t_adj;
                     t_adj = s_adj;
                     s_adj = swap;
                 }
                 i_start = 0, j_start = 0;
-                highest_i = s_adj->count - 1;
-                highest_j = t_adj->count - 1;
-                while(i_start != highest_i) {
-                    mid_i = (i_start + highest_i) / 2;
-                    if (s_adj->neighbors[mid_i] <= t) {
-                        i_start = mid_i + 1;
-                    } else {
-                        highest_i = mid_i;
-                    }
-                }
-                while(j_start != highest_j) {
-                    mid_j = (j_start + highest_j) / 2;
-                    if (t_adj->neighbors[mid_j] <= t) {
-                        j_start = mid_j + 1;
-                    } else {
-                        highest_j = mid_j;
-                    }
-                }
                 /*while(i_start < s_adj->count && s_adj->neighbors[i_start] < t) {
                     i_start++;    
                 }

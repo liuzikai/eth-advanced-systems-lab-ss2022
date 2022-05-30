@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 
+
 typedef uint32_t index_t;
 #define INDEX_FMT "%" PRIu32
 
@@ -11,6 +12,8 @@ static inline index_t roundUp(index_t numToRound, index_t multiple)
 {
     return (numToRound + multiple - 1) & -multiple;
 }
+
+
 
 
 

@@ -4,21 +4,10 @@
 #include "common.h"
 #include <iostream>
 #include <set>
-
+#include "instrumented_index.h"
 
 namespace TriangleListing {
 
-template<class Index, class Counter = index_t>
-struct Count {
-    Counter count = 0;
-
-    void list_triangle(Index a, Index b, Index c) {
-        (void) a;
-        (void) b;
-        (void) c;
-        ++count;
-    }
-};
 
 template<class Index, class Counter = index_t>
 struct Print {
@@ -34,7 +23,7 @@ struct Print {
 };
 
 template<class Index, class Counter = index_t>
-struct Collect {
+struct SetCollect {
     using Triangle = std::set<index_t>;
     using TriangleSet = std::set<Triangle>;
 
@@ -42,6 +31,58 @@ struct Collect {
 
     void list_triangle(Index a, Index b, Index c) {
         triangles.insert({(index_t)a, (index_t)b, (index_t)c});
+    }
+};
+
+template<class Index, class Counter = index_t>
+struct Count {
+    Count(size_t dummy) {
+        count = 0;
+    }
+    Counter count;
+
+    __attribute__((always_inline)) void list_triangle(Index a, Index b, Index c) {
+        (void) a;
+        (void) b;
+        (void) c;
+        ++count;
+    }
+};
+
+
+template<class Index, class Counter = index_t>
+struct Collect {
+
+    struct Triangle {
+        uint32_t a, b, c;
+    };
+
+
+    Collect(size_t max_triangles) {
+        pos = 0;
+        triangles = mallocl(sizeof(Triangle) * max_triangles);
+    }
+    
+    size_t pos;
+    // Yes this is a static array. If you want to keep the result call to set.
+    Triangle* triangles;
+
+
+    void list_triangle(Index a, Index b, Index c) {
+        triangles[pos] = Triangle{(index_t)a, (index_t)b, (index_t)c};
+        ++pos;
+        
+    }
+
+    using SetTriangle = std::set<index_t>;
+    using TriangleSet = std::set<SetTriangle>;
+
+    TriangleSet to_set() {
+        TriangleSet set;
+        for (auto &triangle : triangles) {
+            set.insert({triangle.a, triangle.b, triangle.c});
+        }
+        return set;
     }
 };
 

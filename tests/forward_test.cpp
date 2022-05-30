@@ -24,9 +24,9 @@ TEST_CASE("forward: example graph") {
     AdjacencyGraph<index_t> *G = create_graph_from_file<index_t>(INPUT_DIR "sample_undirected.txt");
     ForwardNeighborContainer<index_t> *A = forward_create_neighbor_container(G);
     for (int i = 0; i < 3; i++) {  // repeat
-        auto lister = forward<index_t, index_t , TriangleListing::Collect<index_t>>(G, A);
+        auto lister = forward<index_t, index_t , TriangleListing::SetCollect<index_t>>(G, A);
         REQUIRE(lister.triangles.size() == 3);
-        REQUIRE(lister.triangles == TriangleListing::Collect<index_t>::TriangleSet{{0, 1, 2},
+        REQUIRE(lister.triangles == TriangleListing::SetCollect<index_t>::TriangleSet{{0, 1, 2},
                                          {0, 1, 3},
                                          {0, 3, 4}});
     }
@@ -36,9 +36,9 @@ TEST_CASE("forward: example graph") {
 
     G = create_graph_from_file<index_t>(INPUT_DIR "sample2.txt");
     A = forward_create_neighbor_container(G);
-    auto lister = forward<index_t, index_t, TriangleListing::Collect<index_t>>(G, A);
+    auto lister = forward<index_t, index_t, TriangleListing::SetCollect<index_t>>(G, A);
     REQUIRE(lister.triangles.size() == 5);
-    REQUIRE(lister.triangles == TriangleListing::Collect<index_t>::TriangleSet{{0, 1, 2},
+    REQUIRE(lister.triangles == TriangleListing::SetCollect<index_t>::TriangleSet{{0, 1, 2},
                                      {0, 1, 3},
                                      {0, 3, 4},
                                      {0, 5, 6},
@@ -54,7 +54,7 @@ TEST_CASE("forward: WWW_NOTRE_DAME graph") {
     std::ignore = system(generate_graph.c_str());
     AdjacencyGraph<index_t> *graph = create_graph_from_file<index_t>("notre.txt");
     ForwardNeighborContainer<index_t> *A = forward_create_neighbor_container(graph);
-    auto triangle_listing = forward<index_t, index_t, TriangleListing::Collect<index_t>>(graph, A);
+    auto triangle_listing = forward<index_t, index_t, TriangleListing::SetCollect<index_t>>(graph, A);
     REQUIRE(triangle_listing.triangles.size() == 8910005);
     free_graph(graph);
     forward_delete_neighbor_container(A);
@@ -68,7 +68,7 @@ TEST_CASE("forward: US Patents graph") {
     std::ignore = system(generate_graph.c_str());
     AdjacencyGraph<index_t> *graph = create_graph_from_file<index_t>("us_patents.txt");
     ForwardNeighborContainer<index_t> *A = forward_create_neighbor_container(graph);
-    auto triangle_listing = forward<index_t, index_t, TriangleListing::Collect<index_t>>(graph, A);
+    auto triangle_listing = forward<index_t, index_t, TriangleListing::SetCollect<index_t>>(graph, A);
     REQUIRE(triangle_listing.triangles.size() == 7515023);
     free_graph(graph);
     forward_delete_neighbor_container(A);

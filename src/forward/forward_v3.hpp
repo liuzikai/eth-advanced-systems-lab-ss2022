@@ -6,6 +6,7 @@
 #include "instrumented_index.h"
 #include "triangle_lister.h"
 #include "quick_sort.h"
+#include <bitset>
 
 #include "instrumented_immintrin.h"
 //#include <immintrin.h>
@@ -107,6 +108,7 @@ TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
     // }
 
     __m256i res_counter = _mm256_set1_epi32(0);
+    (void) res_counter;
 
     for (Counter si = 0; si < G->n; si++) {  // this should not count toward op count
         Index s = (Index) si;
@@ -170,21 +172,34 @@ TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
                 __m256i ge = _mm256_or_si256(eq, gt);  
                 __m256i le = _mm256_or_si256(eq, lt);  
 
+
                 __m256i ge_and_l = _mm256_and_si256(ge, l_vec);
                 __m256i le_and_l = _mm256_and_si256(le, l_vec); 
-    
                 __m256i inc_mask = _mm256_and_si256(ge_and_l, le_and_l);
-                __m256i inc_count = _mm256_and_si256(inc_mask, incer);
-                res_counter = _mm256_add_epi32(res_counter, inc_count);
-
+                
+                if constexpr (std::is_same_v<TRL, TriangleListing::Count<Index>>) { 
+                    __m256i inc_count = _mm256_and_si256(inc_mask, incer);
+                    res_counter = _mm256_add_epi32(res_counter, inc_count);                   
+                } else {
+                    // If we need to list unpack here and inspect
+                    uint32_t trianlge_mask = _mm256_movemask_epi8(inc_mask);
+                    if(trianlge_mask) {
+                        // If there is at leas one triangle
+                        uint32_t s_neigbours_mat[8];
+                        _mm256_store_si256((__m256i *)s_neigbours_mat, s_neigbours);
+                        for (uint32_t k = 0, index = 0; k < 32; k += 4, index++) {
+                            if ((trianlge_mask & (1 << k)) != 0 ) {
+                                Index t = Gs->neighbors[ti + index];
+                                lister.list_triangle(s, t, (Index) s_neigbours_mat[index]);
+                            }
+                        }
+                    }
+                }
                 __m256i inc_count_i = _mm256_and_si256(le_and_l, incer);
                 __m256i inc_count_j = _mm256_and_si256(ge_and_l, incer);
                 i_vec = _mm256_add_epi32(i_vec, inc_count_i);
-                j_vec = _mm256_add_epi32(j_vec, inc_count_j);
-               
-                // _mm256_store_si256((__m256i *)l, l_vec);     
-            
-            } while (hor_8x32(l_vec)); //(l[0] || l[1] || l[2] || l[3] || l[4] || l[5] || l[6] || l[7]);
+                j_vec = _mm256_add_epi32(j_vec, inc_count_j);          
+            } while (_mm256_movemask_epi8(l_vec)); //(l[0] || l[1] || l[2] || l[3] || l[4] || l[5] || l[6] || l[7]);
 
             At_0->neighbors[At_0->count++] = s;
             At_1->neighbors[At_1->count++] = s;
@@ -219,10 +234,10 @@ TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
             
         }
     }
-
+// end:
     if constexpr (std::is_same_v<TRL, TriangleListing::Count<Index>>) {
         lister.count += hsum_8x32(res_counter);
- }
+    }
     
     return lister;
 }
