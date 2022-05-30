@@ -61,8 +61,8 @@ void forward_hashed_delete_neighbor_container(ForwardHashedNeighborContainer<Ind
  * @note     Triangles are printed using print_triangle if it is defined.
  */
 template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedNeighborContainer<Index> *A) {
-    TRL lister;
+void forward_hashed(TRL* lister,AdjacencyGraph<Index> *G, ForwardHashedNeighborContainer<Index> *A) {
+    
     forward_hashed_reset_neighbor_container(G, A);
 
     for (Counter si = 0; si < G->n; si++) {  // this should not count toward op count
@@ -86,7 +86,7 @@ TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedNeighborContainer<Inde
                     HashItem<Index> *head = probe->container[i];
                     while (head) {
                         if (hashtable_lookup(build, head->number)) {
-                            lister.list_triangle(s, t, head->number);
+                            lister->list_triangle(s, t, head->number);
                         }
                         head = head->next;
                     }
@@ -97,7 +97,7 @@ TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedNeighborContainer<Inde
         }
     }
 
-    return lister;
+    
 }
 
 

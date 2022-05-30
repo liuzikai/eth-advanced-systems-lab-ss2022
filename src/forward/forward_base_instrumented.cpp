@@ -16,8 +16,8 @@ namespace f0 {
 
     template void forward_delete_neighbor_container(ForwardNeighborContainer<InstrumentedIndex> *A);
 
-    template TriangleListing::Count<InstrumentedIndex> forward(AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
-    template TriangleListing::Collect<InstrumentedIndex> forward(AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+    template void forward(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+    template void forward(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
 
 }
 
@@ -30,8 +30,8 @@ namespace f1 {
 
     template void forward_delete_neighbor_container(ForwardNeighborContainer<InstrumentedIndex> *A);
 
-    template TriangleListing::Count<InstrumentedIndex> forward(AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
-    template TriangleListing::Collect<InstrumentedIndex> forward(AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+    template void forward(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+    template void forward(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
 
 }
 
@@ -43,8 +43,8 @@ namespace f2 {
 
     template void forward_delete_neighbor_container(ForwardNeighborContainer<InstrumentedIndex> *A);
 
-    template TriangleListing::Count<InstrumentedIndex> forward(AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
-    template TriangleListing::Collect<InstrumentedIndex> forward(AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+    template void forward(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+    template void forward(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
 
 }
 
@@ -56,8 +56,8 @@ namespace fa {
 
     template void forward_delete_neighbor_container(ForwardNeighborContainer<InstrumentedIndex> *A);
 
-    template TriangleListing::Count<InstrumentedIndex> forward(AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
-    template TriangleListing::Collect<InstrumentedIndex> forward(AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+    template void forward(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+    template void forward(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
 
 }
 namespace f3 {
@@ -68,8 +68,8 @@ namespace f3 {
 
     template void forward_delete_neighbor_container(ForwardNeighborContainer<InstrumentedIndex> *A);
 
-    template TriangleListing::Count<InstrumentedIndex> forward(AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
-    template TriangleListing::Collect<InstrumentedIndex> forward(AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+    template void forward(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+    template void forward(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
 
 }
 
@@ -82,7 +82,7 @@ namespace f4 {
 
     template void forward_delete_neighbor_container(ForwardNeighborContainer<InstrumentedIndex> *A);
 
-    template TriangleListing::Count<InstrumentedIndex> forward(AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
-    template TriangleListing::Collect<InstrumentedIndex> forward(AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+    template void forward(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+    template void forward(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
 
 }

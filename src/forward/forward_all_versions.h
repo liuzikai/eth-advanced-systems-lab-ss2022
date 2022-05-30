@@ -18,7 +18,7 @@ namespace f0 {
     void forward_delete_neighbor_container(ForwardNeighborContainer<Index> *A);
 
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-    TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A);
+    void forward(TRL* lister,AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A);
 }
 
 
@@ -34,7 +34,7 @@ namespace f1 {
     void forward_delete_neighbor_container(ForwardNeighborContainer<Index> *A);
 
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-    TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A);
+    void forward(TRL* lister,AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A);
 }
 
 namespace f2 {
@@ -49,7 +49,7 @@ namespace f2 {
     void forward_delete_neighbor_container(ForwardNeighborContainer<Index> *A);
 
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-    TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A);
+    void forward(TRL* lister,AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A);
 }
 
 namespace f3 {
@@ -64,7 +64,7 @@ namespace f3 {
     void forward_delete_neighbor_container(ForwardNeighborContainer<Index> *A);
 
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-    TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A);
+    void forward(TRL* lister,AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A);
 }
 namespace fa {
 
@@ -78,7 +78,7 @@ namespace fa {
     void forward_delete_neighbor_container(ForwardNeighborContainer<Index> *A);
 
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-    TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A);
+    void forward(TRL* lister,AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A);
 }
 
 namespace f4 {
@@ -93,7 +93,7 @@ namespace f4 {
     void forward_delete_neighbor_container(ForwardNeighborContainer<Index> *A);
 
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-    TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A);
+    void forward(TRL* lister,AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A);
 }
 
 

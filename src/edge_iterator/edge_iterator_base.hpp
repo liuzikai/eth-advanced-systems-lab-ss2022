@@ -9,10 +9,9 @@
 namespace ei0 {
 
 template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
+void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) {
     (void) dummy;
 
-    TRL lister;
     // According to sec. 4, the sorting is included in the execution time
     // for (Counter u = 0; u < G->n; u++) {
     //     if (G->adjacency[u].count > 0) {
@@ -37,7 +36,7 @@ TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
                 while (i < s_adj->count && j < t_adj->count) {
                     if (s_adj->neighbors[i] == t_adj->neighbors[j] &&
                         t_adj->neighbors[j] > t) {
-                        lister.list_triangle(s, t, t_adj->neighbors[j]);
+                        lister->list_triangle(s, t, t_adj->neighbors[j]);
                         i++;
                         j++;
                     } else if (s_adj->neighbors[i] < t_adj->neighbors[j]) {
@@ -50,7 +49,7 @@ TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
         }
     }
 
-    return lister;
+    
 }
 
 }

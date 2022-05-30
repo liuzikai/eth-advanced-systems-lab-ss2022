@@ -96,9 +96,8 @@ static inline uint32_t hor_8x32(__m256i v)
  * @note     Triangles are printed using print_triangle if it is defined.
  */
 template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
-    TRL lister;
-    forward_reset_neighbor_container(G, A);
+void forward(TRL* lister,AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
+        forward_reset_neighbor_container(G, A);
 
     // According to sec. 4, the sorting is included in the execution time
     // for (Counter u = 0; u < G->n; u++) {
@@ -190,7 +189,7 @@ TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
                         for (uint32_t k = 0, index = 0; k < 32; k += 4, index++) {
                             if ((trianlge_mask & (1 << k)) != 0 ) {
                                 Index t = Gs->neighbors[ti + index];
-                                lister.list_triangle(s, t, (Index) s_neigbours_mat[index]);
+                                lister->list_triangle(s, t, (Index) s_neigbours_mat[index]);
                             }
                         }
                     }
@@ -220,7 +219,7 @@ TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
             ForwardNeighbourList<Index> *At = &A->adjacency[(index_t) t];
             while (i < As->count && j < At->count) {
                 if (As->neighbors[i] == At->neighbors[j]) {
-                    lister.list_triangle(s, t, As->neighbors[i]);
+                    lister->list_triangle(s, t, As->neighbors[i]);
                     i++;
                     j++;
                 } else if (As->neighbors[i] < At->neighbors[j]) {
@@ -236,10 +235,10 @@ TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
     }
 // end:
     if constexpr (std::is_same_v<TRL, TriangleListing::Count<Index>>) {
-        lister.count += hsum_8x32(res_counter);
+        lister->count += hsum_8x32(res_counter);
     }
     
-    return lister;
+    
 }
 
 }

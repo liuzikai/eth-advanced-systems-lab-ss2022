@@ -190,7 +190,7 @@ void merge_sort(Index *arr, Index* other, index_t total_size) {
 
 // This is for testing
 template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-TRL merge_sort_timing(AdjacencyGraph<Index> *G, void *dummy) {
+void merge_sort_timing(TRL* ,AdjacencyGraph<Index> *G, void *dummy) {
     static Index sort_buf[10800];
     (void) dummy;
     // According to sec. 4, the sorting is included in the execution time
@@ -201,8 +201,6 @@ TRL merge_sort_timing(AdjacencyGraph<Index> *G, void *dummy) {
             merge_sort(G->adjacency[u].neighbors, sort_buf, G->adjacency[u].count);
         }
     }
-    TRL res;
-    return res;
 }
 
 }

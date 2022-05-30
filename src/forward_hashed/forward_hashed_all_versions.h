@@ -19,7 +19,7 @@ namespace fh0 {
 
 
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-    TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedNeighborContainer<Index> *A);
+    void forward_hashed(TRL* lister,AdjacencyGraph<Index> *G, ForwardHashedNeighborContainer<Index> *A);
 }
 
 namespace fh1 {
@@ -34,7 +34,7 @@ namespace fh1 {
     void forward_hashed_delete_neighbor_container(ForwardHashedHelper<Index> *A);
 
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-    TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedHelper<Index> *A);
+    void forward_hashed(TRL* lister,AdjacencyGraph<Index> *G, ForwardHashedHelper<Index> *A);
 }
 
 namespace fh2 {
@@ -49,7 +49,7 @@ namespace fh2 {
     void forward_hashed_delete_neighbor_container(ForwardHashedHelper<Index> *A);
 
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-    TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedHelper<Index> *A);
+    void forward_hashed(TRL* lister,AdjacencyGraph<Index> *G, ForwardHashedHelper<Index> *A);
 }
 
 namespace fh3 {
@@ -64,7 +64,7 @@ namespace fh3 {
     void forward_hashed_delete_neighbor_container(ForwardHashedHelper<Index> *A);
 
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-    TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedHelper<Index> *A);
+    void forward_hashed(TRL* lister,AdjacencyGraph<Index> *G, ForwardHashedHelper<Index> *A);
 }
 
 namespace fh4 {
@@ -79,7 +79,7 @@ namespace fh4 {
     void forward_hashed_delete_neighbor_container(ForwardHashedHelper<Index> *A);
 
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-    TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedHelper<Index> *A);
+    void forward_hashed(TRL* lister,AdjacencyGraph<Index> *G, ForwardHashedHelper<Index> *A);
 }
 
 namespace fha {
@@ -95,7 +95,7 @@ namespace fha {
 
 
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-    TRL forward_hashed(AdjacencyGraph<Index> *G, ForwardHashedNeighborContainer<Index> *A);
+    void forward_hashed(TRL* lister,AdjacencyGraph<Index> *G, ForwardHashedNeighborContainer<Index> *A);
 }
 
 #endif //_FORWARD_ALL_H

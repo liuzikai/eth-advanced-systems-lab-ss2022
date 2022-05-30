@@ -5,7 +5,7 @@
 #include <algorithm>
 
 template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-TRL std_sort_timing(AdjacencyGraph<Index> *G, void *dummy) {
+void std_sort_timing(TRL*, AdjacencyGraph<Index> *G, void *dummy) {
     (void) dummy;
     // According to sec. 4, the sorting is included in the execution time
     for (Counter u = 0; u < G->n; u++) {
@@ -15,6 +15,4 @@ TRL std_sort_timing(AdjacencyGraph<Index> *G, void *dummy) {
             //quick_sort(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1);
         }
     }
-    TRL res;
-    return res;
 }

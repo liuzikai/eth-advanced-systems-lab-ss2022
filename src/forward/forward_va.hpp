@@ -58,8 +58,8 @@ void forward_delete_neighbor_container(ForwardNeighborContainer<Index> *A) {
  * @note     Triangles are printed using print_triangle if it is defined.
  */
 template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
-    TRL lister;
+void forward(TRL* lister,AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
+    
     forward_reset_neighbor_container(G, A);
 
     // According to sec. 4, the sorting is included in the execution time
@@ -80,7 +80,7 @@ TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
             ForwardNeighbourList<Index> *At = &A->adjacency[(index_t) t];
             while (i < As->count && j < At->count) {
                 if (As->neighbors[i] == At->neighbors[j]) {
-                    lister.list_triangle(s, t, As->neighbors[i]);
+                    lister->list_triangle(s, t, As->neighbors[i]);
                     i++;
                     j++;
                 } else if (As->neighbors[i] < At->neighbors[j]) {
@@ -94,7 +94,7 @@ TRL forward(AdjacencyGraph<Index> *G, ForwardNeighborContainer<Index> *A) {
         }
     }
 
-    return lister;
+    
 }
 
 }

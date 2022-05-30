@@ -7,6 +7,6 @@ namespace fh0 {
 
     template void forward_hashed_delete_neighbor_container<index_t, index_t>(ForwardHashedNeighborContainer<index_t> *A);
 
-    template TriangleListing::Count<index_t> forward_hashed(AdjacencyGraph<index_t> *G, ForwardHashedNeighborContainer<index_t> * A);
-    template TriangleListing::Collect<index_t> forward_hashed(AdjacencyGraph<index_t> *G, ForwardHashedNeighborContainer<index_t> * A);
+    template void forward_hashed(TriangleListing::Count<index_t>* tlr, AdjacencyGraph<index_t> *G, ForwardHashedNeighborContainer<index_t> * A);
+    template void forward_hashed(TriangleListing::Collect<index_t>* tlr, AdjacencyGraph<index_t> *G, ForwardHashedNeighborContainer<index_t> * A);
 }

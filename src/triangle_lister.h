@@ -32,14 +32,22 @@ struct SetCollect {
     void list_triangle(Index a, Index b, Index c) {
         triangles.insert({(index_t)a, (index_t)b, (index_t)c});
     }
+
+    void reset() {
+        triangles.clear();
+    }
 };
 
 template<class Index, class Counter = index_t>
 struct Count {
-    Count(size_t dummy) {
+    Count(size_t) {
         count = 0;
     }
     Counter count;
+
+    void reset() {
+        count = 0;
+    }
 
     __attribute__((always_inline)) void list_triangle(Index a, Index b, Index c) {
         (void) a;
@@ -60,7 +68,11 @@ struct Collect {
 
     Collect(size_t max_triangles) {
         pos = 0;
-        triangles = mallocl(sizeof(Triangle) * max_triangles);
+        triangles = static_cast<Triangle*>(malloc(sizeof(Triangle) * max_triangles));
+    }
+
+    void reset() {
+        pos = 0;
     }
     
     size_t pos;
@@ -79,7 +91,8 @@ struct Collect {
 
     TriangleSet to_set() {
         TriangleSet set;
-        for (auto &triangle : triangles) {
+        for (size_t i = 0; i < pos; ++i) {
+            auto &triangle = triangles[i];
             set.insert({triangle.a, triangle.b, triangle.c});
         }
         return set;

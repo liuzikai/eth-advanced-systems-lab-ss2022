@@ -67,7 +67,7 @@ static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_fun
 
 template<class Counter, class TLR>
 static std::map<std::string, TriangleFunctions<index_t, Counter, TLR>> name_to_function_no_instrumentation = {
-    {"WojciechMula",  TriangleFunctions(WojciechMula_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
+   // {"WojciechMula",  TriangleFunctions(WojciechMula_sort_timing<index_t, Counter, TLR>, get_dummy_helper<index_t, Counter>, free_dummy_helper<index_t, Counter>)},
 
 };
 
@@ -167,9 +167,9 @@ void run(const BenchParams &params, std::ofstream &out_file) {
         auto instrumented_graph_copy = create_graph_copy(instrumented_graph_original);
 
 
-        auto test_translator = name_to_function<InstrumentedIndex, index_t , TriangleListing::Collect<InstrumentedIndex>>;
+        auto test_translator = name_to_function<InstrumentedIndex, index_t , TriangleListing::SetCollect<InstrumentedIndex>>;
 
-        TriangleListing::Collect<InstrumentedIndex>::TriangleSet last_result;
+        TriangleListing::SetCollect<InstrumentedIndex>::TriangleSet last_result;
         bool has_last_result = false;
         for (const auto &algo_name: params.algos) {
 
@@ -185,10 +185,11 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                     void *helper = functions.get_helper(instrumented_graph_copy);
 
                     // List triangles and get op count
+                    TriangleListing::SetCollect<InstrumentedIndex> result;
                     OpCounter::ResetOpCount();
-                    auto result_lister = functions.count(instrumented_graph_copy, helper);
+                    functions.count(&result, instrumented_graph_copy, helper);
                     op_count = OpCounter::GetOpCount();
-                    auto result_set = result_lister.to_set();
+                    auto result_set = result.triangles;
                     // Compare triangles with the result of the last algorithm (if available)
                     if (has_last_result) {
                         if (result_set != last_result) {
@@ -240,8 +241,8 @@ void run(const BenchParams &params, std::ofstream &out_file) {
         warmup_graph = create_graph_copy(benchmark_graph_original);
     }
 
-    auto benchmark_translator = name_to_function<index_t, index_t, TriangleListing::Count<index_t>>;
-    auto translator_no_instrumentation = name_to_function_no_instrumentation<index_t, TriangleListing::Count<index_t>>;
+    auto benchmark_translator = name_to_function<index_t, index_t, TriangleListing::Collect<index_t>>;
+    auto translator_no_instrumentation = name_to_function_no_instrumentation<index_t, TriangleListing::Collect<index_t>>;
     benchmark_translator.insert(translator_no_instrumentation.begin(), translator_no_instrumentation.end());
 
 
@@ -260,32 +261,37 @@ void run(const BenchParams &params, std::ofstream &out_file) {
 
                 // Do the warmup runs
                 // Use benchmark_graphs[0], which will be restored later anyway
+                // We know the triangle count from the instrumented roun.
+                TriangleListing::Collect<index_t> result(triangle_count);
                 for (size_t i = 0; i < params.num_warmups; i++) {
-                    functions.count(warmup_graph, helper);
+                    functions.count(&result, warmup_graph, helper);
+                    result.reset();
                 }
 
-                TriangleListing::Count<index_t> result;
+                
                 // Start benchmark
                 size_t cycles;
                 if(params.pre_sort_edge_lists) {
                     cycles = start_tsc();
                     for (size_t run = 0; run < params.num_runs; run++) {
-                        result = functions.count(benchmark_graph_original, helper);
+                        result.reset();
+                        functions.count(&result, benchmark_graph_original, helper);
                     }
                     cycles = stop_tsc(cycles);
-                    std::cout << result.count << std::endl;
+                    std::cout << result.pos << std::endl;
                 } else {
                     cycles = start_tsc();
                     for (size_t run = 0; run < params.num_runs; run++) {
-                        result = functions.count(benchmark_graphs[run], helper);
+                        result.reset();
+                        functions.count(&result, benchmark_graphs[run], helper);
                     }
                     cycles = stop_tsc(cycles);
 
                 }
 
-                if (result.count != triangle_count) {
+                if (result.pos != triangle_count) {
                     std::stringstream ss;
-                    ss << "Count of triangles differs from the instrumented run! Count is: " << result.count << " expected: " << triangle_count;
+                    ss << "Count of triangles differs from the instrumented run! Count is: " << result.pos << " expected: " << triangle_count;
                     //throw std::runtime_error(ss.str());
                 }
                 size_t cycle_per_run = cycles / params.num_runs;

@@ -7,7 +7,7 @@
 
 namespace ms0 {
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-    TRL merge_sort_timing(AdjacencyGraph<Index> *G, void *dummy); 
+    void merge_sort_timing(TRL* ,AdjacencyGraph<Index> *G, void *dummy); 
 
     template<class Index>
     void merge_sort(Index *arr, Index* other, index_t total_size); 
@@ -15,7 +15,7 @@ namespace ms0 {
 
 namespace ms2 {
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-    TRL merge_sort_timing(AdjacencyGraph<Index> *G, void *dummy); 
+    void merge_sort_timing(TRL* ,AdjacencyGraph<Index> *G, void *dummy); 
 
     template<class Index>
     void merge_sort(Index *arr, Index* other, index_t total_size); 
@@ -26,14 +26,14 @@ namespace ms3 {
     void merge_sort(Index *arr, Index* other, index_t total_size); 
 
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-    TRL merge_sort_timing(AdjacencyGraph<Index> *G, void *dummy); 
+    void merge_sort_timing(TRL* ,AdjacencyGraph<Index> *G, void *dummy); 
 
     
 }
 
 namespace ms4 {
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-    TRL merge_sort_timing(AdjacencyGraph<Index> *G, void *dummy); 
+    void merge_sort_timing(TRL* ,AdjacencyGraph<Index> *G, void *dummy); 
 
     template<class Index>
     void merge_sort(Index *arr, Index* other, index_t total_size);     

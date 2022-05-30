@@ -12,17 +12,17 @@ template<class Index, class Counter, class TLR>
 struct TriangleFunctions {
 
     using Graph = AdjacencyGraph<Index, Counter>;
-    using count_triangles_fun = std::function<TLR(Graph *, void *)>;
+    using count_triangles_fun = std::function<void(TLR*, Graph *, void *)>;
     using get_helper_struct_fun = std::function<void *(const Graph *)>;
     using free_helper_struct_fun = std::function<void(void *)>;
 
-    typedef TLR (*count_triangles_c_style)(Graph *, void *);
+    typedef void (*count_triangles_c_style)(TLR*, Graph *, void *);
 
     typedef void *(*get_helper_c_style)(const Graph *);
     typedef void (*free_helper_c_style)(void *);
 
     template<class HelperStruct>
-    TriangleFunctions(TLR (*c)(Graph *, HelperStruct *),
+    TriangleFunctions(void (*c)(TLR*, Graph *, HelperStruct *),
                       HelperStruct *(*h)(const Graph *),
                       void(*f)(HelperStruct *)) {
         // Ugh. This is disgusting...

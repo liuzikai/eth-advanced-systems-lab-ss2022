@@ -8,26 +8,26 @@
 
 
 namespace ei0 {
-    template TriangleListing::Count<InstrumentedIndex> edge_iterator(AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
-    template TriangleListing::Collect<InstrumentedIndex> edge_iterator(AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
+    template void edge_iterator(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
+    template void edge_iterator(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
 }
 
 namespace ei1 {
-    template TriangleListing::Count<InstrumentedIndex> edge_iterator(AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
-    template TriangleListing::Collect<InstrumentedIndex> edge_iterator(AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
+    template void edge_iterator(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
+    template void edge_iterator(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
 }
 
 namespace ei2 {
-    template TriangleListing::Count<InstrumentedIndex> edge_iterator(AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
-    template TriangleListing::Collect<InstrumentedIndex> edge_iterator(AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
+    template void edge_iterator(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
+    template void edge_iterator(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
 }
 
 namespace eu4  {
-    template TriangleListing::Count<InstrumentedIndex> edge_iterator(AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
-    template TriangleListing::Collect<InstrumentedIndex> edge_iterator(AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
+    template void edge_iterator(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
+    template void edge_iterator(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
 }
 
 namespace eia {
-    template TriangleListing::Count<InstrumentedIndex> edge_iterator(AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
-    template TriangleListing::Collect<InstrumentedIndex> edge_iterator(AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
+    template void edge_iterator(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
+    template void edge_iterator(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
 }

@@ -9,7 +9,7 @@
 namespace ei2 {
 
 template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
-TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
+void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) {
     (void) dummy;
     Index s, t;
     //Counter i, j_lower_bound, j_upper_bound, j_current, j_inc, j_next;
@@ -19,8 +19,7 @@ TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
     Index s_neighbor1, s_neighbor2;
     Index t_neighbor1, t_neighbor2;
     
-    TRL lister;
-    // According to sec. 4, the sorting is included in the execution time
+        // According to sec. 4, the sorting is included in the execution time
     // for (Counter u = 0; u < G->n; u++) {
     //     if (G->adjacency[u].count > 0) {
     //         quick_sort(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1);
@@ -68,7 +67,7 @@ TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
                             j_lower_bound += 1;
                         }
                         if(s_adj->neighbors[i] == t_adj->neighbors[j_lower_bound]) {
-                            lister.list_triangle(s, t, t_adj->neighbors[j_lower_bound]);
+                            lister->list_triangle(s, t, t_adj->neighbors[j_lower_bound]);
                         }
                     }
                 } else {
@@ -79,16 +78,16 @@ TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
                         t_neighbor1 = t_adj->neighbors[j];
                         t_neighbor2 = t_adj->neighbors[j+1];
                         if (s_neighbor1 == t_neighbor1) {
-                            lister.list_triangle(s, t, s_neighbor1);
+                            lister->list_triangle(s, t, s_neighbor1);
                         } else if (s_neighbor1 == t_neighbor2) {
-                            lister.list_triangle(s, t, s_neighbor1);
+                            lister->list_triangle(s, t, s_neighbor1);
                             goto advance_t;
                         } else if (s_neighbor2 == t_neighbor1) {
-                            lister.list_triangle(s, t, s_neighbor2);
+                            lister->list_triangle(s, t, s_neighbor2);
                             goto advance_s;
                         } 
                         if (s_neighbor2 == t_neighbor2) {
-                            lister.list_triangle(s, t, s_neighbor2);
+                            lister->list_triangle(s, t, s_neighbor2);
                             goto advance_st;
                         } else if (s_neighbor2 > t_neighbor2) {
                             goto advance_t;
@@ -108,7 +107,7 @@ TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
                     while (i < s_adj->count && j < t_adj->count) {
                         if (s_adj->neighbors[i] == t_adj->neighbors[j] &&
                             t_adj->neighbors[j] > t) {
-                            lister.list_triangle(s, t, t_adj->neighbors[j]);
+                            lister->list_triangle(s, t, t_adj->neighbors[j]);
                             i++;
                             j++;
                         } else if (s_adj->neighbors[i] < t_adj->neighbors[j]) {
@@ -129,7 +128,7 @@ TRL edge_iterator(AdjacencyGraph<Index> *G, void *dummy = nullptr) {
         }
     }
 
-    return lister;
+    
 }
 
 }

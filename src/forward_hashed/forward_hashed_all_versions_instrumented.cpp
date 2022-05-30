@@ -13,8 +13,8 @@ namespace fh0 {
 
     template void forward_hashed_delete_neighbor_container(ForwardHashedNeighborContainer<InstrumentedIndex> *A);
 
-    template TriangleListing::Count<InstrumentedIndex> forward_hashed(AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedNeighborContainer<InstrumentedIndex> * A);
-    template TriangleListing::Collect<InstrumentedIndex> forward_hashed(AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedNeighborContainer<InstrumentedIndex> * A);
+    template void forward_hashed(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedNeighborContainer<InstrumentedIndex> * A);
+    template void forward_hashed(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedNeighborContainer<InstrumentedIndex> * A);
 }
 
 namespace fh1 {
@@ -24,8 +24,8 @@ namespace fh1 {
 
     template void forward_hashed_delete_neighbor_container<InstrumentedIndex>(ForwardHashedHelper<InstrumentedIndex> *A);
 
-    template TriangleListing::Count<InstrumentedIndex> forward_hashed(AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedHelper<InstrumentedIndex> * A);
-    template TriangleListing::Collect<InstrumentedIndex> forward_hashed(AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedHelper<InstrumentedIndex> * A);
+    template void forward_hashed(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedHelper<InstrumentedIndex> * A);
+    template void forward_hashed(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedHelper<InstrumentedIndex> * A);
 }
 
 namespace fh2 {
@@ -35,8 +35,8 @@ namespace fh2 {
 
     template void forward_hashed_delete_neighbor_container<InstrumentedIndex>(ForwardHashedHelper<InstrumentedIndex> *A);
 
-    template TriangleListing::Count<InstrumentedIndex> forward_hashed(AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedHelper<InstrumentedIndex> * A);
-    template TriangleListing::Collect<InstrumentedIndex> forward_hashed(AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedHelper<InstrumentedIndex> * A);
+    template void forward_hashed(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedHelper<InstrumentedIndex> * A);
+    template void forward_hashed(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedHelper<InstrumentedIndex> * A);
 }
 
 namespace fh3 {
@@ -46,8 +46,8 @@ namespace fh3 {
 
     template void forward_hashed_delete_neighbor_container<InstrumentedIndex>(ForwardHashedHelper<InstrumentedIndex> *A);
 
-    template TriangleListing::Count<InstrumentedIndex> forward_hashed(AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedHelper<InstrumentedIndex> * A);
-    template TriangleListing::Collect<InstrumentedIndex> forward_hashed(AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedHelper<InstrumentedIndex> * A);
+    template void forward_hashed(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedHelper<InstrumentedIndex> * A);
+    template void forward_hashed(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedHelper<InstrumentedIndex> * A);
 }
 
 namespace fh4 {
@@ -57,8 +57,8 @@ namespace fh4 {
 
     template void forward_hashed_delete_neighbor_container<InstrumentedIndex>(ForwardHashedHelper<InstrumentedIndex> *A);
 
-    template TriangleListing::Count<InstrumentedIndex> forward_hashed(AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedHelper<InstrumentedIndex> * A);
-    template TriangleListing::Collect<InstrumentedIndex> forward_hashed(AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedHelper<InstrumentedIndex> * A);
+    template void forward_hashed(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedHelper<InstrumentedIndex> * A);
+    template void forward_hashed(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedHelper<InstrumentedIndex> * A);
 }
 namespace fha {
     template struct ForwardHashedNeighborContainer<InstrumentedIndex>;
@@ -67,6 +67,6 @@ namespace fha {
 
     template void forward_hashed_delete_neighbor_container(ForwardHashedNeighborContainer<InstrumentedIndex> *A);
 
-    template TriangleListing::Count<InstrumentedIndex> forward_hashed(AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedNeighborContainer<InstrumentedIndex> * A);
-    template TriangleListing::Collect<InstrumentedIndex> forward_hashed(AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedNeighborContainer<InstrumentedIndex> * A);
+    template void forward_hashed(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedNeighborContainer<InstrumentedIndex> * A);
+    template void forward_hashed(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardHashedNeighborContainer<InstrumentedIndex> * A);
 }

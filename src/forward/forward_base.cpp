@@ -7,6 +7,6 @@ namespace f0 {
 
     template void forward_delete_neighbor_container<index_t, index_t>(ForwardNeighborContainer<index_t> *A);
 
-    template TriangleListing::Count<index_t> forward(AdjacencyGraph<index_t> *G, ForwardNeighborContainer<index_t> * A);
-    template TriangleListing::Collect<index_t> forward(AdjacencyGraph<index_t> *G, ForwardNeighborContainer<index_t> * A);
+    template void forward(TriangleListing::Count<index_t>* tlr, AdjacencyGraph<index_t> *G, ForwardNeighborContainer<index_t> * A);
+    template void forward(TriangleListing::Collect<index_t>* tlr, AdjacencyGraph<index_t> *G, ForwardNeighborContainer<index_t> * A);
 }
