@@ -112,7 +112,7 @@ def plot(algos, node_counts, data, degree, ylabel, title, figname):
     fig, ax = plt.subplots()
     for algo in algos:
         ax.plot(node_counts, data[algo], ".-", label=algo)
-    ax.set_xlabel(f"Node Count of the Random Graph (Avg degree = node * {degree}%)")
+    ax.set_xlabel(f"Node Count (Avg degree = |V| * {degree}%)")
     ax.set_ylabel(ylabel, loc="top", rotation="horizontal")
     # ax.set_ylabel(ylabel)
     ax.legend(loc='best')

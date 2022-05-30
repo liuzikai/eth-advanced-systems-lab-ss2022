@@ -31,12 +31,12 @@ t = args.type
 base = args.base
 
 def read_data(random_graphs):
-    edge_counts = []
+    node_counts = []
     ops_data = []
     cycles_data = []
     perfs_data = []
     for i, graph_name in enumerate(random_graphs):
-        edge_counts.append(int(graph_name.split("_")[-1]))
+        node_counts.append(int(graph_name.split("_")[-2]))
         with open(f"{DATADIR}/{graph_name}.csv", 'r') as f:
             reader = csv.DictReader(f)
             ops = {}
@@ -55,7 +55,7 @@ def read_data(random_graphs):
             ops_data.append(ops)
             cycles_data.append(cycles)
             perfs_data.append(perfs)
-    return edge_counts, ops_data, cycles_data, perfs_data
+    return node_counts, ops_data, cycles_data, perfs_data
 
 def find_base_algo(algos, base):
     base_algo = ""
@@ -67,9 +67,9 @@ def find_base_algo(algos, base):
             break
     return base_algo
 
-def calc_speedup(base_algo, edge_counts, cycles_data):
+def calc_speedup(base_algo, node_counts, cycles_data):
     speedup_data = []
-    for i in range(len(edge_counts)):
+    for i in range(len(node_counts)):
         speedup = {}
         for algo in algos:
             if algo != base_algo:
@@ -105,31 +105,31 @@ sns.set_style('darkgrid') # darkgrid, white grid, dark, white and ticks
 sns.color_palette('pastel')
 
 
-def plot(algos, edge_counts, data, n, xlabel, ylabel, title, figname):
+def plot(algos, node_counts, data, n, xlabel, ylabel, title, figname):
     fig, ax = plt.subplots()
     for algo in algos:
-        ax.plot(edge_counts, data[algo], ".-", label=algo)
+        ax.plot(node_counts, data[algo], ".-", label=algo)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel, loc="top", rotation="horizontal")
     ax.legend(loc='best')
     fig.suptitle(title)
     plt.savefig(figname, bbox_inches="tight")
 
-def plot_separate(algos, edge_counts, data, n, xlabel, ylabel, title, figname, format):
+def plot_separate(algos, node_counts, data, n, xlabel, ylabel, title, figname, format):
     for algo in algos:
         fig, ax = plt.subplots()
-        ax.plot(edge_counts, data[algo], ".-", label=algo)
+        ax.plot(node_counts, data[algo], ".-", label=algo)
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel, loc="top", rotation="horizontal")
         ax.legend(loc='best')
         fig.suptitle(f"{title}, {algo}")
         plt.savefig(f"{figname}-{algo}{format}", bbox_inches="tight")
 
-def plot_speedup(algos, edge_counts, data, n, xlabel, ylabel, title, figname, base_algo):
+def plot_speedup(algos, node_counts, data, n, xlabel, ylabel, title, figname, base_algo):
     fig, ax = plt.subplots()
     for algo in algos:
         if algo != base_algo:
-            ax.plot(edge_counts, data[algo], ".-", label=algo)
+            ax.plot(node_counts, data[algo], ".-", label=algo)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel, loc="top", rotation="horizontal")
     ax.legend(loc='best')
@@ -158,32 +158,32 @@ if __name__ == "__main__":
             else:
                 random_graphs.append(f"generated_{node_count}_{edge_count}")
 
-    edge_counts, ops_data, cycles_data, perfs_data = read_data(random_graphs)
+    node_counts, ops_data, cycles_data, perfs_data = read_data(random_graphs)
 
     # Construct the data frames
-    ops_df = pd.DataFrame(ops_data, index=edge_counts)
-    cycles_df = pd.DataFrame(cycles_data, index=edge_counts)
-    perfs_df = pd.DataFrame(perfs_data, index=edge_counts)
+    ops_df = pd.DataFrame(ops_data, index=node_counts)
+    cycles_df = pd.DataFrame(cycles_data, index=node_counts)
+    perfs_df = pd.DataFrame(perfs_data, index=node_counts)
     algos = list(cycles_df.columns)
 
     if t:
         xlabel = f"Node Count (Avg degree = |V| * {n}%)"
     else:
-        xlabel = f"Edge Count (|V| = |E|/{n})"
+        xlabel = f"Node Count (|E| = |V| * {n})"
     #---op count---
-    plot(algos, edge_counts, ops_df, n, xlabel, "ops", "Random Graph: Op Count", f"{PLOTDIR}/ops.png")
+    plot(algos, node_counts, ops_df, n, xlabel, "ops", "Random Graph: Op Count", f"{PLOTDIR}/ops.png")
     #---runtime cycles---
-    plot(algos, edge_counts, cycles_df, n, xlabel, "cycles", "Random Graph: Runtime", f"{PLOTDIR}/cycles.png")
+    plot(algos, node_counts, cycles_df, n, xlabel, "cycles", "Random Graph: Runtime", f"{PLOTDIR}/cycles.png")
     #---perf ops/cycle---
-    plot_separate(algos, edge_counts, perfs_df, n, xlabel, "ops/cycle", "Random Graph: Performance", f"{PLOTDIR}/perf", ".png")
+    plot_separate(algos, node_counts, perfs_df, n, xlabel, "ops/cycle", "Random Graph: Performance", f"{PLOTDIR}/perf", ".png")
 
     #---speedup---
     if base:
         base_algo = find_base_algo(algos, base)
         if base_algo:
             print("version to compare with:", base_algo)
-            speedup_data = calc_speedup(base_algo, edge_counts, cycles_data)
-            speedup_df = pd.DataFrame(speedup_data, index=edge_counts)
-            plot_speedup(algos, edge_counts, speedup_df, n, xlabel, "x", "Speedup", f"{PLOTDIR}/speedup.png", base_algo)
+            speedup_data = calc_speedup(base_algo, node_counts, cycles_data)
+            speedup_df = pd.DataFrame(speedup_data, index=node_counts)
+            plot_speedup(algos, node_counts, speedup_df, n, xlabel, "x", "Speedup", f"{PLOTDIR}/speedup.png", base_algo)
         else:
             print("no base version")
