@@ -73,7 +73,7 @@ def calc_speedup(base_algo, edge_counts, cycles_data):
         speedup = {}
         for algo in algos:
             if algo != base_algo:
-                ratio = cycles_data[i][algo]/cycles_data[i][base_algo]
+                ratio = cycles_data[i][base_algo]/cycles_data[i][algo]
                 speedup[algo] = ratio
         speedup_data.append(speedup)
     return speedup_data
