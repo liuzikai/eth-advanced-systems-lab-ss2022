@@ -5,6 +5,8 @@
 #include "adjacency_graph.h"
 #include "triangle_lister.h"
 #include "quick_sort.h"
+#include "instrumented_index.h"
+#include "instrumented_immintrin.h"
 
 namespace ei3 {
 
@@ -17,13 +19,12 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
     Counter highest_i, highest_j;
     Counter mid_i, mid_j;
     const AdjacencyList<Index> *t_adj, *s_adj, *swap = NULL;
-    __m256i mask = _mm256_set_epi32(0,0,0,0,0xff,0xff,0xff,0xff);
-    __m256 i1, 
+    //0x0002 0000 0002 0000 0002 0000 0002 0000
+    __m256i perm_idx = _mm256_set_epi32(2, 0, 2, 0, 2, 0, 2, 0);
 
     Index s_neighbor1, s_neighbor2;
     Index t_neighbor1, t_neighbor2;
     
-    TRL lister;
     // According to sec. 4, the sorting is included in the execution time
     // for (Counter u = 0; u < G->n; u++) {
     //     if (G->adjacency[u].count > 0) {
@@ -90,35 +91,35 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
                             j_lower_bound += 1;
                         }
                         if(s_adj->neighbors[i] == t_adj->neighbors[j_lower_bound]) {
-                            lister.list_triangle(s, t, t_adj->neighbors[j_lower_bound]);
+                            lister->list_triangle(s, t, t_adj->neighbors[j_lower_bound]);
                         }
                     }
                 } else {
                     i = i_start, j = j_start;
                     while(i < s_adj->count - 3 && j < t_adj->count - 3) {
                         // a0a1a2a3b0b1b2b3c0c1c2c3d0d1d2d3
-                        _mm128i s_neighbors = _mm_load_si128(s_adj->neighbors + i);
+                        __m128i s_neighbors = _mm_load_si128((__m128i *)(s_adj->neighbors + i));
 
                         // a0a1a0a1a2a3a2a3b0b1b0b1b2b3b2b3
-                        _mm128i low = _mm_unpacklo_epi16(s_neighbors, s_neighbors);
+                        __m128i low = _mm_unpacklo_epi16(s_neighbors, s_neighbors);
                         // c0c1c0c1c2c3c2c3d0d1d0d1d2d3d2d3
-                        _mm128i high = _mm_unpackhi_epi16(s_neighbors, s_neighbors);
+                        __m128i high = _mm_unpackhi_epi16(s_neighbors, s_neighbors);
 
                         // a0a1a0a1b0b1b0b1a0a1a0a1b0b1b0b1c0c1c0c1d0d1d0d1c0c1c0c1d0d1d0d1
-                        __mm256i merge_low_high = _mm256_inserti128_si256(_mm256_castsi128_si256(low), high, 1);
-                        __mm256i permuted = _mm256_permute8x32_epi32(merge_low_high, 0x00020000000200000002000000020000);
+                        __m256i merge_low_high = _mm256_inserti128_si256(_mm256_castsi128_si256(low), high, 1);
+                        __m256i permuted = _mm256_permutevar8x32_epi32(merge_low_high, perm_idx);
 
                         // a0a1a0a1b0b1b0b1c0c1c0c1d0d1d0d1a0a1a0a1b0b1b0b1c0c1c0c1d0d1d0d1
-                        __mm256i a = _mm256_permute4x64_epi64(permuted, 0xD8);
+                        __m256i a = _mm256_permute4x64_epi64(permuted, 0xD8);
 
                         // a0a1a2a3b0b1b2b3c0c1c2c3d0d1d2d3
-                        _mm128i t_neighbors = _mm_load_si128(t_adj->neighbors + i);
+                        __m128i t_neighbors = _mm_load_si128((__m128i *)(t_adj->neighbors + i));
                         // a0a1b0b1a0a1b0b1_c0c1d0d1c0c1d0d1_
-                        _mm256i duplicated = _mmm_broadcastsi128_si256(t_neighbors);
-                        _mm256i merged = _mm256_shufflelo_epi16(duplicated, 0x88);
+                        __m256i duplicated = _mm_broadcastsi128_si256(t_neighbors);
+                        __m256i merged = _mm256_shufflelo_epi16(duplicated, 0x88);
 
                         // a0a1b0b1a0a1b0b1a0a1b0b1a0a1b0b1c0c1d0d1c0c1d0d1c0c1d0d1c0c1d0d1
-                        _mm256i b  = _mm256_unpacklo_epi32(merged, merged)
+                        __m256i b  = _mm256_unpacklo_epi32(merged, merged);
 
                         // a0a1a0a1b0b1b0b1c0c1c0c1d0d1d0d1a0a1a0a1b0b1b0b1c0c1c0c1d0d1d0d1
                         // a0a1b0b1a0a1b0b1a0a1b0b1a0a1b0b1c0c1d0d1c0c1d0d1c0c1d0d1c0c1d0d1
@@ -126,7 +127,7 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
                         // if a[i+31:i+16] == b[i+31:i+16] => element 1 in s might match element 2 in t (if false, doesnt match, if true it might need to check upper half) 
                         // if a[i+15+128:i+128] == b[i+15+128:i+128] => element 1 in s might match element 3 in t (if false, doesnt match, if true it might need to check upper half)
                         // if a[i+31+128:i+16+128] == b[i+31+128:i+16+128] => element 1 in s might match element 4 in t (if false, doesnt match, if true it might need to check upper half) 
-                        __256i comp = _mm256_cmpeq_epi16(a, b);
+                        __m256i comp = _mm256_cmpeq_epi16(a, b);
                     }
                     /*while (i < s_adj->count -1 && j < t_adj->count -1) {
                         s_neighbor1 = s_adj->neighbors[i];
@@ -163,7 +164,7 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
                     while (i < s_adj->count && j < t_adj->count) {
                         if (s_adj->neighbors[i] == t_adj->neighbors[j] &&
                             t_adj->neighbors[j] > t) {
-                            lister.list_triangle(s, t, t_adj->neighbors[j]);
+                            lister->list_triangle(s, t, t_adj->neighbors[j]);
                             i++;
                             j++;
                         } else if (s_adj->neighbors[i] < t_adj->neighbors[j]) {
@@ -183,8 +184,6 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
             }
         }
     }
-
-    return lister;
 }
 
 }

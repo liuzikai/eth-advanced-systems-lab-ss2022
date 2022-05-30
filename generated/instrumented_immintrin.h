@@ -140,6 +140,46 @@ auto static inline _mm_cvtsi128_si32(auto i_0) {
     AVX2::increment_op_count_by(0);
     return real_intrinsics::_mm_cvtsi128_si32(i_0);
 }
+auto static inline _mm_load_si128(auto i_0) {
+    AVX2::increment_op_count_by(0);
+    return real_intrinsics::_mm_load_si128(i_0);
+}
+auto static inline _mm_unpacklo_epi16(auto i_0, auto i_1) {
+    AVX2::increment_op_count_by(0);
+    return real_intrinsics::_mm_unpacklo_epi16(i_0, i_1);
+}
+auto static inline _mm_unpackhi_epi16(auto i_0, auto i_1) {
+    AVX2::increment_op_count_by(0);
+    return real_intrinsics::_mm_unpackhi_epi16(i_0, i_1);
+}
+auto static inline _mm256_castsi128_si256(auto i_0) {
+    AVX2::increment_op_count_by(0);
+    return real_intrinsics::_mm256_castsi128_si256(i_0);
+}
+auto static inline _mm256_inserti128_si256(auto i_0, auto i_1, auto i_2) {
+    AVX2::increment_op_count_by(0);
+    return real_intrinsics::_mm256_inserti128_si256(i_0, i_1, i_2);
+}
+auto static inline _mm256_permute4x64_epi64(auto i_0, auto i_1) {
+    AVX2::increment_op_count_by(0);
+    return real_intrinsics::_mm256_permute4x64_epi64(i_0, i_1);
+}
+auto static inline _mm256_broadcastsi128_si256(auto i_0) {
+    AVX2::increment_op_count_by(0);
+    return real_intrinsics::_mm256_broadcastsi128_si256(i_0);
+}
+auto static inline _mm256_shufflelo_epi16(auto i_0, auto i_1) {
+    AVX2::increment_op_count_by(0);
+    return real_intrinsics::_mm256_shufflelo_epi16(i_0, i_1);
+}
+auto static inline _mm256_unpacklo_epi32(auto i_0, auto i_1) {
+    AVX2::increment_op_count_by(0);
+    return real_intrinsics::_mm256_unpacklo_epi32(i_0, i_1);
+}
+auto static inline _mm256_cmpeq_epi16(auto i_0, auto i_1) {
+    AVX2::increment_op_count_by(0);
+    return real_intrinsics::_mm256_cmpeq_epi16(i_0, i_1);
+}
 
 }
 
