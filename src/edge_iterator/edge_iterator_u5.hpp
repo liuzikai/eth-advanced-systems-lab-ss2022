@@ -8,8 +8,6 @@
 
 namespace eu5 {
 
-#define UNROLL_FACTOR_5 4
-
 template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
 void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) {
     (void) dummy;
@@ -57,7 +55,6 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
                 Counter cnt = 0;
                 do {
                     cnt = 0;
-                    c1=0,c2=0,c3=0,c4=0;
                     if (i[0] < Adj_s_size && j[0] < Adj_t_size[0]) {
                         Index s0 = Adj_s[i[0]];
                         Index t0 = Adj_t[0][j[0]];
