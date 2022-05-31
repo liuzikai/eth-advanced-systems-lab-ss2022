@@ -43,3 +43,6 @@ one cycles, one op_count vs. graph clustered bar graph.\
 one performance plot per algorithm.\
 `clustered_bar.sh -c <commit_hash> -w 10 -r 10 -p 10 -n 1`
 `-n 1`: the first experiment of this configuration
+
+## manually plot data from different experiments
+`python plot_all.py -d [path-to-data eg.".../5-1-1/1"]\;[path] -p [where you'd like to save the plots] -l 500 -r 4000 -i 500 -n 5 -s 1 -a [all algos you'd like to plot] -b [base version name eg. "va"] [-t: use it if it's "_density" experiment]`
