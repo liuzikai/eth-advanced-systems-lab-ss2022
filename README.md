@@ -28,3 +28,7 @@ Files named with camelcase are of C++ version. Otherwise, C version.
 ## tests
 ## benchmark
 `./benchmark -algorithm forward -graph <path-to-graph>`
+
+-fargument-noalias-anything -fno-strict-aliasing
+works for ei_u4
+does not work for forward
