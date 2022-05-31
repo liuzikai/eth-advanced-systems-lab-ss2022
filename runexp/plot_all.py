@@ -167,6 +167,7 @@ if __name__ == "__main__":
                 random_graphs.append(f"generated_{node_count}_{edge_count}")
 
     node_counts, ops_data, cycles_data, perfs_data, v = read_data(random_graphs)
+
     # temp = []
     # for vi in range(v):
     #     for algo in algos:
