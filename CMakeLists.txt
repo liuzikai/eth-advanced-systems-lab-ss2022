@@ -65,6 +65,8 @@ set(TRIANGLE_SOURCES
         src/edge_iterator/edge_iterator_v2.cpp
         src/edge_iterator/edge_iterator_u4.cpp
         src/edge_iterator/edge_iterator_u5.cpp
+        src/edge_iterator/edge_iterator_u6.cpp
+        src/edge_iterator/edge_iterator_u7.cpp
         src/edge_iterator/edge_iterator_m1.cpp
         src/edge_iterator/edge_iterator_va.cpp
 
