@@ -117,7 +117,7 @@ void generate_random_graph_edge_selector(const GraphDefinition &graph_definition
             if(connections_to_add <= 0) {
                 break;
             }
-            if(adjacency_matrix[node][neighbours[j]] == 0) {
+            if(node != neighbours[j] && adjacency_matrix[node][neighbours[j]] == 0) {
                 adjacency_matrix[node][neighbours[j]] = 1;
                 adjacency_matrix[node][node] += 1;
                 adjacency_matrix[neighbours[j]][node] = 1;
