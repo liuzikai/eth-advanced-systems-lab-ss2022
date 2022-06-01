@@ -97,6 +97,36 @@ void generate_random_graph_edge_selector(const GraphDefinition &graph_definition
         adjacency_matrix[dst][dst] += 1;
     }
 
+    // add high degree nodes
+    std::vector<uint64_t> high_degree_nodes(graph_definition.nodes);
+    std::vector<uint64_t> neighbours(graph_definition.nodes);
+    for(uint64_t i = 0; i < graph_definition.nodes; i++) {
+        high_degree_nodes[i] = i;
+        neighbours[i] = i;
+    }
+    std::shuffle(high_degree_nodes.begin(), high_degree_nodes.end(), gen);
+
+    for(uint64_t i = 0; i < graph_definition.high_degree_nodes && i < graph_definition.nodes; i++) {
+        uint64_t node = high_degree_nodes[i];
+        uint64_t current_degree = adjacency_matrix[node][node];
+        uint64_t connections_to_add = (graph_definition.nodes * (graph_definition.high_degree_nodes - (i+1)))
+                                        / (2*graph_definition.high_degree_nodes) 
+                                        - current_degree; // formular from the paper
+        std::shuffle(neighbours.begin(), neighbours.end(), gen);
+        for(uint64_t j = 0; j < graph_definition.nodes; j++) {
+            if(connections_to_add <= 0) {
+                break;
+            }
+            if(node != neighbours[j] && adjacency_matrix[node][neighbours[j]] == 0) {
+                adjacency_matrix[node][neighbours[j]] = 1;
+                adjacency_matrix[node][node] += 1;
+                adjacency_matrix[neighbours[j]][node] = 1;
+                adjacency_matrix[neighbours[j]][neighbours[j]] += 1;
+                connections_to_add--;
+            }
+        }
+    }
+
     outfile << graph_definition.nodes << std::endl;
     for (uint64_t i = 0; i < graph_definition.nodes; i++)
     {
@@ -249,6 +279,7 @@ GraphDefinition parse_arguments(arg_parser &parser)
     graph.graphType = string_to_graphType(std::string{parser.getCmdOption("-gt").value_or("GENERATED")});
     graph.nodes = parser.getCmdOptionAsInt("-num_nodes").value_or(100);
     graph.edges = parser.getCmdOptionAsInt("-num_edges").value_or(1000);
+    graph.high_degree_nodes = parser.getCmdOptionAsInt("-h").value_or(0);
     graph.density = string_to_density(std::string{parser.getCmdOption("-density").value_or("NONE")});
     graph.hdng = string_to_highDegreeNodeGeneration(std::string{parser.getCmdOption("-hdng").value_or("NONE")});
     graph.random_seed = parser.getCmdOptionAsInt("-seed").value_or(std::time(nullptr));
