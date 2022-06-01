@@ -18,6 +18,7 @@ parser.add_argument('--interval', '-i', type=int, help='interval (step)', requir
 parser.add_argument('--seed', '-s', type=int, help='seed for random graph', required=False)
 parser.add_argument('--base', '-b', type=str, help='version to compare with', required=False)
 parser.add_argument('--type', '-t', help='is density experiment set', action='store_true')
+parser.add_argument('--prefix', '-f', help='graph name prefix', default="generated_", required=False)
 args = parser.parse_args()
 
 DATADIR = args.datadir
@@ -29,6 +30,7 @@ interval = args.interval
 seed = args.seed
 t = args.type
 base = args.base
+prefix = args.prefix
 
 def read_data(random_graphs):
     node_counts = []
@@ -147,16 +149,16 @@ if __name__ == "__main__":
                 avg_d -= 1
             edge_count = node_count * avg_d // 2
             if seed:
-                random_graphs.append(f"generated_{seed}_{node_count}_{edge_count}")
+                random_graphs.append(f"{prefix}{seed}_{node_count}_{edge_count}")
             else:
-                random_graphs.append(f"generated_{node_count}_{edge_count}")
+                random_graphs.append(f"{prefix}{node_count}_{edge_count}")
     else:
         for edge_count in range(low, high, interval):
             node_count = edge_count // n;
             if seed:
-                random_graphs.append(f"generated_{seed}_{node_count}_{edge_count}")
+                random_graphs.append(f"{prefix}{seed}_{node_count}_{edge_count}")
             else:
-                random_graphs.append(f"generated_{node_count}_{edge_count}")
+                random_graphs.append(f"{prefix}{node_count}_{edge_count}")
 
     node_counts, ops_data, cycles_data, perfs_data = read_data(random_graphs)
 
