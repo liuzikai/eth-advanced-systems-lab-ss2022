@@ -20,7 +20,8 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
     Counter mid_i, mid_j;
     const AdjacencyList<Index> *t_adj, *s_adj, *swap = NULL;
     //0x0002 0000 0002 0000 0002 0000 0002 0000
-    __m256i perm_idx = _mm256_set_epi32(2, 0, 2, 0, 2, 0, 2, 0);
+    __m256i perm_idx_low = _mm256_set_epi32(2, 0, 2, 0, 2, 0, 2, 0);
+    __m256i perm_idx_high = _mm256_set_epi32(3, 1, 3, 1, 3, 1, 3, 1);
 
     Index s_neighbor1, s_neighbor2;
     Index t_neighbor1, t_neighbor2;
@@ -107,7 +108,7 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
 
                         // a0a1a0a1b0b1b0b1a0a1a0a1b0b1b0b1c0c1c0c1d0d1d0d1c0c1c0c1d0d1d0d1
                         __m256i merge_low_high = _mm256_inserti128_si256(_mm256_castsi128_si256(low), high, 1);
-                        __m256i permuted = _mm256_permutevar8x32_epi32(merge_low_high, perm_idx);
+                        __m256i permuted = _mm256_permutevar8x32_epi32(merge_low_high, perm_idx_low);
 
                         // a0a1a0a1b0b1b0b1c0c1c0c1d0d1d0d1a0a1a0a1b0b1b0b1c0c1c0c1d0d1d0d1
                         __m256i a = _mm256_permute4x64_epi64(permuted, 0xD8);
@@ -128,6 +129,32 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
                         // if a[i+15+128:i+128] == b[i+15+128:i+128] => element 1 in s might match element 3 in t (if false, doesnt match, if true it might need to check upper half)
                         // if a[i+31+128:i+16+128] == b[i+31+128:i+16+128] => element 1 in s might match element 4 in t (if false, doesnt match, if true it might need to check upper half) 
                         __m256i comp = _mm256_cmpeq_epi16(a, b);
+                        int bool_comps = _mm256_movemask_epi8(comp);
+                        if(bool_comps != 0) {
+                            // a2a3a2a3b2b3b2b3a2a3a2a3b2b3b2b3c2c3c2c3d2d3d2d3c2c3c2c3d2d3d2d3
+                            __m256i permuted2 = _mm256_permutevar8x32_epi32(merge_low_high, perm_idx_high);
+                            // compare upper halves and identify which ones are matching
+                            // a2a3a2a3b2b3b2b3c2c3c2c3d2d3d2d3a2a3a2a3b2b3b2b3c2c3c2c3d2d3d2d3
+                            __m256i a2 = _mm256_permute4x64_epi64(permuted2, 0xD8);
+                            
+                            // a2a3b2b3a2a3b2b3_c2c3d2d3c2c3d2d3_
+                            __m256i merged2 = _mm256_shufflelo_epi16(duplicated, 0xDD);
+
+                            // a2a3b2b3a2a3b2b3a2a3b2b3a2a3b2b3c2c3d2d3c2c3d2d3c2c3d2d3c2c3d2d3
+                            __m256i b2 = _mm256_unpacklo_epi32(merged2, merged2);
+
+                            __m256i comp2 = _mm256_cmpeq_epi16(a2, b2);
+                            __m256i total_comp = _mm256_and_si256(comp, comp2);
+                            int bool_comps2 = _mm256_movemask_epi8(comp2);
+
+                            int matches = bool_comps & bool_comps2;
+                            if(matches != 0) {
+
+                            }
+                        } else {
+                            i += 4;
+                            j += 4;
+                        }
                     }
                     /*while (i < s_adj->count -1 && j < t_adj->count -1) {
                         s_neighbor1 = s_adj->neighbors[i];
