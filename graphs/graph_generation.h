@@ -72,8 +72,10 @@ Density string_to_density(std::string s) {
 
 enum class HighDegreeNodeGeneration {
     NONE,
-    NATURAL_LOG,
-    SQRT
+    NATURAL_LOG_NODES,
+    SQRT_NODES,
+    NATURAL_LOG_EDGES,
+    SQRT_EDGES
 };
 
 HighDegreeNodeGeneration string_to_highDegreeNodeGeneration(std::string s) {
@@ -81,9 +83,13 @@ HighDegreeNodeGeneration string_to_highDegreeNodeGeneration(std::string s) {
     if (s == "NONE") {
         return HighDegreeNodeGeneration::NONE;
     } else if (s == "NATURAL_LOG") {
-        return HighDegreeNodeGeneration::NATURAL_LOG;
+        return HighDegreeNodeGeneration::NATURAL_LOG_NODES;
     } else if (s == "SQRT") {
-        return HighDegreeNodeGeneration::SQRT;
+        return HighDegreeNodeGeneration::SQRT_NODES;
+    } else if (s == "NATURAL_LOG_EDGES") {
+        return HighDegreeNodeGeneration::NATURAL_LOG_EDGES;
+    } else if (s == "SQRT_EDGES") {
+        return HighDegreeNodeGeneration::SQRT_EDGES;
     } else {
         throw std::invalid_argument("Invalid HighDegreeNodeGeneration");
     }
@@ -97,6 +103,7 @@ struct GraphDefinition {
     uint64_t random_seed;
     uint64_t nodes;
     uint64_t edges;
+    uint64_t high_degree_nodes;
     bool shuffle_edges;
 
     GraphDefinition(GraphType gT = GraphType::GENERATED, std::string out = std::string("generated_graph.txt")) {
@@ -106,19 +113,39 @@ struct GraphDefinition {
             hdng = HighDegreeNodeGeneration::NONE;
             nodes = 100;
             edges = 1000;
+            high_degree_nodes = 0;
             shuffle_edges = true;
         }
         output_filename = out;
     }
-    GraphDefinition(GraphType gT, Density dense, HighDegreeNodeGeneration degree, uint64_t m, uint64_t n = 0, bool shuffle = true, uint64_t seed = static_cast<uint64_t>(std::time(0)), std::string out = std::string("generated_graph.txt")) {
+    GraphDefinition(GraphType gT, Density dense, HighDegreeNodeGeneration degree, uint64_t m, uint64_t n = 0, uint64_t h = 0, bool shuffle = true, uint64_t seed = static_cast<uint64_t>(std::time(0)), std::string out = std::string("generated_graph.txt")) {
         graphType = gT;
         density = dense;
         hdng = degree;
         nodes = n;
         edges = m;
+        high_degree_nodes = h;
         shuffle_edges = shuffle;
         random_seed = seed;
         output_filename = out;
+        if(h==0) {
+            switch (degree) {
+                case HighDegreeNodeGeneration::NATURAL_LOG_NODES:
+                    high_degree_nodes = static_cast<uint64_t>(std::log(nodes));
+                    break;
+                case HighDegreeNodeGeneration::SQRT_NODES:
+                    high_degree_nodes = static_cast<uint64_t>(std::sqrt(nodes));
+                    break;
+                case HighDegreeNodeGeneration::NATURAL_LOG_EDGES:
+                    high_degree_nodes = static_cast<uint64_t>(std::log(edges));
+                    break;
+                case HighDegreeNodeGeneration::SQRT_EDGES:
+                    high_degree_nodes = static_cast<uint64_t>(std::sqrt(edges));
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 };
 
