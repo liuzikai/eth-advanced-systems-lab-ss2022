@@ -18,13 +18,14 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
     Counter i, j, j_lower_bound, j_inc, j_next, i_start, j_start;
     Counter highest_i, highest_j;
     Counter mid_i, mid_j;
+    int merge_mask = 0x55555555; //all even bits
     const AdjacencyList<Index> *t_adj, *s_adj, *swap = NULL;
     //0x0002 0000 0002 0000 0002 0000 0002 0000
     __m256i perm_idx_low = _mm256_set_epi32(2, 0, 2, 0, 2, 0, 2, 0);
     __m256i perm_idx_high = _mm256_set_epi32(3, 1, 3, 1, 3, 1, 3, 1);
 
-    Index s_neighbor1, s_neighbor2;
-    Index t_neighbor1, t_neighbor2;
+    /*Index s_neighbor1, s_neighbor2;
+    Index t_neighbor1, t_neighbor2;*/
     
     // According to sec. 4, the sorting is included in the execution time
     // for (Counter u = 0; u < G->n; u++) {
@@ -144,12 +145,61 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
                             __m256i b2 = _mm256_unpacklo_epi32(merged2, merged2);
 
                             __m256i comp2 = _mm256_cmpeq_epi16(a2, b2);
-                            __m256i total_comp = _mm256_and_si256(comp, comp2);
                             int bool_comps2 = _mm256_movemask_epi8(comp2);
 
                             int matches = bool_comps & bool_comps2;
-                            if(matches != 0) {
-
+                            int matches_merged = (matches & (matches << 1)) & merge_mask;
+                            if(matches_merged != 0) {
+                                if(matches_merged & 1) {
+                                    // element 1 in s matches element 1 in t
+                                    lister->list_triangle(s, t, s_adj->neighbors[i]);
+                                    // check if element 2 in s matches element 2 in t
+                                    if(matches_merged & 0x40) {
+                                        // element 2 in s matches element 2 in t
+                                        lister->list_triangle(s, t, s_adj->neighbors[i + 1]);
+                                        // check if element 3 in s matches element 3 in t
+                                        if(matches_merged & 0x1000000) {
+                                            lister->list_triangle(s, t, s_adj->neighbors[i + 2]);
+                                            // check if element 4 in s matches element 4 in t
+                                            if(matches_merged & 0x40000000) {
+                                                lister->list_triangle(s, t, s_adj->neighbors[i + 3]);
+                                                i += 4;
+                                                j += 4;
+                                                continue;
+                                            } else if (s_adj->neighbors[i+3] > t_adj->neighbors[i+3]) {
+                                                i += 3;
+                                                j += 4;
+                                                continue;
+                                            } else {
+                                                i += 4;
+                                                j += 3;
+                                                continue;
+                                            }
+                                        }
+                                        i += 2;
+                                        j += 2;
+                                        continue;
+                                    }
+                                    i += 1;
+                                    j += 1;
+                                } else if(matches_merged & 0x4) {
+                                    // element 1 in s matches element 2 in t
+                                    lister->list_triangle(s, t, s_adj->neighbors[i]);
+                                    i += 1;
+                                    j += 2;
+                                } else if(matches_merged & 0x10000) {
+                                    // element 1 in s matches element 3 in t
+                                    lister->list_triangle(s, t, s_adj->neighbors[i]);
+                                    i += 1;
+                                    j += 3;
+                                } else if(matches_merged & 0x40000) {
+                                    // element 1 in s matches element 4 in t
+                                    lister->list_triangle(s, t, s_adj->neighbors[i]);
+                                    i += 1;
+                                    j += 4;
+                                } else {
+                                    i += 1;
+                                }
                             }
                         } else {
                             i += 4;
