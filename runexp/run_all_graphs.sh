@@ -9,9 +9,9 @@ set -e  # exit on error
 # hep: HEP_LITERATURE
 # www: WWW_NOTRE_DAME
 # us: US_PATENTS
-ALGO=ei_base,ei_v1,ei_v2,ei_v3
+ALGO=ei_base,ei_v3
 ./run.sh -g german -w 0 -r 1 -p 1 -l $ALGO
-./run.sh -g actor -w 0 -r 1 -p 1 -l $ALGO
+#./run.sh -g actor -w 0 -r 1 -p 1 -l $ALGO
 ./run.sh -g comp -w 0 -r 1 -p 1 -l $ALGO
 ./run.sh -g google -w 0 -r 1 -p 1 -l $ALGO
 ./run.sh -g hep -w 0 -r 1 -p 1 -l $ALGO

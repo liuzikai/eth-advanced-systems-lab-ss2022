@@ -35,6 +35,8 @@ public:
 
     explicit operator index_t() const;
 
+    explicit operator int() const;
+
 private:
     index_t val;
 };

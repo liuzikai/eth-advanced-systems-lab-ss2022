@@ -1,6 +1,8 @@
 #ifndef TEAM02_EDGE_ITER_V3_H
 #define TEAM02_EDGE_ITER_V3_H
 
+#include <bitset>
+#include <string.h>
 #include "common.h"
 #include "adjacency_graph.h"
 #include "triangle_lister.h"
@@ -10,6 +12,19 @@
 
 namespace ei3 {
 
+inline void print128_num(__m128i var)
+{
+    uint16_t val[8];
+    memcpy(val, &var, sizeof(val));
+    std::cout << "Vector: " << std::bitset<16>(val[0]) << " " << std::bitset<16>(val[1]) << " " << std::bitset<16>(val[2]) << " " << std::bitset<16>(val[3]) << " " << std::bitset<16>(val[4]) << " " << std::bitset<16>(val[5]) << " " << std::bitset<16>(val[6]) << " " << std::bitset<16>(val[7]) << std::endl;
+}
+
+inline void print256_num(__m256i var)
+{
+    uint16_t val[16];
+    memcpy(val, &var, sizeof(val));
+    std::cout << "Vector: " << std::bitset<16>(val[0]) << " " << std::bitset<16>(val[1]) << " " << std::bitset<16>(val[2]) << " " << std::bitset<16>(val[3]) << " " << std::bitset<16>(val[4]) << " " << std::bitset<16>(val[5]) << " " << std::bitset<16>(val[6]) << " " << std::bitset<16>(val[7]) << " " << std::bitset<16>(val[8]) << " " << std::bitset<16>(val[9]) << " " << std::bitset<16>(val[10]) << " " << std::bitset<16>(val[11]) << " " << std::bitset<16>(val[12]) << " " << std::bitset<16>(val[13]) << " " << std::bitset<16>(val[14]) << " " << std::bitset<16>(val[15]) << std::endl;
+}
 template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
 void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) {
     (void) dummy;
@@ -98,24 +113,49 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
                     }
                 } else {
                     i = i_start, j = j_start;
-                    while(i < s_adj->count - 3 && j < t_adj->count - 3) {
+                    while(i + 3 < s_adj->count && j + 3 < t_adj->count) {
+                        std::cout << "i: " << i << " j: " << j << std::endl;
+                        std::cout << "s_adj->neighbors[i]: " << std::bitset<16>((int)s_adj->neighbors[i]) << " t_adj->neighbors[j]: " << std::bitset<16>((int)t_adj->neighbors[j]) << std::endl;
+                        std::cout << "s_adj->neighbors[i+1]: " << std::bitset<16>((int)s_adj->neighbors[i+1]) << " t_adj->neighbors[j+1]: " <<std::bitset<16>((int)t_adj->neighbors[j+1]) << std::endl;
+                        std::cout << "s_adj->neighbors[i+2]: " << std::bitset<16>((int)s_adj->neighbors[i+2]) << " t_adj->neighbors[j+2]: " <<std::bitset<16>((int)t_adj->neighbors[j+2]) << std::endl;
+                        std::cout << "s_adj->neighbors[i+3]: " << std::bitset<16>((int)s_adj->neighbors[i+3]) << " t_adj->neighbors[j+3]: " <<std::bitset<16>((int)t_adj->neighbors[j+3]) << std::endl;
                         // a0a1a2a3b0b1b2b3c0c1c2c3d0d1d2d3
-                        __m128i s_neighbors = _mm_load_si128((__m128i *)(s_adj->neighbors + i));
+                        __m128i s_neighbors = _mm_loadu_si128((__m128i *)(s_adj->neighbors + i));
+                        // print the bits of each 16bit integer in the s_neighbors vector
+                        std::cout << "s_neighbors: ";
+                        print128_num(s_neighbors);
+
+
 
                         // a0a1a0a1a2a3a2a3b0b1b0b1b2b3b2b3
                         __m128i low = _mm_unpacklo_epi16(s_neighbors, s_neighbors);
+                        std::cout << "low: ";
+                        print128_num(low);
                         // c0c1c0c1c2c3c2c3d0d1d0d1d2d3d2d3
                         __m128i high = _mm_unpackhi_epi16(s_neighbors, s_neighbors);
+                        std::cout << "high: ";
+                        print128_num(high);
 
+                        // a0a1a0a1a2a3a2a3b0b1b0b1b2b3b2b3a0a1a0a1a2a3a2a3b0b1b0b1b2b3b2b3
+                        __m256i merge_low_low = _mm256_inserti128_si256(_mm256_castsi128_si256(low), low, 1); 
+                        // c0c1c0c1c2c3c2c3d0d1d0d1d2d3d2d3c0c1c0c1c2c3c2c3d0d1d0d1d2d3d2d3
+                        __m256i merge_high_high = _mm256_inserti128_si256(_mm256_castsi128_si256(high), high, 1);
+                        // a0a1a0a1b0b1b0b1a0a1a0a1b0b1b0b1a0a1a0a1b0b1b0b1a0a1a0a1b0b1b0b1
+                        __m256i permuted_low = _mm256_permutevar8x32_epi32(merge_low_low, perm_idx_low);
+                        // c0c1c0c1d0d1d0d1c0c1c0c1d0d1d0d1c0c1c0c1d0d1d0d1c0c1c0c1d0d1d0d1
+                        __m256i permute_high = _mm256_permutevar8x32_epi32(merge_high_high, perm_idx_low);
                         // a0a1a0a1b0b1b0b1a0a1a0a1b0b1b0b1c0c1c0c1d0d1d0d1c0c1c0c1d0d1d0d1
-                        __m256i merge_low_high = _mm256_inserti128_si256(_mm256_castsi128_si256(low), high, 1);
-                        __m256i permuted = _mm256_permutevar8x32_epi32(merge_low_high, perm_idx_low);
+                        __m256i merge_low_high = _mm256_permute2f128_si256(permuted_low, permute_high, 0x20);
+                        std::cout << "merge_low_high: ";
+                        print256_num(merge_low_high);
 
                         // a0a1a0a1b0b1b0b1c0c1c0c1d0d1d0d1a0a1a0a1b0b1b0b1c0c1c0c1d0d1d0d1
-                        __m256i a = _mm256_permute4x64_epi64(permuted, 0xD8);
+                        __m256i a = _mm256_permute4x64_epi64(merge_low_high, 0xD8);
+                        std::cout << "a: ";
+                        print256_num(a);
 
                         // a0a1a2a3b0b1b2b3c0c1c2c3d0d1d2d3
-                        __m128i t_neighbors = _mm_load_si128((__m128i *)(t_adj->neighbors + i));
+                        __m128i t_neighbors = _mm_loadu_si128((__m128i *)(t_adj->neighbors + j));
                         // a0a1b0b1a0a1b0b1_c0c1d0d1c0c1d0d1_
                         __m256i duplicated = _mm_broadcastsi128_si256(t_neighbors);
                         __m256i merged = _mm256_shufflelo_epi16(duplicated, 0x88);
@@ -131,9 +171,11 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
                         // if a[i+31+128:i+16+128] == b[i+31+128:i+16+128] => element 1 in s might match element 4 in t (if false, doesnt match, if true it might need to check upper half) 
                         __m256i comp = _mm256_cmpeq_epi16(a, b);
                         int bool_comps = _mm256_movemask_epi8(comp);
+                        std::cout << "bool_comps: " << std::bitset<32>(bool_comps) << std::endl;
                         if(bool_comps != 0) {
+                            __m256i merge_low_high2 = _mm256_inserti128_si256(_mm256_castsi128_si256(low), high, 1);
                             // a2a3a2a3b2b3b2b3a2a3a2a3b2b3b2b3c2c3c2c3d2d3d2d3c2c3c2c3d2d3d2d3
-                            __m256i permuted2 = _mm256_permutevar8x32_epi32(merge_low_high, perm_idx_high);
+                            __m256i permuted2 = _mm256_permutevar8x32_epi32(merge_low_high2, perm_idx_high);
                             // compare upper halves and identify which ones are matching
                             // a2a3a2a3b2b3b2b3c2c3c2c3d2d3d2d3a2a3a2a3b2b3b2b3c2c3c2c3d2d3d2d3
                             __m256i a2 = _mm256_permute4x64_epi64(permuted2, 0xD8);
@@ -146,9 +188,11 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
 
                             __m256i comp2 = _mm256_cmpeq_epi16(a2, b2);
                             int bool_comps2 = _mm256_movemask_epi8(comp2);
+                            std::cout << "bool_comps2: " << std::bitset<32>(bool_comps2) << std::endl;
 
                             int matches = bool_comps & bool_comps2;
-                            int matches_merged = (matches & (matches << 1)) & merge_mask;
+                            int matches_merged = (matches & (matches >> 1)) & merge_mask;
+                            std::cout << "matches: " << std::bitset<32>(matches_merged) << std::endl;
                             if(matches_merged != 0) {
                                 if(matches_merged & 1) {
                                     // element 1 in s matches element 1 in t
@@ -166,7 +210,7 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
                                                 i += 4;
                                                 j += 4;
                                                 continue;
-                                            } else if (s_adj->neighbors[i+3] > t_adj->neighbors[i+3]) {
+                                            } else if (s_adj->neighbors[i+3] > t_adj->neighbors[j+3]) {
                                                 i += 3;
                                                 j += 4;
                                                 continue;
@@ -182,28 +226,44 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
                                     }
                                     i += 1;
                                     j += 1;
+                                    continue;
                                 } else if(matches_merged & 0x4) {
                                     // element 1 in s matches element 2 in t
                                     lister->list_triangle(s, t, s_adj->neighbors[i]);
                                     i += 1;
                                     j += 2;
+                                    continue;
                                 } else if(matches_merged & 0x10000) {
                                     // element 1 in s matches element 3 in t
                                     lister->list_triangle(s, t, s_adj->neighbors[i]);
                                     i += 1;
                                     j += 3;
+                                    continue;
                                 } else if(matches_merged & 0x40000) {
                                     // element 1 in s matches element 4 in t
                                     lister->list_triangle(s, t, s_adj->neighbors[i]);
                                     i += 1;
                                     j += 4;
+                                    continue;
                                 } else {
                                     i += 1;
+                                    continue;
                                 }
+                            } else {
+                                if(s_adj->neighbors[i+3] > t_adj->neighbors[j+3]) {
+                                    j += 4;
+                                } else {
+                                    i += 4;
+                                }
+                                continue;
                             }
                         } else {
-                            i += 4;
-                            j += 4;
+                            if(s_adj->neighbors[i+3] > t_adj->neighbors[j+3]) {
+                                j += 4;
+                            } else {
+                                i += 4;
+                            }
+                            continue;
                         }
                     }
                     /*while (i < s_adj->count -1 && j < t_adj->count -1) {

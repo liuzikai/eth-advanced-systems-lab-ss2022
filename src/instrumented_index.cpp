@@ -80,6 +80,11 @@ InstrumentedIndex::operator index_t() const {
     return val;
 }
 
+InstrumentedIndex::operator int() const {
+    // This is needed when index is used to access and index.
+    return val;
+}
+
 namespace AVX2{
     void increment_op_count_by(uint64_t count){
         op_count += count;
