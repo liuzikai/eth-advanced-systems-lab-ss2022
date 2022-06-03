@@ -18,7 +18,6 @@ parser.add_argument('--interval', '-i', type=int, help='interval (step)', requir
 parser.add_argument('--seed', '-s', type=int, help='seed for random graph', required=False)
 parser.add_argument('--base', '-b', type=str, help='version to compare with', required=False)
 parser.add_argument('--type', '-t', help='is density experiment set', action='store_true')
-parser.add_argument('--prefix', '-f', help='graph name prefix', default="generated_", required=False)
 args = parser.parse_args()
 
 DATADIR = args.datadir
@@ -30,13 +29,14 @@ interval = args.interval
 seed = args.seed
 t = args.type
 base = args.base
-prefix = args.prefix
 
 def read_data(random_graphs):
     node_counts = []
     ops_data = []
     cycles_data = []
     perfs_data = []
+    output_perf_data = []
+    template_data = []
     for i, graph_name in enumerate(random_graphs):
         node_counts.append(int(graph_name.split("_")[-2]))
         with open(f"{DATADIR}/{graph_name}.csv", 'r') as f:
@@ -54,9 +54,27 @@ def read_data(random_graphs):
                 ops[algo] = op
                 cycles[algo] = cycle
                 perfs[algo] = perf
+                output_perf_data.append({"graph":graph_name, "algo":algo, "op":op, "cycle": cycle, "perf":perf})
+                template_data.append({"graph":graph_name, "algo":algo, "data_transfer":""})
             ops_data.append(ops)
             cycles_data.append(cycles)
             perfs_data.append(perfs)
+    with open(f"{DATADIR}/data.csv", 'w') as f:
+        fieldnames = list(output_perf_data[0].keys())
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+
+        writer.writeheader()
+        for line in output_perf_data:
+            writer.writerow(line)
+
+    with open(f"{DATADIR}/qn.csv", 'w') as f:
+        fieldnames = list(template_data[0].keys())
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+
+        writer.writeheader()
+        for line in template_data:
+            writer.writerow(line)
+
     return node_counts, ops_data, cycles_data, perfs_data
 
 def find_base_algo(algos, base):
@@ -149,16 +167,16 @@ if __name__ == "__main__":
                 avg_d -= 1
             edge_count = node_count * avg_d // 2
             if seed:
-                random_graphs.append(f"{prefix}{seed}_{node_count}_{edge_count}")
+                random_graphs.append(f"generated_{seed}_{node_count}_{edge_count}")
             else:
-                random_graphs.append(f"{prefix}{node_count}_{edge_count}")
+                random_graphs.append(f"generated_{node_count}_{edge_count}")
     else:
         for edge_count in range(low, high, interval):
             node_count = edge_count // n;
             if seed:
-                random_graphs.append(f"{prefix}{seed}_{node_count}_{edge_count}")
+                random_graphs.append(f"generated_{seed}_{node_count}_{edge_count}")
             else:
-                random_graphs.append(f"{prefix}{node_count}_{edge_count}")
+                random_graphs.append(f"generated_{node_count}_{edge_count}")
 
     node_counts, ops_data, cycles_data, perfs_data = read_data(random_graphs)
 
