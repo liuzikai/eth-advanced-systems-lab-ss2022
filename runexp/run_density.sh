@@ -105,10 +105,10 @@ if [ -z $BASE ]; then BASE="va"; fi
 # read opt graph type
 if [ -z $GRAPHTYPE ]; then
     GRAPHTYPE="GENERATED"
-    if [ -z $LOWNODE ]; then LOWNODE="1000"; fi
-    if [ -z $HIGHNODE ]; then HIGHNODE="5000"; fi
-    if [ -z $INTERVAL ]; then INTERVAL="500"; fi
-    if [ -z $DEGREE ]; then DEGREE="10"; fi
+    if [ -z $LOWNODE ]; then LOWNODE="100"; fi
+    if [ -z $HIGHNODE ]; then HIGHNODE="105"; fi
+    if [ -z $INTERVAL ]; then INTERVAL="7"; fi
+    if [ -z $DEGREE ]; then DEGREE="20"; fi
 fi
 case $GRAPHTYPE in
     german) GRAPHTYPE="GERMAN_ROAD_NETWORK";;
