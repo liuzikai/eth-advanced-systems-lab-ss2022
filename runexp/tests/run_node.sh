@@ -156,7 +156,7 @@ if [ ! -d $EXP ]; then
     fi
     JSON_STR=$JSON_STR'"number":'$NUMBER'}'
     echo $JSON_STR > $EXP/config.json
-    echo $JSON_STR | python -c "
+    echo $JSON_STR | python3 -c "
 import sys, json
 config = json.load(sys.stdin)
 for a,v in config.items():
@@ -165,13 +165,13 @@ for a,v in config.items():
     sed -i '' -e 's/"number":'$NUMBER'/"number":'$(($NUMBER+1))'/' $EXP/config.json
 else
     # more runs of the exp config
-    cat $EXP/config.json | python -c "
+    cat $EXP/config.json | python3 -c "
 import sys, json
 config = json.load(sys.stdin)
 for a,v in config.items():
     print(f'\t{a}: {v}')
 "
-    NUMBER=$(cat $EXP/config.json | python -c "import sys, json; print(json.load(sys.stdin)['number'])")
+    NUMBER=$(cat $EXP/config.json | python3 -c "import sys, json; print(json.load(sys.stdin)['number'])")
     sed -i '' -e 's/"number":'$NUMBER'/"number":'$(($NUMBER+1))'/' $EXP/config.json
 fi
 
@@ -212,9 +212,9 @@ if [ $GRAPHTYPE = "GENERATED" ]; then
     cd $RUNEXP
     echo "Your are in $RUNEXP"
     if [ -z $SEED ]; then
-        python plot_node.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL
+        python3 plot_node.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL
     else
-        python plot_node.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL -s $SEED
+        python3 plot_node.py -d $EXPNUM -p $EXPNUM -n $NODE -l $LOWEDGE -r $HIGHEDGE -i $INTERVAL -s $SEED
     fi
 else
     graph=$GRAPHTYPE
