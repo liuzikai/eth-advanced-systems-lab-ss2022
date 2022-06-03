@@ -1,3 +1,10 @@
+## How to plot roofline
+`$ run_density.sh` as usual\
+Fill in "qn.csv": data_transfer column\
+`$ python3 roofline.py -d [path to dir of qn.csv] (-a [list algos you want to plot])`
+
+
+
 ## How to use the exp pipeline
 1. Modify env.sh
 2. Run run.sh: -h for help
