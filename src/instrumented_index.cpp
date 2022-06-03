@@ -47,6 +47,11 @@ InstrumentedIndex InstrumentedIndex::operator+(const InstrumentedIndex& other) c
     return InstrumentedIndex(val + other.val);
 }
 
+InstrumentedIndex InstrumentedIndex::operator*(const InstrumentedIndex& other) const {
+    op_count++;
+    return InstrumentedIndex(val * other.val);
+}
+
 InstrumentedIndex InstrumentedIndex::operator+(const bool& other) const {
     op_count++;
     return InstrumentedIndex(val + other);
@@ -60,6 +65,16 @@ InstrumentedIndex InstrumentedIndex::operator-(const InstrumentedIndex& other) c
 InstrumentedIndex InstrumentedIndex::operator%(const InstrumentedIndex& other) const {
     op_count++;
     return InstrumentedIndex(val % other.val);
+}
+
+InstrumentedIndex InstrumentedIndex::operator&(const InstrumentedIndex& other) const {
+    op_count++;
+    return InstrumentedIndex(val & other.val);
+}
+
+InstrumentedIndex InstrumentedIndex::operator>>(const InstrumentedIndex& other) const {
+    op_count++;
+    return InstrumentedIndex(val >> other.val);
 }
 
 InstrumentedIndex& InstrumentedIndex::operator++() {

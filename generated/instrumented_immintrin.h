@@ -181,7 +181,7 @@ auto static inline _mm256_unpacklo_epi32(auto i_0, auto i_1) {
     return real_intrinsics::_mm256_unpacklo_epi32(i_0, i_1);
 }
 auto static inline _mm256_cmpeq_epi16(auto i_0, auto i_1) {
-    AVX2::increment_op_count_by(0);
+    AVX2::increment_op_count_by(16);
     return real_intrinsics::_mm256_cmpeq_epi16(i_0, i_1);
 }
 

@@ -22,12 +22,18 @@ public:
     bool operator!=(const InstrumentedIndex& other) const;
 
     InstrumentedIndex operator+(const InstrumentedIndex& other) const;
+    
+    InstrumentedIndex operator*(const InstrumentedIndex& other) const;
 
     InstrumentedIndex operator+(const bool& other) const;
 
     InstrumentedIndex operator-(const InstrumentedIndex& other) const;
 
     InstrumentedIndex operator%(const InstrumentedIndex& other) const;
+
+    InstrumentedIndex operator&(const InstrumentedIndex& other) const;
+
+    InstrumentedIndex operator>>(const InstrumentedIndex& other) const;
 
     InstrumentedIndex& operator++();
 
