@@ -2,6 +2,9 @@
 #include <fstream>
 #include <iomanip>
 
+#define COLLECT_TRIANGLES
+// If not defined we will only count.
+
 #include <string_view>
 #include <functional>
 #include <map>
@@ -152,9 +155,10 @@ void run(const BenchParams &params, std::ofstream &out_file) {
     std::cout << "pre_sort_edge_lists = " << params.pre_sort_edge_lists << std::endl;
 
     std::map<std::string, size_t> op_counts;
-    size_t triangle_count = -1;
+    size_t triangle_count = 0;
 
     // Instrumented runs
+    #ifndef NO_INSTRUMENTATION
     {
         auto *instrumented_graph_original = create_graph_from_file<InstrumentedIndex>(params.graph_file.c_str());
         if (params.pre_sort_edge_lists && params.pre_cut_edge_lists) {
@@ -216,6 +220,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
         free_graph(instrumented_graph_original);
         free_graph(instrumented_graph_copy);
     }
+    #endif
 
     // Declare as const to avoid misuse that change the graph
     auto *benchmark_graph_original = create_graph_from_file<index_t>(params.graph_file.c_str());
@@ -241,9 +246,15 @@ void run(const BenchParams &params, std::ofstream &out_file) {
     if (params.num_warmups > 0) {
         warmup_graph = create_graph_copy(benchmark_graph_original);
     }
-
+    // Yes this could be templated.
+    #ifdef COLLECT_TRIANGLES
     auto benchmark_translator = name_to_function<index_t, index_t, TriangleListing::Collect<index_t>>;
     auto translator_no_instrumentation = name_to_function_no_instrumentation<index_t, TriangleListing::Collect<index_t>>;
+    #else
+    auto benchmark_translator = name_to_function<index_t, index_t, TriangleListing::Count<index_t>>;
+    auto translator_no_instrumentation = name_to_function_no_instrumentation<index_t, TriangleListing::Count<index_t>>;
+    #endif
+
     benchmark_translator.insert(translator_no_instrumentation.begin(), translator_no_instrumentation.end());
 
 
@@ -263,7 +274,11 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                 // Do the warmup runs
                 // Use benchmark_graphs[0], which will be restored later anyway
                 // We know the triangle count from the instrumented roun.
+                #ifdef COLLECT_TRIANGLES
                 TriangleListing::Collect<index_t> result(triangle_count);
+                #else
+                TriangleListing::Count<index_t> result(triangle_count);
+                #endif
                 for (size_t i = 0; i < params.num_warmups; i++) {
                     functions.count(&result, warmup_graph, helper);
                     result.reset();
@@ -279,7 +294,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                         functions.count(&result, benchmark_graph_original, helper);
                     }
                     cycles = stop_tsc(cycles);
-                    std::cout << result.pos << std::endl;
+                    std::cout << result.count << std::endl;
                 } else {
                     cycles = start_tsc();
                     for (size_t run = 0; run < params.num_runs; run++) {
@@ -290,9 +305,9 @@ void run(const BenchParams &params, std::ofstream &out_file) {
 
                 }
 
-                if (result.pos != triangle_count) {
+                if (result.count != triangle_count) {
                     std::stringstream ss;
-                    ss << "Count of triangles differs from the instrumented run! Count is: " << result.pos << " expected: " << triangle_count;
+                    ss << "Count of triangles differs from the instrumented run! Count is: " << result.count << " expected: " << triangle_count;
                     //throw std::runtime_error(ss.str());
                 }
                 size_t cycle_per_run = cycles / params.num_runs;

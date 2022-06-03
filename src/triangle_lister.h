@@ -67,23 +67,22 @@ struct Collect {
 
 
     Collect(size_t max_triangles) {
-        pos = 0;
+        count = 0;
         triangles = static_cast<Triangle*>(malloc(sizeof(Triangle) * max_triangles));
     }
 
     void reset() {
-        pos = 0;
+        count = 0;
     }
     
-    size_t pos;
+    size_t count;
     // Yes this is a static array. If you want to keep the result call to set.
     Triangle* triangles;
 
 
     void list_triangle(Index a, Index b, Index c) {
-        triangles[pos] = Triangle{(index_t)a, (index_t)b, (index_t)c};
-        ++pos;
-        
+        triangles[count] = Triangle{(index_t)a, (index_t)b, (index_t)c};
+        ++count;
     }
 
     using SetTriangle = std::set<index_t>;
@@ -91,7 +90,7 @@ struct Collect {
 
     TriangleSet to_set() {
         TriangleSet set;
-        for (size_t i = 0; i < pos; ++i) {
+        for (size_t i = 0; i < count; ++i) {
             auto &triangle = triangles[i];
             set.insert({triangle.a, triangle.b, triangle.c});
         }

@@ -110,6 +110,8 @@ template void copy_graph(AdjacencyGraph<index_t> *dest, const AdjacencyGraph<ind
 
 template void free_graph(const AdjacencyGraph<index_t> *graph);
 
+#ifndef NO_INSTRUMENTATION
+
 template AdjacencyGraph<InstrumentedIndex> *create_graph_from_file(const char *filename);
 
 template AdjacencyGraph<InstrumentedIndex> *create_graph_copy(const AdjacencyGraph<InstrumentedIndex> *graph);
@@ -118,3 +120,4 @@ template void copy_graph(AdjacencyGraph<InstrumentedIndex> *dest, const Adjacenc
 
 template void free_graph(const AdjacencyGraph<InstrumentedIndex> *graph);
 
+#endif

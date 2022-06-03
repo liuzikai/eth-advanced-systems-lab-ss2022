@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 
+//#define NO_INSTRUMENTATION
 
 typedef uint32_t index_t;
 #define INDEX_FMT "%" PRIu32
