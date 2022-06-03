@@ -30,8 +30,8 @@ namespace ei3 {
         Index s, t;
         //Counter i, j_lower_bound, j_upper_bound, j_current, j_inc, j_next;
         Counter i, j, j_lower_bound, j_inc, j_next, i_start, j_start;
-        Counter highest_i, highest_j;
-        Counter mid_i, mid_j;
+        //Counter highest_i, highest_j;
+        //Counter mid_i, mid_j;
         Index count_triangles = (Index) 0;
         const Index merge_mask = (Index) 0x55555555; //all even bits
         const AdjacencyList<Index> *t_adj, *s_adj, *swap = NULL;
@@ -66,7 +66,7 @@ namespace ei3 {
                         s_adj = swap;
                     }
                     i_start = 0, j_start = 0;
-                    highest_i = s_adj->count - 1;
+                    /*highest_i = s_adj->count - 1;
                     highest_j = t_adj->count - 1;
                     while(i_start != highest_i) {
                         mid_i = (i_start + highest_i) / 2;
@@ -83,12 +83,6 @@ namespace ei3 {
                         } else {
                             highest_j = mid_j;
                         }
-                    }
-                    /*while(i_start < s_adj->count && s_adj->neighbors[i_start] < t) {
-                        i_start++;    
-                    }
-                    while(j_start < t_adj->count && t_adj->neighbors[j_start] < t) {
-                        j_start++;    
                     }*/
                     if(s_adj->count << 3 < t_adj->count) {
                         i = i_start;
@@ -212,8 +206,8 @@ namespace ei3 {
                             }
                         }
                         while (i < s_adj->count && j < t_adj->count) {
-                            if (s_adj->neighbors[i] == t_adj->neighbors[j] &&
-                                t_adj->neighbors[j] > t) {
+                            if (s_adj->neighbors[i] == t_adj->neighbors[j]) {/*&&
+                                t_adj->neighbors[j] > t) {*/
                                 lister->list_triangle(s, t, t_adj->neighbors[j]);
                                 i++;
                                 j++;
