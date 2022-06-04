@@ -31,6 +31,21 @@ namespace eu4 {
     void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr);
 }
 
+namespace eu5 {
+    template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
+    void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr);
+}
+
+namespace e_vec4 {
+    template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
+    void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr);
+}
+
+namespace e_vec5 {
+    template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
+    void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr);
+}
+
 namespace eia {
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
     void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr);

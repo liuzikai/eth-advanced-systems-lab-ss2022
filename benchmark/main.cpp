@@ -47,6 +47,9 @@ static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_fun
     {"ei_v2",  TriangleFunctions(ei2::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
     {"ei_v3",  TriangleFunctions(ei3::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
     {"ei_u4",  TriangleFunctions(eu4::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"ei_u5",  TriangleFunctions(eu5::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"ei_vec4",  TriangleFunctions(e_vec4::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
+    {"ei_vec5",  TriangleFunctions(e_vec5::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
     {"ei_va",  TriangleFunctions(eia::edge_iterator<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
     {"f_base",        TriangleFunctions(f0::forward<Index, Counter, TLR>, f0::forward_create_neighbor_container<Index, Counter>, f0::forward_delete_neighbor_container<Index, Counter>)},
     {"f_v1",        TriangleFunctions(f1::forward<Index, Counter, TLR>, f1::forward_create_neighbor_container<Index, Counter>, f1::forward_delete_neighbor_container<Index, Counter>)},
@@ -54,6 +57,7 @@ static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_fun
     {"f_v3",        TriangleFunctions(f3::forward<Index, Counter, TLR>, f3::forward_create_neighbor_container<Index, Counter>, f3::forward_delete_neighbor_container<Index, Counter>)},
     {"f_v4",        TriangleFunctions(f4::forward<Index, Counter, TLR>, f4::forward_create_neighbor_container<Index, Counter>, f4::forward_delete_neighbor_container<Index, Counter>)},
     {"f_v5",        TriangleFunctions(f5::forward<Index, Counter, TLR>, f5::forward_create_neighbor_container<Index, Counter>, f5::forward_delete_neighbor_container<Index, Counter>)},
+    {"f_u4",        TriangleFunctions(fu4::forward<Index, Counter, TLR>, fu4::forward_create_neighbor_container<Index, Counter>, fu4::forward_delete_neighbor_container<Index, Counter>)},
     {"f_v6",        TriangleFunctions(f6::forward<Index, Counter, TLR>, f6::forward_create_neighbor_container<Index, Counter>, f6::forward_delete_neighbor_container<Index, Counter>)},
     {"f_va",        TriangleFunctions(fa::forward<Index, Counter, TLR>, fa::forward_create_neighbor_container<Index, Counter>, fa::forward_delete_neighbor_container<Index, Counter>)},
     {"fh_base", TriangleFunctions(fh0::forward_hashed<Index, Counter, TLR>, fh0::forward_hashed_create_neighbor_container<Index, Counter>, fh0::forward_hashed_delete_neighbor_container<Index, Counter>)},
@@ -314,7 +318,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                     result.reset();
                 }
 
-                
+
                 // Start benchmark
                 size_t cycles;
                 if(params.pre_sort_edge_lists) {

@@ -7,6 +7,7 @@
 #include <forward/forward_v5.hpp>
 #include <forward/forward_v6.hpp>
 #include <forward/forward_va.hpp>
+#include <forward/forward_u4.hpp>
 #include "instrumented_index.h"
 
 
@@ -50,20 +51,8 @@ namespace f2 {
 
 }
 
-namespace fa {
-    
-    template struct ForwardNeighborContainer<InstrumentedIndex>;
-
-    template ForwardNeighborContainer<InstrumentedIndex> *forward_create_neighbor_container(const AdjacencyGraph<InstrumentedIndex> *G);
-
-    template void forward_delete_neighbor_container(ForwardNeighborContainer<InstrumentedIndex> *A);
-
-    template void forward(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
-    template void forward(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
-
-}
 namespace f3 {
-    
+
     template struct ForwardNeighborContainer<InstrumentedIndex>;
 
     template ForwardNeighborContainer<InstrumentedIndex> *forward_create_neighbor_container(const AdjacencyGraph<InstrumentedIndex> *G);
@@ -77,7 +66,7 @@ namespace f3 {
 
 
 namespace f4 {
-    
+
     template struct ForwardNeighborContainer<InstrumentedIndex>;
 
     template ForwardNeighborContainer<InstrumentedIndex> *forward_create_neighbor_container(const AdjacencyGraph<InstrumentedIndex> *G);
@@ -90,7 +79,34 @@ namespace f4 {
 }
 
 namespace f5 {
-    
+
+    template struct ForwardNeighborContainer<InstrumentedIndex>;
+
+    template ForwardNeighborContainer<InstrumentedIndex> *forward_create_neighbor_container(const AdjacencyGraph<InstrumentedIndex> *G);
+
+    template void forward_delete_neighbor_container(ForwardNeighborContainer<InstrumentedIndex> *A);
+
+    template void forward(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+    template void forward(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+
+}
+
+namespace fu4 {
+
+    template struct ForwardNeighborContainer<InstrumentedIndex>;
+
+    template ForwardNeighborContainer<InstrumentedIndex> *forward_create_neighbor_container(const AdjacencyGraph<InstrumentedIndex> *G);
+
+    template void forward_delete_neighbor_container(ForwardNeighborContainer<InstrumentedIndex> *A);
+
+    template void forward(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+    template void forward(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, ForwardNeighborContainer<InstrumentedIndex> * A);
+
+}
+
+
+namespace fa {
+
     template struct ForwardNeighborContainer<InstrumentedIndex>;
 
     template ForwardNeighborContainer<InstrumentedIndex> *forward_create_neighbor_container(const AdjacencyGraph<InstrumentedIndex> *G);

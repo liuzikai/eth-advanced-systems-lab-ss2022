@@ -59,26 +59,30 @@ set(BENCH_SOURCES
 set(TRIANGLE_SOURCES
         src/instrumented_index.cpp
 
-        src/edge_iterator/edge_iterator_base.cpp
         src/edge_iterator/edge_iterator_all_versions_instrumented.cpp
+        src/edge_iterator/edge_iterator_base.cpp
         src/edge_iterator/edge_iterator_v1.cpp
         src/edge_iterator/edge_iterator_v2.cpp
         src/edge_iterator/edge_iterator_v3.cpp
         src/edge_iterator/edge_iterator_u4.cpp
+        src/edge_iterator/edge_iterator_u5.cpp
+        src/edge_iterator/edge_iterator_vec4.cpp
+        src/edge_iterator/edge_iterator_vec5.cpp
         src/edge_iterator/edge_iterator_va.cpp
 
+        src/forward/forward_base_instrumented.cpp
         src/forward/forward_base.cpp
         src/forward/forward_v1.cpp
         src/forward/forward_v2.cpp
         src/forward/forward_v3.cpp
         src/forward/forward_v4.cpp
         src/forward/forward_v5.cpp
+        src/forward/forward_u4.cpp
         src/forward/forward_v6.cpp
         src/forward/forward_va.cpp
-        src/forward/forward_base_instrumented.cpp
 
-        src/forward_hashed/forward_hashed_base.cpp
         src/forward_hashed/forward_hashed_all_versions_instrumented.cpp
+        src/forward_hashed/forward_hashed_base.cpp
         src/forward_hashed/forward_hashed_v1.cpp
         src/forward_hashed/forward_hashed_v2.cpp
         src/forward_hashed/forward_hashed_v3.cpp
