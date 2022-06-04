@@ -366,7 +366,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
         free_graph(warmup_graph);
     }
     if(!params.pre_sort_edge_lists) {
-        for (size_t i = 0; i < params.num_warmups; i++) {
+        for (size_t i = 0; i < params.num_runs; i++) {
             free_graph(benchmark_graphs[i]);
         }
     }
