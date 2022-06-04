@@ -44,8 +44,16 @@ template<class Index, class Counter = index_t>
 ForwardNeighborContainer<Index> *forward_create_neighbor_container(const AdjacencyGraph<Index> *G) {
     auto *A = new ForwardNeighborContainer<Index>;
     A->adjacency = new ForwardNeighbourList<Index>[G->n];
+    // First get the total size.
+    size_t total_size = 0;
     for (Counter u = 0; u < G->n; u++) {
-        A->adjacency[u].neighbors = new Index[G->adjacency[u].orig_count];
+        total_size += G->adjacency[u].orig_count - G->adjacency[u].count;
+    }
+    A->adjacency[0].neighbors = new Index[total_size];
+    size_t offset = G->adjacency[0].orig_count - G->adjacency[0].count;
+    for (Counter u = 0; u < G->n; u++) {
+        A->adjacency[u].neighbors = &A->adjacency[0].neighbors[offset];
+        offset += G->adjacency[u].orig_count - G->adjacency[u].count;
     }
     return A;
 }
@@ -60,9 +68,7 @@ static void forward_reset_neighbor_container(AdjacencyGraph<Index> *G, ForwardNe
 
 template<class Index, class Counter = index_t>
 void forward_delete_neighbor_container(ForwardNeighborContainer<Index> *A) {
-    for (Counter u = 0; u < A->n; u++) {
-        delete[] A->adjacency[u].neighbors;
-    }
+    delete[] A->adjacency[0].neighbors;
     delete[] A->adjacency;
     delete A;
 }

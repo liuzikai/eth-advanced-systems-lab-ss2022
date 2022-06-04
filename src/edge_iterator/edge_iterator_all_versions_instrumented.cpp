@@ -6,6 +6,7 @@
 #include "edge_iterator_u5.hpp"
 #include "edge_iterator_vec4.hpp"
 #include "edge_iterator_vec5.hpp"
+#include "edge_iterator_vec6.hpp"
 #include "edge_iterator_va.hpp"
 #include "edge_iterator_v3.hpp"
 #include "edge_iterator_v4.hpp"
@@ -43,6 +44,11 @@ namespace e_vec4  {
 }
 
 namespace e_vec5  {
+    template void edge_iterator(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
+    template void edge_iterator(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
+}
+
+namespace e_vec6  {
     template void edge_iterator(TriangleListing::Count<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
     template void edge_iterator(TriangleListing::SetCollect<InstrumentedIndex>* tlr, AdjacencyGraph<InstrumentedIndex> *G, void *dummy = nullptr);
 }

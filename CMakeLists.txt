@@ -69,6 +69,7 @@ set(TRIANGLE_SOURCES
         src/edge_iterator/edge_iterator_u5.cpp
         src/edge_iterator/edge_iterator_vec4.cpp
         src/edge_iterator/edge_iterator_vec5.cpp
+        src/edge_iterator/edge_iterator_vec6.cpp
         src/edge_iterator/edge_iterator_va.cpp
 
         src/forward/forward_base_instrumented.cpp

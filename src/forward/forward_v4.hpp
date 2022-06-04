@@ -30,7 +30,7 @@ ForwardNeighborContainer<Index> *forward_create_neighbor_container(const Adjacen
     auto *A = new ForwardNeighborContainer<Index>;
     A->adjacency = new ForwardNeighbourList<Index>[G->n];
     for (Counter u = 0; u < G->n; u++) {
-        A->adjacency[u].neighbors = new Index[G->adjacency[u].orig_count];
+        A->adjacency[u].neighbors = new Index[G->adjacency[u].orig_count - G->adjacency[u].count];
     }
     return A;
 }
