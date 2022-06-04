@@ -2,6 +2,7 @@
 #define TEAM02_INSTRUMENTED_INDEX_H
 
 #include "common.h"
+#include <functional>
 
 struct InstrumentedIndex {
 public:
@@ -43,9 +44,19 @@ public:
 
     explicit operator int() const;
 
-private:
+//private:
     index_t val;
 };
+
+namespace std {
+template <> struct hash<InstrumentedIndex>
+{
+    size_t operator()(const InstrumentedIndex & x) const
+    {
+        return hash<index_t>()(x.val);
+    }
+};
+}
 
 namespace AVX2{
     void increment_op_count_by(uint64_t count);

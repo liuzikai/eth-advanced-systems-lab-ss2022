@@ -86,6 +86,7 @@ set(TRIANGLE_SOURCES
 
         src/forward_hashed/forward_hashed_all_versions_instrumented.cpp
         src/forward_hashed/forward_hashed_base.cpp
+        src/forward_hashed/forward_hashed_std.cpp
         src/forward_hashed/forward_hashed_v1.cpp
         src/forward_hashed/forward_hashed_v1a.cpp
         src/forward_hashed/forward_hashed_v2.cpp
