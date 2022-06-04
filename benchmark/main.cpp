@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iomanip>
 
-#define COLLECT_TRIANGLES
+//#define COLLECT_TRIANGLES
 // If not defined we will only count.
 
 #include <string_view>
@@ -53,6 +53,7 @@ static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_fun
     {"f_v3",        TriangleFunctions(f3::forward<Index, Counter, TLR>, f3::forward_create_neighbor_container<Index, Counter>, f3::forward_delete_neighbor_container<Index, Counter>)},
     {"f_v4",        TriangleFunctions(f4::forward<Index, Counter, TLR>, f4::forward_create_neighbor_container<Index, Counter>, f4::forward_delete_neighbor_container<Index, Counter>)},
     {"f_v5",        TriangleFunctions(f5::forward<Index, Counter, TLR>, f5::forward_create_neighbor_container<Index, Counter>, f5::forward_delete_neighbor_container<Index, Counter>)},
+    {"f_v6",        TriangleFunctions(f6::forward<Index, Counter, TLR>, f6::forward_create_neighbor_container<Index, Counter>, f6::forward_delete_neighbor_container<Index, Counter>)},
     {"f_va",        TriangleFunctions(fa::forward<Index, Counter, TLR>, fa::forward_create_neighbor_container<Index, Counter>, fa::forward_delete_neighbor_container<Index, Counter>)},
     {"fh_base", TriangleFunctions(fh0::forward_hashed<Index, Counter, TLR>, fh0::forward_hashed_create_neighbor_container<Index, Counter>, fh0::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh_v1", TriangleFunctions(fh1::forward_hashed<Index, Counter, TLR>, fh1::forward_hashed_create_neighbor_container<Index, Counter>, fh1::forward_hashed_delete_neighbor_container<Index, Counter>)},
@@ -155,7 +156,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
     std::cout << "pre_sort_edge_lists = " << params.pre_sort_edge_lists << std::endl;
 
     std::map<std::string, size_t> op_counts;
-    size_t triangle_count = 0;
+    size_t triangle_count = 20836815;
 
     // Instrumented runs
     #ifndef NO_INSTRUMENTATION
@@ -171,10 +172,17 @@ void run(const BenchParams &params, std::ofstream &out_file) {
 
         auto instrumented_graph_copy = create_graph_copy(instrumented_graph_original);
 
-
+        #ifdef COLLECT_TRIANGLES
         auto test_translator = name_to_function<InstrumentedIndex, index_t , TriangleListing::SetCollect<InstrumentedIndex>>;
-
+        #else
+        auto test_translator = name_to_function<InstrumentedIndex, index_t , TriangleListing::Count<InstrumentedIndex>>;
+        #endif
+        #ifdef COLLECT_TRIANGLES
         TriangleListing::SetCollect<InstrumentedIndex>::TriangleSet last_result;
+        #else
+        size_t last_result;
+        #endif
+
         bool has_last_result = false;
         for (const auto &algo_name: params.algos) {
 
@@ -190,24 +198,40 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                     void *helper = functions.get_helper(instrumented_graph_copy);
 
                     // List triangles and get op count
+                    #ifdef COLLECT_TRIANGLES
                     TriangleListing::SetCollect<InstrumentedIndex> result;
+                    #else
+                    TriangleListing::Count<InstrumentedIndex> result(0);
+                    #endif
                     OpCounter::ResetOpCount();
                     functions.count(&result, instrumented_graph_copy, helper);
                     op_count = OpCounter::GetOpCount();
+                    #ifdef COLLECT_TRIANGLES
                     auto result_set = result.triangles;
+                    #else
+                    auto result_set = result.count;
+                    #endif
                     // Compare triangles with the result of the last algorithm (if available)
                     if (has_last_result) {
                         if (result_set != last_result) {
                             // Convert an int to a string
                             std::stringstream ss;
+                            #ifdef COLLECT_TRIANGLES
                             ss << "Different triangles! Count is: " << result_set.size() << " expected: " << last_result.size();
+                            #else
+                            ss << "Different triangles! Count is: " << result_set << " expected: " << last_result;
+                            #endif
                             std::cerr << ss.str() << std::endl;
                             //throw std::runtime_error(ss.str());
                         }
                     } else {
                         last_result = std::move(result_set);
                         has_last_result = true;
+                        #ifdef COLLECT_TRIANGLES
                         triangle_count = last_result.size();
+                        #else
+                        triangle_count = last_result;
+                        #endif
                     }
 
                     copy_graph(instrumented_graph_copy, instrumented_graph_original);
@@ -215,7 +239,12 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                 }
             }
             op_counts[algo_name] = op_count;
+            #ifdef COLLECT_TRIANGLES
             std::cout << algo_name << ": " << op_count << " ops, verified, " << last_result.size() << " triangles" << std::endl;
+            #else
+            std::cout << algo_name << ": " << op_count << " ops, verified, " << last_result << " triangles" << std::endl;
+            #endif
+        
         }
         free_graph(instrumented_graph_original);
         free_graph(instrumented_graph_copy);

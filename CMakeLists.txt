@@ -72,6 +72,7 @@ set(TRIANGLE_SOURCES
         src/forward/forward_v3.cpp
         src/forward/forward_v4.cpp
         src/forward/forward_v5.cpp
+        src/forward/forward_v6.cpp
         src/forward/forward_va.cpp
         src/forward/forward_base_instrumented.cpp
 
