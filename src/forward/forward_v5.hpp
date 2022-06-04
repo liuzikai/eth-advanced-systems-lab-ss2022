@@ -322,7 +322,6 @@ void forward(TRL* lister,AdjacencyGraph<Index> *G, ForwardNeighborContainer<Inde
                     __m256i inc_count_b = _mm256_and_si256(inc_mask_b, incer);
                     __m256i inc_count_c = _mm256_and_si256(inc_mask_c, incer);
                     __m256i inc_count_d = _mm256_and_si256(inc_mask_d, incer);
-                    std::cout << "COUNINT" << std::endl;
                     res_counter_a = _mm256_add_epi32(res_counter_a, inc_count_a);
                     res_counter_b = _mm256_add_epi32(res_counter_b, inc_count_b);
                     res_counter_c = _mm256_add_epi32(res_counter_c, inc_count_c);

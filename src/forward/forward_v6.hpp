@@ -26,11 +26,6 @@
 
 namespace f6 {
 
-static inline constexpr auto min(const auto a, const auto b) {
-    return a < b ? a : b;
-}
-
-
 /// Accessory container (array A in the paper)
 template<class Index, class Counter = index_t>
 struct ForwardNeighbourList {
