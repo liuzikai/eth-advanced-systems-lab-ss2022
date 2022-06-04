@@ -14,7 +14,7 @@ template<class Index, class Counter = index_t, class TRL = TriangleListing::Coun
 void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) {
     (void) dummy;
 
-    
+
 
 #if 0
     // According to sec. 4, the sorting is included in the execution time
@@ -93,9 +93,7 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
             // find the intersection of s's and t's neighbors
             while (x < Adj_s_size && y < Adj_t_size) {
                 if (Adj_s[x] == Adj_t[y]) {
-                    if (Adj_t[y] > t) {
-                        lister->list_triangle(s, t, Adj_t[y]);
-                    }
+                    lister->list_triangle(s, t, Adj_t[y]);
                     x++;
                     y++;
                 } else if (Adj_s[x] < Adj_t[y]) {
@@ -108,7 +106,7 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
         }
     }
 
-    
+
 
 }
 
