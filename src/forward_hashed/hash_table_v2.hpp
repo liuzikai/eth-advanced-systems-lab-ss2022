@@ -3,16 +3,12 @@
 
 #include "common.h"
 #include <cstring>
+#include "hash_table_common.h"
 
 namespace fh2 {
 
-// This is very ugly... But I don't want to deal with templates simply for a global variable...
-#ifndef HASH_NULL_NUMBER
-#define HASH_NULL_NUMBER ((Index) (-1))
-#endif
-
-static constexpr size_t HASH_CONTAINER_SIZE = 4U;
 static constexpr size_t HASH_ITEM_SIZE = 4U;
+static constexpr size_t HASH_CONTAINER_SIZE = HASH_TOTAL_SIZE / HASH_ITEM_SIZE;
 
 // separate chaining
 
@@ -71,14 +67,18 @@ void hashtable_insert(HashTable<Index> *table, Index x) {
         }
     }
 
+    // Move all items to the new item
     HashItem<Index> *new_item = static_cast<HashItem<Index> *>(malloc(sizeof(HashItem<Index>)));
-    new_item->number[0] = x;
-    for (Counter j = 1; j < HASH_ITEM_SIZE; j++) {
-        new_item->number[j] = HASH_NULL_NUMBER;
+    for (Counter j = 0; j < HASH_ITEM_SIZE; j++) {
+        new_item->number[j] = head->number[j];
     }
     new_item->next = head->next;
     head->next = new_item;
 
+    head->number[0] = x;
+    for (Counter j = 1; j < HASH_ITEM_SIZE; j++) {
+        head->number[j] = HASH_NULL_NUMBER;
+    }
 }
 
 template<class Index, class Counter = index_t>
