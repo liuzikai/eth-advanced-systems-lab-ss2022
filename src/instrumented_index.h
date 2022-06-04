@@ -22,6 +22,8 @@ public:
     bool operator!=(const InstrumentedIndex& other) const;
 
     InstrumentedIndex operator+(const InstrumentedIndex& other) const;
+    
+    InstrumentedIndex operator*(const InstrumentedIndex& other) const;
 
     InstrumentedIndex operator+(const bool& other) const;
 
@@ -29,11 +31,17 @@ public:
 
     InstrumentedIndex operator%(const InstrumentedIndex& other) const;
 
+    InstrumentedIndex operator&(const InstrumentedIndex& other) const;
+
+    InstrumentedIndex operator>>(const InstrumentedIndex& other) const;
+
     InstrumentedIndex& operator++();
 
     InstrumentedIndex operator++(int);
 
     explicit operator index_t() const;
+
+    explicit operator int() const;
 
 private:
     index_t val;
