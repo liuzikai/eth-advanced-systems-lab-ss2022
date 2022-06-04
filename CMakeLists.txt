@@ -64,6 +64,7 @@ set(TRIANGLE_SOURCES
         src/edge_iterator/edge_iterator_v1.cpp
         src/edge_iterator/edge_iterator_v2.cpp
         src/edge_iterator/edge_iterator_v3.cpp
+        src/edge_iterator/edge_iterator_v4.cpp
         src/edge_iterator/edge_iterator_u4.cpp
         src/edge_iterator/edge_iterator_u5.cpp
         src/edge_iterator/edge_iterator_vec4.cpp
@@ -80,6 +81,7 @@ set(TRIANGLE_SOURCES
         src/forward/forward_u4.cpp
         src/forward/forward_v6.cpp
         src/forward/forward_va.cpp
+        src/forward/forward_vpi.cpp
 
         src/forward_hashed/forward_hashed_all_versions_instrumented.cpp
         src/forward_hashed/forward_hashed_base.cpp

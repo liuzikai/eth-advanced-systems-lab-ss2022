@@ -121,7 +121,8 @@ void forward(TRL* lister,AdjacencyGraph<Index> *G, ForwardNeighborContainer<Inde
 
     ForwardNeighbourList<Index>* A_adj = A->adjacency;
 
-    for (Counter si = 0; si < G->n; si++) {  // this should not count toward op count
+    Counter Gn = G->n;
+    for (Counter si = 0; si < Gn; si++) {  // this should not count toward op count
         Index s = (Index) si;
         ForwardNeighbourList<Index> *As = &A_adj[(index_t) s];
         AdjacencyList<Index>* Gs = &G->adjacency[(index_t) s];
