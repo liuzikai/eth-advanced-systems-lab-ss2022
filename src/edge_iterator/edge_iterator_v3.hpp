@@ -11,7 +11,7 @@
 #include "instrumented_immintrin.h"
 
 //#define MEASURE_DEEP_LOOP_OPS
-#define MEASURE_DEEP_LOOP_CYCLES
+//#define MEASURE_DEEP_LOOP_CYCLES
 
 #ifdef MEASURE_DEEP_LOOP_CYCLES
 #include "tsc_x86.h"
