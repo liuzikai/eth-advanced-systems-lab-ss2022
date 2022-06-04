@@ -33,6 +33,7 @@ namespace ei3 {
         //Counter highest_i, highest_j;
         //Counter mid_i, mid_j;
         Index count_triangles = (Index) 0;
+        (void) count_triangles;
         const Index merge_mask = (Index) 0x55555555; //all even bits
         const AdjacencyList<Index> *t_adj, *s_adj, *swap = NULL;
         //0x0002 0000 0002 0000 0002 0000 0002 0000
