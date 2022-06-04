@@ -20,18 +20,6 @@
 
 namespace ei3 {
 
-    // https://stackoverflow.com/questions/109023/how-to-count-the-number-of-set-bits-in-a-32-bit-integer
-    template<class Index = index_t>
-    inline Index numberOfSetBits(Index i)
-    {
-        // Java: use int, and use >>> instead of >>. Or use Integer.bitCount()
-        // C or C++: use uint32_t
-        i = i - ((i >> (Index)1) & (Index)0x55555555);        // add pairs of bits
-        i = (i & (Index)0x33333333) + ((i >> (Index)2) & (Index)0x33333333);  // quads
-        i = (i + (i >> (Index)4)) & (Index)0x0F0F0F0F;        // groups of 8
-        return (i * (Index)0x01010101) >> (Index)24;          // horizontal sum of bytes
-    }
-
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
     void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) {
         #if defined(MEASURE_DEEP_LOOP_OPS) || defined(MEASURE_DEEP_LOOP_CYCLES)
@@ -199,7 +187,7 @@ namespace ei3 {
                                 Index matches_merged = (matches & (matches >> (Index)1)) & merge_mask;
                                 if(matches_merged != (Index)0) {
                                     if constexpr (std::is_same_v<TRL, TriangleListing::Count<Index>>) { 
-                                        count_triangles = count_triangles + numberOfSetBits(matches_merged);
+                                        count_triangles = count_triangles + __builtin_popcount((index_t)matches_merged);
                                     } else {
                                         if((matches_merged & (Index)0x50005) != (Index)0) {
                                             // element 1 in s matches any element in t
