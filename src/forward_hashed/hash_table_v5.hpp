@@ -102,13 +102,18 @@ void hashtable_insert(HashTable<Index> *table, Index x) {
 //        }
 //    }
 
+    // Move all items to the new item
     HashItem<Index> *new_item = static_cast<HashItem<Index> *>(malloc(sizeof(HashItem<Index>)));
-    new_item->number[0] = x;
-    for (Counter j = 1; j < HASH_ITEM_SIZE; j++) {
-        new_item->number[j] = HASH_NULL_NUMBER;
+    for (Counter j = 0; j < HASH_ITEM_SIZE; j++) {
+        new_item->number[j] = head->number[j];
     }
     new_item->next = head->next;
     head->next = new_item;
+
+    head->number[0] = x;
+    for (Counter j = 1; j < HASH_ITEM_SIZE; j++) {
+        head->number[j] = HASH_NULL_NUMBER;
+    }
 
 }
 

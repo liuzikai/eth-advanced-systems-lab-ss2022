@@ -86,10 +86,12 @@ set(TRIANGLE_SOURCES
         src/forward_hashed/forward_hashed_all_versions_instrumented.cpp
         src/forward_hashed/forward_hashed_base.cpp
         src/forward_hashed/forward_hashed_v1.cpp
+        src/forward_hashed/forward_hashed_v1a.cpp
         src/forward_hashed/forward_hashed_v2.cpp
         src/forward_hashed/forward_hashed_v3.cpp
         src/forward_hashed/forward_hashed_v4.cpp
         src/forward_hashed/forward_hashed_v5.cpp
+        src/forward_hashed/forward_hashed_v4a.cpp
         src/forward_hashed/forward_hashed_va.cpp
 
         src/merge_sort/merge_sort_all_versions_instrumented.cpp
