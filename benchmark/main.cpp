@@ -66,9 +66,12 @@ static std::map<std::string, TriangleFunctions<Index, Counter, TLR>> name_to_fun
     {"f_vpi",        TriangleFunctions(fpi::forward<Index, Counter, TLR>, fpi::forward_create_neighbor_container<Index, Counter>, fpi::forward_delete_neighbor_container<Index, Counter>)},
     {"fh_base", TriangleFunctions(fh0::forward_hashed<Index, Counter, TLR>, fh0::forward_hashed_create_neighbor_container<Index, Counter>, fh0::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh_v1", TriangleFunctions(fh1::forward_hashed<Index, Counter, TLR>, fh1::forward_hashed_create_neighbor_container<Index, Counter>, fh1::forward_hashed_delete_neighbor_container<Index, Counter>)},
+    {"fh_v1a", TriangleFunctions(fh1a::forward_hashed<Index, Counter, TLR>, fh1a::forward_hashed_create_neighbor_container<Index, Counter>, fh1a::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh_v2", TriangleFunctions(fh2::forward_hashed<Index, Counter, TLR>, fh2::forward_hashed_create_neighbor_container<Index, Counter>, fh2::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh_v3", TriangleFunctions(fh3::forward_hashed<Index, Counter, TLR>, fh3::forward_hashed_create_neighbor_container<Index, Counter>, fh3::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh_v4", TriangleFunctions(fh4::forward_hashed<Index, Counter, TLR>, fh4::forward_hashed_create_neighbor_container<Index, Counter>, fh4::forward_hashed_delete_neighbor_container<Index, Counter>)},
+    {"fh_v4a", TriangleFunctions(fh4a::forward_hashed<Index, Counter, TLR>, fh4a::forward_hashed_create_neighbor_container<Index, Counter>, fh4a::forward_hashed_delete_neighbor_container<Index, Counter>)},
+    {"fh_v5", TriangleFunctions(fh5::forward_hashed<Index, Counter, TLR>, fh5::forward_hashed_create_neighbor_container<Index, Counter>, fh5::forward_hashed_delete_neighbor_container<Index, Counter>)},
     {"fh_va", TriangleFunctions(fha::forward_hashed<Index, Counter, TLR>, fha::forward_hashed_create_neighbor_container<Index, Counter>, fha::forward_hashed_delete_neighbor_container<Index, Counter>)},
     // Sorting
     {"quick_sort",  TriangleFunctions(quick_sort_timing<Index, Counter, TLR>, get_dummy_helper<Index, Counter>, free_dummy_helper<Index, Counter>)},
@@ -163,6 +166,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
     std::cout << "num_runs = " << params.num_runs << std::endl;
     std::cout << "pre_cut_edge_lists = " << params.pre_cut_edge_lists << std::endl;
     std::cout << "pre_sort_edge_lists = " << params.pre_sort_edge_lists << std::endl;
+    std::cout << "HASH_TOTAL_SIZE = " << HASH_TOTAL_SIZE << std::endl;
 
     std::map<std::string, size_t> op_counts;
     size_t triangle_count = 20836815;
@@ -231,7 +235,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                             ss << "Different triangles! Count is: " << result_set << " expected: " << last_result;
                             #endif
                             std::cerr << ss.str() << std::endl;
-                            //throw std::runtime_error(ss.str());
+                            throw std::runtime_error(ss.str());
                         }
                     } else {
                         last_result = std::move(result_set);
