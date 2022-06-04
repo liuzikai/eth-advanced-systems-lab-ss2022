@@ -32,6 +32,12 @@
             "is_void" : false
         },
         {
+            "fname": "_mm_load_si128",
+            "num_args" : 1,
+            "num_ops" : 0,
+            "is_void" : false
+        },
+        {
             "fname": "_mm_cmpeq_epi32",
             "num_args" : 2,
             "num_ops" : 4,

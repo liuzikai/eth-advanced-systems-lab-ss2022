@@ -4,16 +4,12 @@
 #include "common.h"
 #include <cstring>
 #include "instrumented_immintrin.h"
+#include "hash_table_common.h"
 
 namespace fh3 {
 
-// This is very ugly... But I don't want to deal with templates simply for a global variable...
-#ifndef HASH_NULL_NUMBER
-#define HASH_NULL_NUMBER ((Index) (-1))
-#endif
-
-static constexpr size_t HASH_CONTAINER_SIZE = 2U;
 static constexpr size_t HASH_ITEM_SIZE = 8U;
+static constexpr size_t HASH_CONTAINER_SIZE = HASH_TOTAL_SIZE / HASH_ITEM_SIZE;
 #define __mi __m256i
 #define _mm_set1_epi32 _mm256_set1_epi32
 #define _mm_cmpeq_epi32 _mm256_cmpeq_epi32

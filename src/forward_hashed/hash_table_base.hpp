@@ -3,10 +3,11 @@
 
 #include "common.h"
 #include <cstring>
+#include "hash_table_common.h"
 
 namespace fh0 {
 
-static constexpr size_t HASH_CONTAINER_SIZE = 4U;
+static constexpr size_t HASH_CONTAINER_SIZE = HASH_TOTAL_SIZE;
 
 // separate chaining
 
