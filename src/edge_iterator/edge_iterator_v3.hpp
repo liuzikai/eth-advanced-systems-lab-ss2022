@@ -10,6 +10,14 @@
 #include "instrumented_index.h"
 #include "instrumented_immintrin.h"
 
+//#define MEASURE_DEEP_LOOP_OPS
+#define MEASURE_DEEP_LOOP_CYCLES
+
+#ifdef MEASURE_DEEP_LOOP_CYCLES
+#include "tsc_x86.h"
+#endif
+
+
 namespace ei3 {
 
     // https://stackoverflow.com/questions/109023/how-to-count-the-number-of-set-bits-in-a-32-bit-integer
@@ -26,6 +34,10 @@ namespace ei3 {
 
     template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
     void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) {
+        #if defined(MEASURE_DEEP_LOOP_OPS) || defined(MEASURE_DEEP_LOOP_CYCLES)
+        size_t op_sum = 0;
+        size_t iters  = 0;
+        #endif
         (void) dummy;
         Index s, t;
         //Counter i, j_lower_bound, j_upper_bound, j_current, j_inc, j_next;
@@ -107,8 +119,16 @@ namespace ei3 {
                             }
                         }
                     } else {
+                        #ifdef MEASURE_DEEP_LOOP_OPS
+                        OpCounter::ResetOpCount();
+                        #elif defined(MEASURE_DEEP_LOOP_CYCLES)
+                        size_t cycles = start_tsc();
+                        #endif
                         i = i_start, j = j_start;
                         while(i + 3 < s_adj->count && j + 3 < t_adj->count) {
+                            #if defined(MEASURE_DEEP_LOOP_OPS) || defined(MEASURE_DEEP_LOOP_CYCLES)
+                            iters++;
+                            #endif
                             // a0a1a2a3b0b1b2b3c0c1c2c3d0d1d2d3
                             __m128i s_neighbors = _mm_loadu_si128((__m128i *)(s_adj->neighbors + i));
 
@@ -206,6 +226,11 @@ namespace ei3 {
                                 i += 4;
                             }
                         }
+                        #ifdef MEASURE_DEEP_LOOP_OPS
+                        op_sum += (OpCounter::GetOpCount());
+                        #elif defined(MEASURE_DEEP_LOOP_CYCLES)
+                        op_sum += stop_tsc(cycles);;
+                        #endif
                         while (i < s_adj->count && j < t_adj->count) {
                             if (s_adj->neighbors[i] == t_adj->neighbors[j]) {/*&&
                                 t_adj->neighbors[j] > t) {*/
@@ -232,6 +257,11 @@ namespace ei3 {
                 }
             }
         }
+        #ifdef MEASURE_DEEP_LOOP_OPS
+        std::cout << "Deep Loop Ops: " << (op_sum/iters) << std::endl;
+        #elif defined(MEASURE_DEEP_LOOP_CYCLES)
+        std::cout << "Deep Loop Cycles: " << (op_sum/iters) << std::endl;
+        #endif
     }
 }
 
