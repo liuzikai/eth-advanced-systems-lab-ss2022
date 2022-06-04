@@ -221,7 +221,9 @@ if [ $GRAPHTYPE = "GENERATED" ]; then
                 ./graph_generation -gt $GRAPHTYPE -num_nodes $i -num_edges $EDGE -seed $SEED -shuffle_edges -density EXIST -o $INPUTDIR/$graph.txt
             fi
         fi
+        echo "density,$DEGREE" > $EXPNUM/$graph.txt
         ./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPNUM/$graph.csv -algorithm $ALGO -graph $INPUTDIR/$graph.txt
+        # | tee -a $EXPNUM/$graph.txt
     done
 
     cd $RUNEXP
