@@ -10,25 +10,45 @@ Triangle Listing
 ```
 
 # Project structure
-## src
-Files ending with "_hashed" are for Forward-Hashed only.\
-Files named with camelcase are of C++ version. Otherwise, C version.
-- graph definition and functions
-    + adjacency_graph.cpp/h
-    + adjacency_graph_hashed.cpp/h
-- utilities
-    + common.cpp/h
-    + quick_sort.h
-    + hash_table.cpp/h
-- algorithms
-    + edge_iterator.cpp/h
-    + forward.cpp/h
-    + forward_hashed.cpp/h
-## input
-## tests
-## benchmark
-`./benchmark -algorithm forward -graph <path-to-graph>`
 
+# Compiler Flags
 -fargument-noalias-anything -fno-strict-aliasing
 works for ei_u4
 does not work for forward
+
+# Versions
+## Edge Iterator
++ ei_base: pre sort, no pre cut, has s smaller t everywhere
++ ei_va: pre sort, pre cut, remove all s smaller t, all other versions are based on this
++ ei_v1
++ ei_v2: exponential search + set intersection compare with (1 set, 2 elements stride) at a time = unroll the set intersection loop.
++ ei_u4: unroll t-loop by 4, set intersection compare with (4 sets, 1 element stride) at a time.\
+    Unrolling by 3 is a little better\
+    Compiling with -fno-strict-aliasing is better.
++ ei_u5: u4 + unfold the loop by hand + store commonly accessed items in variables.\
+    This optimization should be done by the compiler, but somehow only done by compiler when using -fno-strict-aliasing.
++ ei_vec4: apply forward_v4 to ei
++ ei_vec5: apply forward_v5 to ei\
+    Both vec4 and vec5 has a slightly different gt/lt/ge/le comparison chunk than forward_v4/v5, no significant speedup.
+
+## Forward
++ f_base
++ f_va
++ f_v1
++ f_v2
++ f_v3
++ f_v4: vectorized version of u4, unroll by 16.
++ f_v5: unroll by 32.\
+    Compiling v4 and v5 with -fno-strict-aliasing is somehow worse.
++ f_u4: apply ei_u4 to forward. Same performance characteristics.
+
+## Forward Hashed
++ fh_base
++ fh_va
++ fh_v1: put the first hash item in the bucket, reduce one indirection
++ fh_v2:
++ fh_v3: vectorized one item hash table lookup
++ fh_v4: vectorized one item hash table lookup
+
+# Other optimizations
++ put adjacency.count into adjacency.neighbors, similar for forward helper.

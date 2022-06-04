@@ -1,5 +1,5 @@
-#ifndef TEAM02_EDGE_ITER_U7_H
-#define TEAM02_EDGE_ITER_U7_H
+#ifndef TEAM02_EDGE_ITER_VEC5_H
+#define TEAM02_EDGE_ITER_VEC5_H
 
 #include "common.h"
 #include "adjacency_graph.h"
@@ -8,7 +8,7 @@
 
 #include "instrumented_immintrin.h"
 
-namespace eu7 {
+namespace e_vec5 {
 
 // https://stackoverflow.com/questions/60108658/fastest-method-to-calculate-sum-of-all-packed-32-bit-integers-using-avx512-or-av
 static inline uint32_t hsum_epi32_avx(__m128i x)
@@ -600,4 +600,4 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
 
 }
 
-#endif //TEAM02_EDGE_ITER_U7_H
+#endif //TEAM02_EDGE_ITER_VEC5_H

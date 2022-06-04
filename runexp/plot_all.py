@@ -43,12 +43,13 @@ def read_data(random_graphs):
         ops = {}
         cycles = {}
         perfs = {}
+        prev_d = ""
         for d in DATADIR:
             with open(f"{d}/{graph_name}.csv", 'r') as f:
                 reader = csv.DictReader(f)
                 for row in reader:
-                    # algo = row["algorithm"]+str(v)
-                    algo = row["algorithm"]
+                    algo = row["algorithm"]+str(v)
+                    # algo = row["algorithm"]
                     op = int(row["ops"])
                     del row["algorithm"]
                     del row["ops"]
@@ -57,7 +58,10 @@ def read_data(random_graphs):
                     ops[algo] = op
                     cycles[algo] = cycle
                     perfs[algo] = perf
-            v += 1
+            if d.split("-")[1] != prev_d:
+                prev_d = d.split("-")[1]
+            else:
+                v += 1
         ops_data.append(ops)
         cycles_data.append(cycles)
         perfs_data.append(perfs)
@@ -124,9 +128,9 @@ def plot(algos, node_counts, data, n, xlabel, ylabel, title, figname):
 def plot_separate(algos, node_counts, data, n, xlabel, ylabel, title, figname, format, v):
     for algo in algos:
         fig, ax = plt.subplots()
-        ax.plot(node_counts, data[algo], ".-", label=algo)
-        # for vi in range(v):
-        #     ax.plot(node_counts, data[algo+str(vi)], ".-", label=algo+str(vi))
+        # ax.plot(node_counts, data[algo], ".-", label=algo)
+        for vi in range(v):
+            ax.plot(node_counts, data[algo+str(vi)], ".-", label=algo+str(vi))
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel, loc="top", rotation="horizontal")
         ax.legend(loc='best')
@@ -168,12 +172,12 @@ if __name__ == "__main__":
 
     node_counts, ops_data, cycles_data, perfs_data, v = read_data(random_graphs)
 
-    # temp = []
-    # for vi in range(v):
-    #     for algo in algos:
-    #         temp.append(algo+str(vi))
+    temp = []
+    for vi in range(v):
+        for algo in algos:
+            temp.append(algo+str(vi))
     algos_original = algos
-    # algos = temp
+    algos = temp
     print(algos)
 
     # Construct the data frames
