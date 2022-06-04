@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iomanip>
 
-//#define COLLECT_TRIANGLES
+#define COLLECT_TRIANGLES
 // If not defined we will only count.
 
 #include <string_view>
