@@ -21,7 +21,7 @@ Usage:
 EOF
 }
 
-while getopts ":hc:w:r:p:n:l:g:" opt
+while getopts ":hc:w:r:p:n:l:g:b:" opt
 do
     case $opt in
         h) help; exit 1;;
@@ -32,10 +32,12 @@ do
         n) NUMBER=$OPTARG;;
         l) ALGO=$OPTARG;;
         g) GRAPHS=$OPTARG;;
+        b) BASE=$OPTARG;;
         \?) help; exit 1;;
     esac
 done
 
+if [ -z $BASE ]; then BASE="va"; fi
 if [ -z $COMMIT ]; then COMMIT=$(git rev-parse --short HEAD); fi
 if [ -z $WARMUP ]; then WARMUP="5"; fi
 if [ -z $RUN ]; then RUN="10"; fi
@@ -55,5 +57,5 @@ if [ ! -d $PLOTDIR ]; then
 fi
 
 # python $RUNEXP/clustered_bar.py -m $METADATA -d $DATADIR -p $DATADIR -c $COMMIT -f $WARMUP"-"$RUN"-"$PHASE -n $NUMBER
-
-python3 $RUNEXP/clustered_bar.py -m $METADATA -d $DATADIR -p $PLOTDIR -c $COMMIT -f $WARMUP"-"$RUN"-"$PHASE -n $NUMBER -g $GRAPHS
+echo "python3 $RUNEXP/clustered_bar.py -m $METADATA -d $DATADIR -p $PLOTDIR -c $COMMIT -f $WARMUP"-"$RUN"-"$PHASE -n $NUMBER -g $GRAPHS"
+python3 $RUNEXP/clustered_bar.py -m $METADATA -d $DATADIR -p $PLOTDIR -c $COMMIT -f $WARMUP"-"$RUN"-"$PHASE -n $NUMBER -g $GRAPHS -b $BASE

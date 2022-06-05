@@ -59,6 +59,7 @@ def read_data(random_graphs):
             ops_data.append(ops)
             cycles_data.append(cycles)
             perfs_data.append(perfs)
+
     with open(f"{DATADIR}/data.csv", 'w') as f:
         fieldnames = list(output_perf_data[0].keys())
         writer = csv.DictWriter(f, fieldnames=fieldnames)

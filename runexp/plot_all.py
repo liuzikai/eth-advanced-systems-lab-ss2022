@@ -16,7 +16,6 @@ parser.add_argument('--low', '-l', type=int, help='start edge count', required=T
 parser.add_argument('--high', '-r', type=int, help='end edge count', required=True)
 parser.add_argument('--interval', '-i', type=int, help='interval (step)', required=True)
 parser.add_argument('--seed', '-s', type=int, help='seed for random graph', required=False)
-parser.add_argument('--algos', '-a', type=str, help='version to compare with', required=False)
 parser.add_argument('--type', '-t', help='is density experiment set', action='store_true')
 parser.add_argument('--base', '-b', type=str, help='version to compare with', required=False)
 args = parser.parse_args()
@@ -29,7 +28,6 @@ high = args.high
 interval = args.interval
 seed = args.seed
 t = args.type
-algos = args.algos.split(",")
 base = args.base
 
 def read_data(random_graphs):
@@ -37,19 +35,19 @@ def read_data(random_graphs):
     ops_data = []
     cycles_data = []
     perfs_data = []
+    algos = []
     for i, graph_name in enumerate(random_graphs):
         node_counts.append(int(graph_name.split("_")[-2]))
-        v = 0
         ops = {}
         cycles = {}
         perfs = {}
-        prev_d = ""
+        gather_algos = {}
         for d in DATADIR:
             with open(f"{d}/{graph_name}.csv", 'r') as f:
                 reader = csv.DictReader(f)
                 for row in reader:
-                    algo = row["algorithm"]+str(v)
-                    # algo = row["algorithm"]
+                    gather_algos[row["algorithm"]] = gather_algos.get(row["algorithm"],-1) + 1
+                    algo = row["algorithm"] + "_" + str(gather_algos[row["algorithm"]])
                     op = int(row["ops"])
                     del row["algorithm"]
                     del row["ops"]
@@ -58,14 +56,13 @@ def read_data(random_graphs):
                     ops[algo] = op
                     cycles[algo] = cycle
                     perfs[algo] = perf
-            if d.split("-")[1] != prev_d:
-                prev_d = d.split("-")[1]
-            else:
-                v += 1
         ops_data.append(ops)
         cycles_data.append(cycles)
         perfs_data.append(perfs)
-    return node_counts, ops_data, cycles_data, perfs_data, v
+    for k,v in gather_algos.items():
+        for vi in range(v+1):
+            algos.append(k + "_" + str(vi))
+    return node_counts, ops_data, cycles_data, perfs_data, algos
 
 def find_base_algo(algos, base):
     base_algo = ""
@@ -125,12 +122,10 @@ def plot(algos, node_counts, data, n, xlabel, ylabel, title, figname):
     fig.suptitle(title)
     plt.savefig(figname, bbox_inches="tight")
 
-def plot_separate(algos, node_counts, data, n, xlabel, ylabel, title, figname, format, v):
+def plot_separate(algos, node_counts, data, n, xlabel, ylabel, title, figname, format):
     for algo in algos:
         fig, ax = plt.subplots()
-        # ax.plot(node_counts, data[algo], ".-", label=algo)
-        for vi in range(v):
-            ax.plot(node_counts, data[algo+str(vi)], ".-", label=algo+str(vi))
+        ax.plot(node_counts, data[algo], ".-", label=algo)
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel, loc="top", rotation="horizontal")
         ax.legend(loc='best')
@@ -170,14 +165,8 @@ if __name__ == "__main__":
             else:
                 random_graphs.append(f"generated_{node_count}_{edge_count}")
 
-    node_counts, ops_data, cycles_data, perfs_data, v = read_data(random_graphs)
+    node_counts, ops_data, cycles_data, perfs_data, algos = read_data(random_graphs)
 
-    temp = []
-    for vi in range(v):
-        for algo in algos:
-            temp.append(algo+str(vi))
-    algos_original = algos
-    algos = temp
     print(algos)
 
     # Construct the data frames
@@ -195,7 +184,7 @@ if __name__ == "__main__":
     #---runtime cycles---
     plot(algos, node_counts, cycles_df, n, xlabel, "cycles", "Random Graph: Runtime", f"{PLOTDIR}/cycles.png")
     #---perf ops/cycle---
-    plot_separate(algos_original, node_counts, perfs_df, n, xlabel, "ops/cycle", "Random Graph: Performance", f"{PLOTDIR}/perf", ".png", v)
+    plot_separate(algos, node_counts, perfs_df, n, xlabel, "ops/cycle", "Random Graph: Performance", f"{PLOTDIR}/perf", ".png")
 
     #---speedup---
     if base:
