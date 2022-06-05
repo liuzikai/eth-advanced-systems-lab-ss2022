@@ -19,11 +19,14 @@
     "f_v5": "forward unroll t-loop by 32 vectorized",
     "f_v6": "forward unroll set intersection loop vectorized, scalar replacement",
     "f_u4": "forward unroll t-loop by 4",
-    "fh_base": "fh no precut",
-    "fh_va": "fh precut",
-    "fh_v1": "fh one item per bucket, first item in bucket",
-    "fh_v2": "fh_v2?",
-    "fh_v3": "fh 8 items per bucket, vectorized lookup",
-    "fh_v4": "fh_v4? vectorized lookup",
-    "fh_v5": "fh_v5"
+    "fh_base": "baseline (no pre-cut)",
+    "fh_va": "baseline (pre-cut)",
+    "fh_std": "std::unordered_set",
+    "fh_v1": "pre-alloc 1 slot",
+    "fh_v1a": "pre-alloc 1 slot + linked list iteration",
+    "fh_v2": "4 items per slot",
+    "fh_v3": "8 items + vec lookup",
+    "fh_v4": "4 items + vec lookup",
+    "fh_v4a": "4 items + vec lookup + linked list iter",
+    "fh_v5": "4 items + vec lookup + calc insert slot"
 }
