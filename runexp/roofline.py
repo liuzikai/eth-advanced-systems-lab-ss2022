@@ -46,8 +46,8 @@ def print_data(all_graphs,perf,oi):
 		print("P(n):",["{:.4f}".format(x) for x in perf[k]])
 		print("I(n):",["{:.4f}".format(x) for x in oi[k]])
 
-
-black_list_graphs = ["generated_1_5500_1512500","generated_1_6000_1800000"]
+# Uncomment the second part for edge iterator
+black_list_graphs = ["generated_1_5500_1512500","generated_1_6000_1800000"] #, "generated_1_4500_1012500", "generated_1_5000_1250000"]
 black_list_algos = ["f_v2", "f_v3","f_v4","f_v5",]
 
 def read_data(DATADIR):
