@@ -47,6 +47,9 @@ def print_data(all_graphs,perf,oi):
 		print("I(n):",["{:.4f}".format(x) for x in oi[k]])
 
 
+black_list_graphs = ["generated_1_5500_1512500","generated_1_6000_1800000"]
+black_list_algos = ["f_v2", "f_v3","f_v4","f_v5",]
+
 def read_data(DATADIR):
 	perf = {}
 	oi = {}
@@ -60,6 +63,10 @@ def read_data(DATADIR):
 		with open(f"{d}/data.csv", 'r') as f:
 			reader = csv.DictReader(f)
 			for row in reader:
+				if row["graph"] in black_list_graphs:
+					continue
+				if row["algo"] in black_list_algos:
+					continue
 				graphs[row["graph"]] = 1
 				if row["algo"] not in perf:
 					perf[row["algo"]] = []
@@ -72,8 +79,13 @@ def read_data(DATADIR):
 		with open(f"{d}/qn.csv", 'r') as f:
 			reader = csv.DictReader(f)
 			for row in reader:
+				if row["graph"] in black_list_graphs:
+					continue
+				if row["algo"] in black_list_algos:
+					continue
 				opoi[row["algo"]][row["graph"]] = opoi[row["algo"]][row["graph"]] / float(row["data_transfer"])
-
+		print("asdfg")
+		print(opoi)
 		for algo in opoi.keys():
 			if algo not in oi:
 				oi[algo] = []
