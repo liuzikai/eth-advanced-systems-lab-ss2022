@@ -51,11 +51,13 @@ if [ -z $GRAPHS ]; then
     GRAPHS="GERMAN_ROAD_NETWORK,COMP_SCIENCE_AUTHORS,GOOGLE_CONTEST,HEP_LITERATURE,WWW_NOTRE_DAME,US_PATENTS"
 fi
 
+DATADIR=$DATADIR/"realworld-"$ALGO
 PLOTDIR=$DATADIR/$ALGO"-"$COMMIT
 if [ ! -d $PLOTDIR ]; then
     mkdir $PLOTDIR
 fi
 
 # python $RUNEXP/clustered_bar.py -m $METADATA -d $DATADIR -p $DATADIR -c $COMMIT -f $WARMUP"-"$RUN"-"$PHASE -n $NUMBER
-echo "python3 $RUNEXP/clustered_bar.py -m $METADATA -d $DATADIR -p $PLOTDIR -c $COMMIT -f $WARMUP"-"$RUN"-"$PHASE -n $NUMBER -g $GRAPHS"
+
+#echo "python3 $RUNEXP/clustered_bar.py -m $METADATA -d $DATADIR -p $PLOTDIR -c $COMMIT -f $WARMUP"-"$RUN"-"$PHASE -n $NUMBER -g $GRAPHS"
 python3 $RUNEXP/clustered_bar.py -m $METADATA -d $DATADIR -p $PLOTDIR -c $COMMIT -f $WARMUP"-"$RUN"-"$PHASE -n $NUMBER -g $GRAPHS -b $BASE
