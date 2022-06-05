@@ -1,12 +1,13 @@
 ## How to plot roofline
 `$ run_density.sh` as usual\
 Fill in "qn.csv": data_transfer column\
-`$ python3 roofline.py -d [path to dir of qn.csv] (-a [list algos you want to plot])`
+`$ python3 roofline.py -d [path to dir of qn.csv] (-a [list algos you want to plot])`\
 
 `python roofline.py -d [paths] -p [path] -a [algos] -m -v "-O3,-O3 -fno-strict-aliasing"`
 
 ## plot_all.py
-`python plot_all.py -d [datadir1\;datadir2] -p [store plots here] -l 500 -r 6001 -i 500 -n 10 -s 1 -t -a [f_va,f_v6,f_u4,f_v5] -m -b va -v [version name of datadir1,version name of datadir2]`
+`python plot_all.py -d [paths] -p [path] -b va -t -a [algos]`\
+deprecated `python plot_all.py -d [datadir1\;datadir2] -p [store plots here] -l 500 -r 6001 -i 500 -n 10 -s 1 -t -a [f_va,f_v6,f_u4,f_v5] -m -b va -v [version name of datadir1,version name of datadir2]`
 
 ## How to use the exp pipeline
 1. Modify env.sh

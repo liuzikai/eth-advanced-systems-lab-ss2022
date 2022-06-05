@@ -261,6 +261,7 @@ if __name__ == "__main__":
 	# sort both labels and handles by labels
 	labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
 	axes.legend(handles, labels, loc='center left', bbox_to_anchor=(1, 0.5))
+    
 	if algos[0][:2] == "ei":
 		algo_name = "Edge Iterator"
 	elif algos[0][:2] == "f_":
