@@ -2,7 +2,7 @@
 
 set -e  # exit on error
 
-source env.sh
+#source env.sh
 
 # directories
 RUNEXP=$PWD
@@ -123,13 +123,13 @@ if [ -z $PHASE ]; then PHASE="5"; fi
 
 # create experiment dir and save exp config
 COMMIT=$(git rev-parse --short HEAD)
-mkdir -p $DATADIR/"realworld-"$ALGO
 if [ $GRAPHTYPE = "GENERATED" ]; then
-    EXPDIR=$DATADIR/"realworld-"$ALGO/"edge-"$ALGO"-"$COMMIT"-"$GRAPHTYPE"-"$LOWEDGE"-"$HIGHEDGE"-"$INTERVAL"-"$NODE
+    EXPDIR=$DATADIR/"edge-"$ALGO"-"$COMMIT"-"$GRAPHTYPE"-"$LOWEDGE"-"$HIGHEDGE"-"$INTERVAL"-"$NODE
     if [ ! -z $SEED ]; then
         EXPDIR=$EXPDIR"-"$SEED
     fi
 else
+    mkdir -p $DATADIR/"realworld-"$ALGO
     EXPDIR=$DATADIR/"realworld-"$ALGO/$COMMIT"-"$GRAPHTYPE
 fi
 if [ ! -d $EXPDIR ]; then mkdir $EXPDIR; fi
@@ -162,7 +162,7 @@ config = json.load(sys.stdin)
 for a,v in config.items():
     print(f'\t{a}: {v}')
 "
-    sed -i '' -e 's/"number":'$NUMBER'/"number":'$(($NUMBER+1))'/' $EXP/config.json
+    #sed -i '' -e 's/"number":'$NUMBER'/"number":'$(($NUMBER+1))'/' $EXP/config.json
 else
     # more runs of the exp config
     cat $EXP/config.json | python3 -c "
@@ -172,7 +172,7 @@ for a,v in config.items():
     print(f'\t{a}: {v}')
 "
     NUMBER=$(cat $EXP/config.json | python3 -c "import sys, json; print(json.load(sys.stdin)['number'])")
-    sed -i '' -e 's/"number":'$NUMBER'/"number":'$(($NUMBER+1))'/' $EXP/config.json
+    #sed -i '' -e 's/"number":'$NUMBER'/"number":'$(($NUMBER+1))'/' $EXP/config.json
 fi
 
 EXPNUM=$EXP/$NUMBER
@@ -184,7 +184,7 @@ cd $BUILDDIR
 echo ">>> You are in $BUILDDIR"
 
 echo ">>> building $BUILDTYPE... Check if the compiler is GNU"
-cmake $PROJECT -DCMAKE_C_COMPILER=$GCC -DCMAKE_CXX_COMPILER=$GXX -DCMAKE_BUILD_TYPE=$BUILDTYPE
+cmake $PROJECT #-DCMAKE_C_COMPILER=$GCC -DCMAKE_CXX_COMPILER=$GXX -DCMAKE_BUILD_TYPE=$BUILDTYPE
 make -j$(nproc)
 
 echo ">>> running..."
@@ -206,6 +206,7 @@ if [ $GRAPHTYPE = "GENERATED" ]; then
                 ./graph_generation -gt $GRAPHTYPE -num_nodes $(($i/$NODE)) -num_edges $i -seed $SEED -shuffle_edges -o $INPUTDIR/$graph.txt
             fi
         fi
+        echo $EXPNUM/$graph.csv 
         ./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o $EXPNUM/$graph.csv -algorithm $ALGO -graph $INPUTDIR/$graph.txt
     done
 
