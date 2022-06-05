@@ -165,135 +165,136 @@ def read_data(DATADIR):
 	return perf, oi, all_graphs, density, gather_algos, all_algos
 
 if __name__ == "__main__":
-	markers = ["o","^","s","v","+"]
-	membw = 22 * 10 ** 9
-	base_freq = 3.6 * 10 ** 9
-	membw_cycle = membw / base_freq
-	print("bytes per cycle:", membw_cycle)
-	scalar_pi = 4
-	vector_pi = 32
-	# f list
-	# vector_pi = 6.910896404
-	# f count
-	# vector_pi = 7.914160744
-	# eiv3
-	# vector_pi = 1.882352941
-	# vector_pi = 1.882352941
+    markers = ["o","^","s","v","+"]
+    membw = 22 * 10 ** 9
+    base_freq = 3.6 * 10 ** 9
+    membw_cycle = membw / base_freq
+    print("bytes per cycle:", membw_cycle)
+    scalar_pi = 4
+    vector_pi = 32
+    # f list
+    # vector_pi = 6.910896404
+    # f count
+    # vector_pi = 7.914160744
+    # eiv3
+    # vector_pi = 1.882352941
+    # vector_pi = 1.882352941
 
-	scalar_boundary = scalar_pi/membw_cycle
-	vector_boundary = vector_pi/membw_cycle
+    scalar_boundary = scalar_pi/membw_cycle
+    vector_boundary = vector_pi/membw_cycle
 
-	perf, oi, all_graphs, density, gather_algos, all_algos = read_data(DATADIR)
-	if algos_to_plot:
-		algos = []
-		for algo in algos_to_plot.split(","):
-			if versions:
-				for vi in range(gather_algos[algo]):
-					algos.append(algo + "-" + str(vi))
-			else:
-				algos.append(algo)
-	else:
-		algos = list(all_algos)
+    perf, oi, all_graphs, density, gather_algos, all_algos = read_data(DATADIR)
+    if algos_to_plot:
+        algos = []
+        for algo in algos_to_plot.split(","):
+            if versions:
+                for vi in range(gather_algos[algo]):
+                    algos.append(algo + "-" + str(vi))
+            else:
+                algos.append(algo)
+    else:
+        algos = list(all_algos)
 
 	# ------------- plot -------------
-	fig, axes = plt.subplots(figsize=(12, 8), dpi=300)
-	if algos[0][:2] == "fh":
-		xmin = -8
-		xmax = 7
-		ymin = -12
-		ymax = 6
-	else:
-		xmin = -4
-		xmax = 7
-		ymin = -4
-		ymax = 4
-	scalar_color = "black"
-	vector_color = "black"
+    fig, axes = plt.subplots(figsize=(12, 8), dpi=300)
+    if algos[0][:2] == "fh":
+    	xmin = -8
+    	xmax = 7
+    	ymin = -12
+    	ymax = 6
+    else:
+    	xmin = -4
+    	xmax = 7
+    	ymin = -4
+    	ymax = 4
+    scalar_color = "black"
+    vector_color = "black"
 
-	# ------------- roofline -------------
-	# scalar beta
-	xs1 = [2**xmin,scalar_boundary]
-	ys1 = [2**xmin * membw_cycle,scalar_pi]
-	axes.plot(xs1, ys1, linestyle="-", linewidth=1, color="black")
+    # ------------- roofline -------------
+    # scalar beta
+    xs1 = [2**xmin,scalar_boundary]
+    ys1 = [2**xmin * membw_cycle,scalar_pi]
+    axes.plot(xs1, ys1, linestyle="-", linewidth=1, color="black")
 
-	# scalar pi
-	axes.plot([2**xmin,2**xmax],[scalar_pi,scalar_pi], linestyle="-", linewidth=1, color="black")
-	axes.annotate(f"\u03C0_scalar ({scalar_pi} flops/cycle)", xy=(2**(xmin+0.1),scalar_pi*1.05), fontsize=10)
+    # scalar pi
+    axes.plot([2**xmin,2**xmax],[scalar_pi,scalar_pi], linestyle="-", linewidth=1, color="black")
+    axes.annotate(f"\u03C0_scalar ({scalar_pi} flops/cycle)", xy=(2**(xmin+0.1),scalar_pi*1.05), fontsize=10)
 
-	#memory/compute bound
-	axes.plot([scalar_boundary,scalar_boundary],[0,scalar_pi], linestyle="-.", linewidth=1, color=scalar_color, label="\u03C0_scalar/\u03B2 ({:.02f} flops/cycle)".format(scalar_boundary))
-	# axes.annotate("\u03C0_scalar/\u03B2\n({:.02f} flops/cycle)".format(scalar_boundary), xy=(scalar_boundary*1.1, 2**(ymin+0.1)), color=scalar_color, fontsize=8.5)
+    #memory/compute bound
+    axes.plot([scalar_boundary,scalar_boundary],[0,scalar_pi], linestyle="-.", linewidth=1, color=scalar_color, label="\u03C0_scalar/\u03B2 ({:.02f} flops/byte)".format(scalar_boundary))
+    # axes.annotate("\u03C0_scalar/\u03B2\n({:.02f} flops/cycle)".format(scalar_boundary), xy=(scalar_boundary*1.1, 2**(ymin+0.1)), color=scalar_color, fontsize=8.5)
 
-	# plt.fill_between([scalar_pi/membw_cycle,2**xmax], 0, [scalar_pi,scalar_pi], facecolor='red', alpha=0.25)
+    # plt.fill_between([scalar_pi/membw_cycle,2**xmax], 0, [scalar_pi,scalar_pi], facecolor='red', alpha=0.25)
 
-	# vector beta
-	xv1 = [2**xmin,2**xmax]
-	yv1 = [2**xmin * membw_cycle,2**xmax * membw_cycle]
-	axes.plot(xv1, yv1, linestyle="--", linewidth=1, color="black")
-	label_line(axes, "\u03B2 ({:.02f} bytes/cycle)".format(membw_cycle), xs1[0], ys1[0], math.log(2**xmax * membw_cycle - 2**xmin * membw_cycle, 2**xmax - 2**xmin))
+    # vector beta
+    xv1 = [2**xmin,2**xmax]
+    yv1 = [2**xmin * membw_cycle,2**xmax * membw_cycle]
+    axes.plot(xv1, yv1, linestyle="--", linewidth=1, color="black")
+    label_line(axes, "\u03B2 ({:.02f} bytes/cycle)".format(membw_cycle), xs1[0], ys1[0], math.log(2**xmax * membw_cycle - 2**xmin * membw_cycle, 2**xmax - 2**xmin))
 
-	# vector pi
-	axes.plot([2**xmin,2**xmax],[vector_pi,vector_pi], linestyle="--", linewidth=1, color="black")
-	axes.annotate("\u03C0_vector ({:.02f} flops/cycle)".format(vector_pi), xy=(2**(xmin+0.1),vector_pi*1.05), fontsize=10)
+    # vector pi
+    if algos[0][:2] != "fh":
+        axes.plot([2**xmin,2**xmax],[vector_pi,vector_pi], linestyle="--", linewidth=1, color="black")
+        axes.annotate("{:.02f} flops/cycle".format(vector_pi), xy=(2**(xmin+0.1),vector_pi*1.05), fontsize=10)
 
-	#memory/compute bound
-	axes.plot([vector_boundary,vector_boundary],[0,vector_pi], linestyle="dotted", linewidth=1, color=vector_color, label="\u03C0_vector/\u03B2 ({:.02f} flops/cycle)".format(vector_boundary))
-	# axes.annotate("\u03C0_vector/\u03B2\n({:.02f} flops/cycle)".format(vector_boundary), xy=(vector_boundary*1.1, 2**(ymin+0.1)), color=vector_color,fontsize=8.5)
+        #memory/compute bound
+        axes.plot([vector_boundary,vector_boundary],[0,vector_pi], linestyle="dotted", linewidth=1, color=vector_color, label="\u03C0_vector/\u03B2 ({:.02f} flops/byte)".format(vector_boundary))
+        # axes.annotate("\u03C0_vector/\u03B2\n({:.02f} flops/cycle)".format(vector_boundary), xy=(vector_boundary*1.1, 2**(ymin+0.1)), color=vector_color,fontsize=8.5)
 
-	# plt.fill_between([vector_pi/membw_cycle,2**xmax], 0, [vector_pi,vector_pi], facecolor='green', alpha=0.25)
+    	# plt.fill_between([vector_pi/membw_cycle,2**xmax], 0, [vector_pi,vector_pi], facecolor='green', alpha=0.25)
 
 
 	# ------------- algo points -------------
-	for i,algo in enumerate(algos):
-		# markeredgecolor="black",markerfacecolor="none"
-		algo_label = get_label(algo)
-		if "vec" in algo_label:
-			axes.plot(oi[algo], perf[algo], marker="v", markersize=6, markeredgecolor="white", markeredgewidth=0.2, linewidth=1.5, label=algo_label)
-		else:
-			axes.plot(oi[algo], perf[algo], marker="o", markersize=5, markeredgecolor="white", markeredgewidth=0.2, linewidth=1.5, label=algo_label)
-		# axes.annotate(algo, xy=(oi[algo][-1]*0.8,perf[algo][-1]*0.7), fontsize=8.5)
+    for i,algo in enumerate(algos):
+    	# markeredgecolor="black",markerfacecolor="none"
+    	algo_label = get_label(algo)
+    	if "vec" in algo_label:
+    		axes.plot(oi[algo], perf[algo], marker="v", markersize=6, markeredgecolor="white", markeredgewidth=0.2, linewidth=1.5, label=algo_label)
+    	else:
+    		axes.plot(oi[algo], perf[algo], marker="o", markersize=5, markeredgecolor="white", markeredgewidth=0.2, linewidth=1.5, label=algo_label)
+    	# axes.annotate(algo, xy=(oi[algo][-1]*0.8,perf[algo][-1]*0.7), fontsize=8.5)
 
 
-	# ------------- format -------------
-	box = axes.get_position()
-	axes.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-	handles, labels = axes.get_legend_handles_labels()
-	# sort both labels and handles by labels
-	labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
-	axes.legend(handles, labels, loc='center left', bbox_to_anchor=(1, 0.5))
-    
-	if algos[0][:2] == "ei":
-		algo_name = "Edge Iterator"
-	elif algos[0][:2] == "f_":
-		algo_name = "Forward"
-	else:
-		algo_name = "Forward Hashed"
-	plt.title(f"Roofline Plot of Comparison Operations\n{algo_name}", fontsize=16)
-	plt.xlabel(f"I(n) = W/Q [flops/byte]\nnodes: {all_graphs[0][0]}k to {all_graphs[-1][0]}k, density {density}%", fontsize=11, labelpad=10)
-	plt.ylabel("P = W/T [flops/cycle]", fontsize=11, rotation='horizontal', horizontalalignment='left', y=1.03)
+    # ------------- format -------------
+    box = axes.get_position()
+    axes.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    handles, labels = axes.get_legend_handles_labels()
+    # sort both labels and handles by labels
+    labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
+    axes.legend(handles, labels, loc='center left', bbox_to_anchor=(1, 0.5))
 
-	ax = plt.gca()
-	ax.tick_params(axis='both', which='major', labelsize=11)
-	ax.set_xscale('log')
-	ax.set_xticks([2**x for x in range(xmin,xmax)])
-	ax.set_yscale('log')
-	ax.set_yticks([2**y for y in range(ymin,ymax)])
-	ax.get_xaxis().set_major_formatter(
-		ticker.FixedFormatter(
-			['$\\frac{{{:2.0f}}}{{{:2.0f}}}$'.format(1,2**x) for x in range(-xmin,0,-1)]
-			+ [2 ** x for x in range(0,xmax)]))
-	ax.get_yaxis().set_major_formatter(
-		ticker.FixedFormatter(
-			['$\\frac{{{:2.0f}}}{{{:2.0f}}}$'.format(1,2**y) for y in range(-ymin,0,-1)]
-			+ [2 ** y for y in range(0,ymax)]))
+    if algos[0][:2] == "ei":
+    	algo_name = "Edge Iterator"
+    elif algos[0][:2] == "f_":
+    	algo_name = "Forward"
+    else:
+    	algo_name = "Forward Hashed"
+    plt.title(f"Roofline Plot of Comparison Operations\n{algo_name}", fontsize=16)
+    plt.xlabel(f"I(n) = W/Q [flops/byte]\nnodes: {all_graphs[0][0]}k to {all_graphs[-1][0]}k, density {density}%", fontsize=11, labelpad=10)
+    plt.ylabel("P = W/T [flops/cycle]", fontsize=11, rotation='horizontal', horizontalalignment='left', y=1.03)
 
-	plt.xlim(xmin=2**xmin, xmax=2**xmax)
-	plt.ylim(ymin=2**ymin, ymax=2**ymax)
-	# plt.grid(color="#FFFFFF")
-	# ax.set_facecolor('#EFECEF')
+    ax = plt.gca()
+    ax.tick_params(axis='both', which='major', labelsize=11)
+    ax.set_xscale('log')
+    ax.set_xticks([2**x for x in range(xmin,xmax)])
+    ax.set_yscale('log')
+    ax.set_yticks([2**y for y in range(ymin,ymax)])
+    ax.get_xaxis().set_major_formatter(
+    	ticker.FixedFormatter(
+    		['$\\frac{{{:2.0f}}}{{{:2.0f}}}$'.format(1,2**x) for x in range(-xmin,0,-1)]
+    		+ [2 ** x for x in range(0,xmax)]))
+    ax.get_yaxis().set_major_formatter(
+    	ticker.FixedFormatter(
+    		['$\\frac{{{:2.0f}}}{{{:2.0f}}}$'.format(1,2**y) for y in range(-ymin,0,-1)]
+    		+ [2 ** y for y in range(0,ymax)]))
 
-	# plt.show()
-	if algos_to_plot:
-		plt.savefig(f"{PLOTDIR}/roofline_{algos_to_plot}.png")
-	else:
-		plt.savefig(f"{PLOTDIR}/roofline_{algo_name}.png")
+    plt.xlim(xmin=2**xmin, xmax=2**xmax)
+    plt.ylim(ymin=2**ymin, ymax=2**ymax)
+    # plt.grid(color="#FFFFFF")
+    # ax.set_facecolor('#EFECEF')
+
+    # plt.show()
+    if algos_to_plot:
+    	plt.savefig(f"{PLOTDIR}/roofline_{algos_to_plot}.png")
+    else:
+    	plt.savefig(f"{PLOTDIR}/roofline_{algo_name}.png")

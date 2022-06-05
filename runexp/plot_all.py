@@ -26,7 +26,8 @@ args = parser.parse_args()
 DATADIR = args.datadir.split(";")
 PLOTDIR = args.plotdir
 n = args.degree
-n = 10
+if not n:
+    n = 10
 low = args.low
 high = args.high
 interval = args.interval
@@ -108,6 +109,8 @@ def calc_speedup(base_algo, node_counts, cycles_data):
             if algo != base_algo:
                 ratio = cycles_data[i][base_algo]/cycles_data[i][algo]
                 speedup[algo] = ratio
+            else:
+                speedup[algo] = 1
         speedup_data.append(speedup)
     return speedup_data
 
@@ -141,7 +144,7 @@ def get_label(algo):
     algo = algo.split("-")
     ar = rename_table[algo[0]]
     if versions:
-        return ar + " " + versions[int(algo[1])]
+        return ar + ", " + versions[int(algo[1])]
     else:
         return ar
 
@@ -183,8 +186,8 @@ def plot_separate(algos, node_counts, data, n, xlabel, ylabel, title, figname, f
 def plot_speedup(algos, node_counts, data, n, xlabel, ylabel, title, figname, base_algo):
     fig, ax = plt.subplots(figsize=(9, 6), dpi=300)
     for algo in algos:
-        if algo != base_algo:
-            ax.plot(node_counts, data[algo], ".-", label=get_label(algo))
+        # if algo != base_algo:
+        ax.plot(node_counts, data[algo], ".-", label=get_label(algo))
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel, loc="top", rotation="horizontal")
     # ax.legend(loc='best')
