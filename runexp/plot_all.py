@@ -5,7 +5,7 @@ from scipy import stats
 import seaborn as sns
 import matplotlib as mpl
 import os, argparse, sys
-import csv, re
+import csv, re, json
 
 
 parser = argparse.ArgumentParser(description='argparse')
@@ -18,6 +18,9 @@ parser.add_argument('--interval', '-i', type=int, help='interval (step)', requir
 parser.add_argument('--seed', '-s', type=int, help='seed for random graph', required=False)
 parser.add_argument('--type', '-t', help='is density experiment set', action='store_true')
 parser.add_argument('--base', '-b', type=str, help='version to compare with', required=False)
+parser.add_argument('--algos', '-a', type=str, help='version to compare with', required=False)
+parser.add_argument('--rename', '-m', help='rename the algos', action='store_true')
+parser.add_argument('--versions', '-v', type=str, help='versioning', required=False)
 args = parser.parse_args()
 
 DATADIR = args.datadir.split(";")
@@ -29,13 +32,23 @@ interval = args.interval
 seed = args.seed
 t = args.type
 base = args.base
+algos_to_plot = args.algos
+rename = args.rename
+rename = True
+if rename:
+    with open("rename.json", "r") as f:
+        rename_table = json.load(f)
+versions = args.versions
+if versions:
+    versions = versions.split(",")
 
 def read_data(random_graphs):
     node_counts = []
     ops_data = []
     cycles_data = []
     perfs_data = []
-    algos = []
+    gather_algos = {}
+    all_algos = set()
     for i, graph_name in enumerate(random_graphs):
         node_counts.append(int(graph_name.split("_")[-2]))
         ops = {}
@@ -46,8 +59,19 @@ def read_data(random_graphs):
             with open(f"{d}/{graph_name}.csv", 'r') as f:
                 reader = csv.DictReader(f)
                 for row in reader:
-                    gather_algos[row["algorithm"]] = gather_algos.get(row["algorithm"],-1) + 1
-                    algo = row["algorithm"] + "_" + str(gather_algos[row["algorithm"]])
+                    ar = row["algorithm"]
+                    if versions:
+                        algo = ar + "-" + str(gather_algos.get(ar, 0))
+                        gather_algos[ar] = gather_algos.get(ar, 0) + 1
+                    else:
+                        if gather_algos.get(ar, 0):
+                            print(f"ERROR: duplicate algo data {row['algorithm']}, provide version names!")
+                            exit(1)
+                        else:
+                            algo = ar
+                            gather_algos[ar] = 1
+                    all_algos.add(algo)
+
                     op = int(row["ops"])
                     del row["algorithm"]
                     del row["ops"]
@@ -59,10 +83,8 @@ def read_data(random_graphs):
         ops_data.append(ops)
         cycles_data.append(cycles)
         perfs_data.append(perfs)
-    for k,v in gather_algos.items():
-        for vi in range(v+1):
-            algos.append(k + "_" + str(vi))
-    return node_counts, ops_data, cycles_data, perfs_data, algos
+
+    return node_counts, ops_data, cycles_data, perfs_data, gather_algos, all_algos
 
 def find_base_algo(algos, base):
     base_algo = ""
@@ -111,35 +133,47 @@ sns.set(font='Times New Roman',
 sns.set_style('darkgrid') # darkgrid, white grid, dark, white and ticks
 sns.color_palette('pastel')
 
+def get_label(algo):
+    algo = algo.split("-")
+    ar = rename_table[algo[0]]
+    if versions:
+        return ar + " " + versions[int(algo[1])]
+    else:
+        return ar
+    return
+
 
 def plot(algos, node_counts, data, n, xlabel, ylabel, title, figname):
     fig, ax = plt.subplots()
     for algo in algos:
-        ax.plot(node_counts, data[algo], ".-", label=algo)
+        ax.plot(node_counts, data[algo], ".-", label=get_label(algo))
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel, loc="top", rotation="horizontal")
-    ax.legend(loc='best')
+    # ax.legend(loc='best')
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
     fig.suptitle(title)
     plt.savefig(figname, bbox_inches="tight")
 
 def plot_separate(algos, node_counts, data, n, xlabel, ylabel, title, figname, format):
     for algo in algos:
         fig, ax = plt.subplots()
-        ax.plot(node_counts, data[algo], ".-", label=algo)
+        ax.plot(node_counts, data[algo], ".-", label=get_label(algo))
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel, loc="top", rotation="horizontal")
-        ax.legend(loc='best')
-        fig.suptitle(f"{title}, {algo}")
+        # ax.legend(loc='best')
+        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
+        fig.suptitle(f"{title}\n{get_label(algo)}")
         plt.savefig(f"{figname}-{algo}{format}", bbox_inches="tight")
 
 def plot_speedup(algos, node_counts, data, n, xlabel, ylabel, title, figname, base_algo):
     fig, ax = plt.subplots()
     for algo in algos:
         if algo != base_algo:
-            ax.plot(node_counts, data[algo], ".-", label=algo)
+            ax.plot(node_counts, data[algo], ".-", label=get_label(algo))
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel, loc="top", rotation="horizontal")
-    ax.legend(loc='best')
+    # ax.legend(loc='best')
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
     fig.suptitle(title)
     plt.savefig(figname, bbox_inches="tight")
 
@@ -165,15 +199,24 @@ if __name__ == "__main__":
             else:
                 random_graphs.append(f"generated_{node_count}_{edge_count}")
 
-    node_counts, ops_data, cycles_data, perfs_data, algos = read_data(random_graphs)
-
-    print(algos)
-
+    node_counts, ops_data, cycles_data, perfs_data, gather_algos, all_algos = read_data(random_graphs)
     # Construct the data frames
     ops_df = pd.DataFrame(ops_data, index=node_counts)
     cycles_df = pd.DataFrame(cycles_data, index=node_counts)
     perfs_df = pd.DataFrame(perfs_data, index=node_counts)
     # algos = list(cycles_df.columns)
+
+    if algos_to_plot:
+        algos = []
+        for algo in algos_to_plot.split(","):
+            if versions:
+                for vi in range(gather_algos[algo]):
+                    algos.append(algo + "-" + str(vi))
+            else:
+                algos.append(algo)
+    else:
+        algos = all_algos
+    print(algos)
 
     if t:
         xlabel = f"Node Count (Avg degree = |V| * {n}%)"
