@@ -140,7 +140,6 @@ def get_label(algo):
         return ar + " " + versions[int(algo[1])]
     else:
         return ar
-    return
 
 
 def plot(algos, node_counts, data, n, xlabel, ylabel, title, figname):
