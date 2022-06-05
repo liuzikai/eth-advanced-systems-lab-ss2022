@@ -4,7 +4,7 @@
 #include "common.h"
 #include "adjacency_graph.h"
 #include "triangle_lister.h"
-#include "hash_table.hpp"
+#include "hash_table_base.hpp"
 #include "quick_sort.h"
 
 namespace fh0 {

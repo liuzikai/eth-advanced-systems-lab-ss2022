@@ -36,6 +36,10 @@ auto static inline _mm_set1_epi32(auto i_0) {
     AVX2::increment_op_count_by(0);
     return real_intrinsics::_mm_set1_epi32(i_0);
 }
+auto static inline _mm_load_si128(auto i_0) {
+    AVX2::increment_op_count_by(0);
+    return real_intrinsics::_mm_load_si128(i_0);
+}
 auto static inline _mm_cmpeq_epi32(auto i_0, auto i_1) {
     AVX2::increment_op_count_by(4);
     return real_intrinsics::_mm_cmpeq_epi32(i_0, i_1);
@@ -95,6 +99,10 @@ auto static inline _mm256_and_si256(auto i_0, auto i_1) {
 auto static inline _mm256_or_si256(auto i_0, auto i_1) {
     AVX2::increment_op_count_by(8);
     return real_intrinsics::_mm256_or_si256(i_0, i_1);
+}
+auto static inline _mm256_andnot_si256(auto i_0, auto i_1) {
+    AVX2::increment_op_count_by(16);
+    return real_intrinsics::_mm256_andnot_si256(i_0, i_1);
 }
 auto static inline _mm256_add_epi64(auto i_0, auto i_1) {
     AVX2::increment_op_count_by(4);

@@ -1,0 +1,100 @@
+#ifndef TEAM02_FORWARD_HASHED_V1A_H
+#define TEAM02_FORWARD_HASHED_V1A_H
+
+#include "common.h"
+#include "adjacency_graph.h"
+#include "triangle_lister.h"
+#include "hash_table_v1a.hpp"
+#include "quick_sort.h"
+
+namespace fh1a {
+
+/// Accessory container
+
+template<class Index, class Counter = index_t>
+struct ForwardHashedHelper {
+    Counter n;            // node count
+    HashTable<Index> *A;  // array of hash tables of size n
+};
+
+template<class Index, class Counter = index_t>
+ForwardHashedHelper<Index> *forward_hashed_create_neighbor_container(const AdjacencyGraph<Index> *G) {
+    auto *A = new ForwardHashedHelper<Index>;
+    A->n = G->n;
+    A->A = new HashTable<Index>[G->n];
+    for (Counter u = 0; u < A->n; u++) {
+        hashtable_init(&A->A[u]);
+    }
+    return A;
+}
+
+template<class Index, class Counter = index_t>
+static void forward_hashed_reset_neighbor_container(AdjacencyGraph<Index> *G, ForwardHashedHelper<Index> *A) {
+    (void) G;
+    for (Counter u = 0; u < A->n; u++) {
+        hashtable_clear(&A->A[u]);
+    }
+}
+
+template<class Index, class Counter = index_t>
+void forward_hashed_delete_neighbor_container(ForwardHashedHelper<Index> *A) {
+    for (Counter u = 0; u < A->n; u++) {
+        hashtable_clear(&A->A[u]);
+    }
+    delete[] A->A;
+    delete A;
+}
+
+/**
+ * List triangles using the forward-hashed algorithm.
+ * @param G  The input graph. Notice that the graph WILL be changed (sorted). Make a copy before calling the function.
+ * @param A  The accessory head.
+ * @return   The number of triangles.
+ * @note     Triangles are printed using print_triangle if it is defined.
+ */
+template<class Index, class Counter = index_t, class TRL = TriangleListing::Count<Index>>
+void forward_hashed(TRL *lister, AdjacencyGraph<Index> *G, ForwardHashedHelper<Index> *A) {
+
+    forward_hashed_reset_neighbor_container(G, A);
+
+    for (Counter si = 0; si < G->n; si++) {  // this should not count toward op count
+        Index s = (Index) si;
+
+        for (Counter ti = 0; ti < G->adjacency[(index_t) s].count; ti++) {
+            Index t = G->adjacency[(index_t) s].neighbors[ti];
+
+            if (s < t) {
+
+                HashTable<Index> *s_table = &A->A[(index_t) s];
+                HashTable<Index> *t_table = &A->A[(index_t) t];
+
+                // set intersection: use the smaller hash table to probe the larger one.
+                HashTable<Index> *probe;
+                HashTable<Index> *build;
+                if (s_table->count < t_table->count) {
+                    probe = s_table;
+                    build = t_table;
+                } else {
+                    probe = t_table;
+                    build = s_table;
+                }
+
+                HashItem<Index> *head = probe->iter_head;
+                while (head) {
+                    if (hashtable_lookup(build, head->number)) {
+                        lister->list_triangle(s, t, head->number);
+                    }
+                    head = head->iter;
+                }
+
+                hashtable_insert(t_table, s);
+            }
+        }
+    }
+
+
+}
+
+}
+
+#endif
