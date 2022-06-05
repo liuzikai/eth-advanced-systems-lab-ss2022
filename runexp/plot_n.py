@@ -11,7 +11,7 @@ import csv, re, json
 parser = argparse.ArgumentParser(description='argparse')
 parser.add_argument('--datadir', '-d', help='data directory', required=True)
 parser.add_argument('--plotdir', '-p', help='plot directory', required=True)
-parser.add_argument('--degree', '-n', type=int, help='node_count=edge_count/n', required=False)
+parser.add_argument('--degree', '-n', type=str, help='node_count=edge_count/n', required=True)
 parser.add_argument('--low', '-l', type=int, help='start edge count', required=False)
 parser.add_argument('--high', '-r', type=int, help='end edge count', required=False)
 parser.add_argument('--interval', '-i', type=int, help='interval (step)', required=False)
@@ -25,7 +25,8 @@ args = parser.parse_args()
 
 DATADIR = args.datadir.split(";")
 PLOTDIR = args.plotdir
-n = args.degree
+n = args.degree.split(",")
+n = [int(x) for x in n]
 low = args.low
 high = args.high
 interval = args.interval
@@ -44,51 +45,67 @@ if versions:
     versions = versions.split(",")
 
 def read_data(random_graphs):
-    node_counts = []
-    ops_data = []
-    cycles_data = []
-    perfs_data = []
+    ops = {}
+    cycles = {}
+    perfs = {}
     # gather_algos = {}
     all_algos = set()
     for i, graph_name in enumerate(random_graphs):
-        node_counts.append(int(graph_name.split("_")[-2]))
-        ops = {}
-        cycles = {}
-        perfs = {}
+        edge_count = int(graph_name.split("_")[-1])
+        if edge_count not in ops:
+            ops[edge_count] = {}
+        if edge_count not in cycles:
+            cycles[edge_count] = {}
+        if edge_count not in perfs:
+            perfs[edge_count] = {}
+        # ops = {}
+        # cycles = {}
+        # perfs = {}
         # gather_algos = {}
+
         for v,d in enumerate(DATADIR):
-            with open(f"{d}/{graph_name}", 'r') as f:
-                reader = csv.DictReader(f)
-                for row in reader:
-                    ar = row["algorithm"]
-                    if algos_to_plot:
-                        if ar not in algos_to_plot:
-                            continue
-                    if versions:
-                        algo = ar + "-" + str(v)
-                        # gather_algos[ar] = gather_algos.get(ar, 0) + 1
-                    else:
-                        # if gather_algos.get(ar, 0):
-                        #     print(f"ERROR: duplicate algo data {row['algorithm']}, provide version names!")
-                        #     exit(1)
-                        # else:
-                        algo = ar
-                            # gather_algos[ar] = 1
-                    all_algos.add(algo)
+            if os.path.isfile(f"{d}/{graph_name}.csv"):
+                with open(f"{d}/{graph_name}.csv", 'r') as f:
+                    reader = csv.DictReader(f)
+                    for row in reader:
+                        ar = row["algorithm"]
+                        if algos_to_plot:
+                            if ar not in algos_to_plot:
+                                continue
+                        if versions:
+                            algo = ar + "-" + str(v)
+                            # gather_algos[ar] = gather_algos.get(ar, 0) + 1
+                        else:
+                            # if gather_algos.get(ar, 0):
+                            #     print(f"ERROR: duplicate algo data {row['algorithm']}, provide version names!")
+                            #     exit(1)
+                            # else:
+                            algo = ar
+                                # gather_algos[ar] = 1
+                        all_algos.add(algo)
 
-                    op = int(row["ops"])
-                    del row["algorithm"]
-                    del row["ops"]
-                    cycle = np.median([int(x) for x in row.values()])
-                    perf = op / cycle
-                    ops[algo] = op
-                    cycles[algo] = cycle
-                    perfs[algo] = perf
-        ops_data.append(ops)
-        cycles_data.append(cycles)
-        perfs_data.append(perfs)
+                        op = int(row["ops"])
+                        del row["algorithm"]
+                        del row["ops"]
+                        cycle = np.median([int(x) for x in row.values()])
+                        perf = op / cycle
+                        ops[edge_count][algo] = op
+                        cycles[edge_count][algo] = cycle
+                        perfs[edge_count][algo] = perf
+        # ops_data.append(ops)
+        # cycles_data.append(cycles)
+        # perfs_data.append(perfs)
+    ops_data = []
+    cycles_data = []
+    perfs_data = []
+    for v in ops.values():
+        ops_data.append(v)
+    for v in cycles.values():
+        cycles_data.append(v)
+    for v in perfs.values():
+        perfs_data.append(v)
 
-    return node_counts, ops_data, cycles_data, perfs_data, all_algos
+    return list(ops.keys()), ops_data, cycles_data, perfs_data, all_algos
 
 def find_base_algo(algos, base):
     base_algo = ""
@@ -207,9 +224,6 @@ def plot_speedup(algos, node_counts, data, n, xlabel, ylabel, title, figname, ba
 
 
 if __name__ == "__main__":
-    outputdir = os.path.join(PLOTDIR, algos_to_plot)
-    if not os.path.isdir(outputdir):
-        os.mkdir(outputdir)
     if "edge-" in DATADIR[0]:
         t = False
     random_graphs = []
@@ -224,28 +238,30 @@ if __name__ == "__main__":
     else:
         if t:
             for node_count in range(low, high, interval):
-                avg_d = node_count * n // 100
-                if avg_d == node_count:
-                    avg_d -= 1
-                edge_count = node_count * avg_d // 2
-                if seed:
-                    random_graphs.append(f"generated_{seed}_{node_count}_{edge_count}")
-                else:
-                    random_graphs.append(f"generated_{node_count}_{edge_count}")
+                for x in n:
+                    avg_d = node_count * x // 100
+                    if avg_d == node_count:
+                        avg_d -= 1
+                    edge_count = node_count * avg_d // 2
+                    if seed:
+                        random_graphs.append(f"generated_{seed}_{node_count}_{edge_count}")
+                    else:
+                        random_graphs.append(f"generated_{node_count}_{edge_count}")
         else:
             for edge_count in range(low, high, interval):
-                node_count = edge_count // n;
-                if seed:
-                    random_graphs.append(f"generated_{seed}_{node_count}_{edge_count}")
-                else:
-                    random_graphs.append(f"generated_{node_count}_{edge_count}")
+                for x in n:
+                    node_count = edge_count // x;
+                    if seed:
+                        random_graphs.append(f"generated_{seed}_{node_count}_{edge_count}")
+                    else:
+                        random_graphs.append(f"generated_{node_count}_{edge_count}")
 
-    node_counts, ops_data, cycles_data, perfs_data, all_algos = read_data(random_graphs)
+    edge_counts, ops_data, cycles_data, perfs_data, all_algos = read_data(random_graphs)
     # Construct the data frames
-    ops_df = pd.DataFrame(ops_data, index=node_counts)
-    cycles_df = pd.DataFrame(cycles_data, index=node_counts)
-    perfs_df = pd.DataFrame(perfs_data, index=node_counts)
-    # algos = list(cycles_df.columns)
+    ops_df = pd.DataFrame(ops_data, index=edge_counts)
+    cycles_df = pd.DataFrame(cycles_data, index=edge_counts)
+    perfs_df = pd.DataFrame(perfs_data, index=edge_counts)
+    algos = list(cycles_df.columns)
 
     # if algos_to_plot:
     #     algos = []
@@ -256,7 +272,7 @@ if __name__ == "__main__":
     #         else:
     #             algos.append(algo)
     # else:
-    algos = list(all_algos)
+    # algos = list(all_algos)
     print(algos)
     if algos[0][:2] == "ei":
         algo_name = "Edge Iterator"
@@ -270,19 +286,19 @@ if __name__ == "__main__":
     else:
         xlabel = f"Node Count (|E| = |V| * {n})"
     #---op count---
-    plot(algos, node_counts, ops_df, n, xlabel, "ops", f"Random Graph: Op Count\n{algo_name}", f"{outputdir}/ops.png")
+    plot(algos, edge_counts, ops_df, n, xlabel, "ops", f"Random Graph: Op Count\n{algo_name}", f"{PLOTDIR}/ops.png")
     #---runtime cycles---
-    plot(algos, node_counts, cycles_df, n, xlabel, "cycles", f"Random Graph: Runtime\n{algo_name}", f"{outputdir}/cycles.png")
+    plot(algos, edge_counts, cycles_df, n, xlabel, "cycles", f"Random Graph: Runtime\n{algo_name}", f"{PLOTDIR}/cycles.png")
     #---perf ops/cycle---
-    plot_separate(algos, node_counts, perfs_df, n, xlabel, "ops/cycle", f"Random Graph: Performance\n{algo_name}", f"{outputdir}/perf", ".png")
+    plot_separate(algos, edge_counts, perfs_df, n, xlabel, "ops/cycle", f"Random Graph: Performance\n{algo_name}", f"{PLOTDIR}/perf", ".png")
 
     #---speedup---
     if base:
         base_algo = find_base_algo(algos, base)
         if base_algo:
             print("version to compare with:", base_algo)
-            speedup_data = calc_speedup(base_algo, node_counts, cycles_data)
-            speedup_df = pd.DataFrame(speedup_data, index=node_counts)
-            plot_speedup(algos, node_counts, speedup_df, n, xlabel, "x", f"Speedup\n{algo_name}", f"{outputdir}/speedup.png", base_algo)
+            speedup_data = calc_speedup(base_algo, edge_counts, cycles_data)
+            speedup_df = pd.DataFrame(speedup_data, index=edge_counts)
+            plot_speedup(algos, edge_counts, speedup_df, n, xlabel, "x", f"Speedup\n{algo_name}", f"{PLOTDIR}/speedup.png", base_algo)
         else:
             print("no base version")

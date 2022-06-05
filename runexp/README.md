@@ -2,11 +2,14 @@
 `$ run_density.sh` as usual\
 Fill in "qn.csv": data_transfer column\
 deprecated `$ python3 roofline.py -d [path to dir of qn.csv] (-a [list algos you want to plot])`\
+`python roofline.py -d [path\;path] -p [path] -a [algos] -m -v="-O3,-O3 -fno-strict-aliasing"`
 
-`python roofline.py -d [paths] -p [path] -a [algos] -m -v "-O3,-O3 -fno-strict-aliasing"`
+## plot_n.py
+same algo, same edge count, different degree\\
+`python plot_n.py -d [path for degree4\;path degree 8\;path degree 16] -p ../data/compare -l 600 -r 20001 -i 500 -a fh_va,fh_v3,fh_v4 -b va -v "avg degree 4,avg degree 8,avg degree 16" -n 4,8,16 -s 1`
 
 ## plot_all.py
-`python plot_all.py -d [paths] -p [path] -b va -t -a [algos]`\
+`python plot_all.py -d [paths] -p [path] -b [base version: eg. va] -v [version name of datadir1,version name of datadir2] -a [algos] -n [-n value]`\
 deprecated `python plot_all.py -d [datadir1\;datadir2] -p [store plots here] -l 500 -r 6001 -i 500 -n 10 -s 1 -t -a [f_va,f_v6,f_u4,f_v5] -m -b va -v [version name of datadir1,version name of datadir2] -n [-n value]`
 
 ## How to use the exp pipeline
