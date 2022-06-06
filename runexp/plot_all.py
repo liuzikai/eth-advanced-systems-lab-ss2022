@@ -43,6 +43,9 @@ versions = args.versions
 if versions:
     versions = versions.split(",")
 
+with open("vid.json", "r") as f:
+    vid = json.load(f)
+
 def read_data(random_graphs):
     node_counts = []
     ops_data = []
@@ -151,22 +154,26 @@ def get_label(algo):
 def plot(algos, node_counts, data, n, xlabel, ylabel, title, figname):
     fig, ax = plt.subplots(figsize=(9, 6), dpi=300)
     for algo in algos:
-        ax.plot(node_counts, data[algo], ".-", label=get_label(algo))
+        algo_label = get_label(algo).replace("\n", "")
+        if algo in vid[algo[:2]]:
+            ax.plot(node_counts, data[algo], ".-", color=f"C{vid[algo[:2]].index(algo)}", label=algo_label)
+        else:
+            ax.plot(node_counts, data[algo], ".-", label=algo_label)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel, loc="top", rotation="horizontal")
     # ax.legend(loc='best')
-    # box = ax.get_position()
-    # ax.set_position([box.x0, box.y0 + box.height * 0.1,
-    #              box.width, box.height * 0.9])
-    # handles, labels = ax.get_legend_handles_labels()
-    # labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
-    # ax.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
     box = ax.get_position()
-    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    ax.set_position([box.x0, box.y0 + box.height * 0.1,
+                 box.width, box.height * 0.9])
     handles, labels = ax.get_legend_handles_labels()
-    # sort both labels and handles by labels
     labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
-    ax.legend(handles, labels, loc='center left', bbox_to_anchor=(1, 0.5))
+    ax.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
+    # box = ax.get_position()
+    # ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    # handles, labels = ax.get_legend_handles_labels()
+    # # sort both labels and handles by labels
+    # labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
+    # ax.legend(handles, labels, loc='center left', bbox_to_anchor=(1, 0.5))
     fig.suptitle(title)
     plt.savefig(figname, bbox_inches="tight")
 
@@ -185,31 +192,35 @@ def plot_separate(algos, node_counts, data, n, xlabel, ylabel, title, figname, f
 def plot_speedup(algos, node_counts, data, n, xlabel, ylabel, title, figname, base_algo):
     fig, ax = plt.subplots(figsize=(9, 6), dpi=300)
     for algo in algos:
+        algo_label = get_label(algo).replace("\n", "")
         # if algo != base_algo:
-        ax.plot(node_counts, data[algo], ".-", label=get_label(algo))
+        if algo in vid[algo[:2]]:
+            ax.plot(node_counts, data[algo], ".-", color=f"C{vid[algo[:2]].index(algo)}", label=algo_label)
+        else:
+            ax.plot(node_counts, data[algo], ".-", label=algo_label)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel, loc="top", rotation="horizontal")
     # ax.legend(loc='best')
-    # box = ax.get_position()
-    # ax.set_position([box.x0, box.y0 + box.height * 0.1,
-    #              box.width, box.height * 0.9])
-    # handles, labels = ax.get_legend_handles_labels()
-    # labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
-    # ax.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
     box = ax.get_position()
-    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    ax.set_position([box.x0, box.y0 + box.height * 0.1,
+                 box.width, box.height * 0.9])
     handles, labels = ax.get_legend_handles_labels()
-    # sort both labels and handles by labels
     labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
-    ax.legend(handles, labels, loc='center left', bbox_to_anchor=(1, 0.5))
+    ax.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
+    # box = ax.get_position()
+    # ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    # handles, labels = ax.get_legend_handles_labels()
+    # # sort both labels and handles by labels
+    # labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
+    # ax.legend(handles, labels, loc='center left', bbox_to_anchor=(1, 0.5))
     fig.suptitle(title)
     plt.savefig(figname, bbox_inches="tight")
 
 
 if __name__ == "__main__":
-    outputdir = os.path.join(PLOTDIR, algos_to_plot)
-    if not os.path.isdir(outputdir):
-        os.mkdir(outputdir)
+    # outputdir = os.path.join(PLOTDIR, algos_to_plot)
+    # if not os.path.isdir(outputdir):
+    #     os.mkdir(outputdir)
     if "edge-" in DATADIR[0]:
         t = False
     random_graphs = []
@@ -270,11 +281,11 @@ if __name__ == "__main__":
     else:
         xlabel = f"Node Count (|E| = |V| * {n})"
     #---op count---
-    plot(algos, node_counts, ops_df, n, xlabel, "ops", f"Random Graph: Op Count\n{algo_name}", f"{outputdir}/ops.png")
+    plot(algos, node_counts, ops_df, n, xlabel, "ops", f"Random Graph: Op Count\n{algo_name}", f"{PLOTDIR}/ops_{algos_to_plot}.png")
     #---runtime cycles---
-    plot(algos, node_counts, cycles_df, n, xlabel, "cycles", f"Random Graph: Runtime\n{algo_name}", f"{outputdir}/cycles.png")
+    plot(algos, node_counts, cycles_df, n, xlabel, "cycles", f"Random Graph: Runtime\n{algo_name}", f"{PLOTDIR}/cycles_{algos_to_plot}.png")
     #---perf ops/cycle---
-    plot_separate(algos, node_counts, perfs_df, n, xlabel, "ops/cycle", f"Random Graph: Performance\n{algo_name}", f"{outputdir}/perf", ".png")
+    plot_separate(algos, node_counts, perfs_df, n, xlabel, "ops/cycle", f"Random Graph: Performance\n{algo_name}", f"{PLOTDIR}/perf", ".png")
 
     #---speedup---
     if base:
@@ -283,6 +294,6 @@ if __name__ == "__main__":
             print("version to compare with:", base_algo)
             speedup_data = calc_speedup(base_algo, node_counts, cycles_data)
             speedup_df = pd.DataFrame(speedup_data, index=node_counts)
-            plot_speedup(algos, node_counts, speedup_df, n, xlabel, "x", f"Speedup\n{algo_name}", f"{outputdir}/speedup.png", base_algo)
+            plot_speedup(algos, node_counts, speedup_df, n, xlabel, "x", f"Speedup\n{algo_name}", f"{PLOTDIR}/speedup_{algos_to_plot}.png", base_algo)
         else:
             print("no base version")

@@ -171,9 +171,9 @@ if __name__ == "__main__":
     membw_cycle = membw / base_freq
     print("bytes per cycle:", membw_cycle)
     scalar_pi = 4
-    vector_pi = 32
+    # vector_pi = 32
     # f list
-    # vector_pi = 6.910896404
+    vector_pi = 6.910896404
     # f count
     # vector_pi = 7.914160744
     # eiv3
@@ -196,7 +196,7 @@ if __name__ == "__main__":
         algos = list(all_algos)
 
 	# ------------- plot -------------
-    fig, axes = plt.subplots(figsize=(12, 8), dpi=300)
+    fig, axes = plt.subplots(figsize=(10, 9), dpi=400)
     if algos[0][:2] == "fh":
     	xmin = -8
     	xmax = 7
@@ -256,12 +256,18 @@ if __name__ == "__main__":
 
 
     # ------------- format -------------
+    # box = axes.get_position()
+    # axes.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    # handles, labels = axes.get_legend_handles_labels()
+    # # sort both labels and handles by labels
+    # labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
+    # axes.legend(handles, labels, loc='center left', bbox_to_anchor=(1, 0.5))
     box = axes.get_position()
-    axes.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    axes.set_position([box.x0, box.y0 + box.height * 0.15,
+                 box.width, box.height * 0.85])
     handles, labels = axes.get_legend_handles_labels()
-    # sort both labels and handles by labels
     labels, handles = zip(*sorted(zip(labels, handles), key=lambda t: t[0]))
-    axes.legend(handles, labels, loc='center left', bbox_to_anchor=(1, 0.5))
+    axes.legend(handles, labels, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
 
     if algos[0][:2] == "ei":
     	algo_name = "Edge Iterator"
