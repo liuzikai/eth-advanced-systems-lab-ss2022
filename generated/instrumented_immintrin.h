@@ -161,6 +161,10 @@ auto static inline _mm256_load_si256(auto i_0) {
     AVX2::increment_op_count_by(0);
     return real_intrinsics::_mm256_load_si256(i_0);
 }
+auto static inline _mm256_loadu_si256(auto i_0) {
+    AVX2::increment_op_count_by(0);
+    return real_intrinsics::_mm256_loadu_si256(i_0);
+}
 auto static inline _mm_unpacklo_epi16(auto i_0, auto i_1) {
     AVX2::increment_op_count_by(0);
     return real_intrinsics::_mm_unpacklo_epi16(i_0, i_1);

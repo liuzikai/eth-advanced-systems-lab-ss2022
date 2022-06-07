@@ -19,7 +19,7 @@ static constexpr size_t HASH_ITEM_SIZE = 4U;
 static constexpr size_t HASH_CONTAINER_SIZE = HASH_TOTAL_SIZE / HASH_ITEM_SIZE;
 #define mi __m128i
 #define mm_set1_epi32 _mm_set1_epi32
-#define mm_load _mm_load_si128
+#define mm_load _mm_loadu_si128
 #define mm_cmpeq_epi32 _mm_cmpeq_epi32
 #define mm_movemask_epi8 _mm_movemask_epi8
 
@@ -29,7 +29,6 @@ static constexpr size_t HASH_CONTAINER_SIZE = HASH_TOTAL_SIZE / HASH_ITEM_SIZE;
 template<class Index, class Counter = index_t>
 struct HashItem {
     // the actual value (node id)
-    __attribute__((__aligned__(16)))
     Index number[HASH_ITEM_SIZE];
     struct HashItem<Index> *next;
 };
