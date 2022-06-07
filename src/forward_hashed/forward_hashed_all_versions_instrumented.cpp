@@ -1,3 +1,4 @@
+#define INSTRUMENTED
 #include "forward_hashed/forward_hashed_base.hpp"
 #include "forward_hashed/forward_hashed_std.hpp"
 #include "forward_hashed/forward_hashed_v1.hpp"
