@@ -10,17 +10,18 @@ namespace fh3 {
 
 static constexpr size_t HASH_ITEM_SIZE = 8U;
 static constexpr size_t HASH_CONTAINER_SIZE = HASH_TOTAL_SIZE / HASH_ITEM_SIZE;
-#define __mi __m256i
-#define _mm_set1_epi32 _mm256_set1_epi32
-#define _mm_cmpeq_epi32 _mm256_cmpeq_epi32
-#define _mm_movemask_epi8 _mm256_movemask_epi8
+#define mi __m256i
+#define mm_set1_epi32 _mm256_set1_epi32
+#define mm_load _mm256_load_si256
+#define mm_cmpeq_epi32 _mm256_cmpeq_epi32
+#define mm_movemask_epi8 _mm256_movemask_epi8
 
 //static constexpr size_t HASH_CONTAINER_SIZE = 4U;
 //static constexpr size_t HASH_ITEM_SIZE = 4U;
-//#define __mi __m128i
-//#define _mm_set1_epi32 _mm_set1_epi32
-//#define _mm_cmpeq_epi32 _mm_cmpeq_epi32
-//#define _mm_movemask_epi8 _mm_movemask_epi8
+//#define mi __m128i
+//#define mm_set1_epi32 _mm_set1_epi32
+//#define mm_cmpeq_epi32 _mm_cmpeq_epi32
+//#define mm_movemask_epi8 _mm_movemask_epi8
 
 // separate chaining
 
@@ -28,11 +29,13 @@ static constexpr size_t HASH_CONTAINER_SIZE = HASH_TOTAL_SIZE / HASH_ITEM_SIZE;
 template<class Index, class Counter = index_t>
 struct HashItem {
     // the actual value (node id)
+    __attribute__((__aligned__(32)))
     Index number[HASH_ITEM_SIZE];
     struct HashItem<Index> *next;
 };
 
-static_assert(sizeof(index_t) * HASH_ITEM_SIZE == sizeof(__mi), "Index number[HASH_ITEM_SIZE]");
+static_assert(sizeof(InstrumentedIndex) * HASH_ITEM_SIZE == sizeof(mi), "Index number[HASH_ITEM_SIZE]");
+static_assert(sizeof(index_t) * HASH_ITEM_SIZE == sizeof(mi), "Index number[HASH_ITEM_SIZE]");
 
 template<class Index, class Counter = index_t>
 struct HashTable {
@@ -82,7 +85,7 @@ void hashtable_insert(HashTable<Index> *table, Index x) {
     }
 
     // Move all items to the new item
-    HashItem<Index> *new_item = static_cast<HashItem<Index> *>(malloc(sizeof(HashItem<Index>)));
+    HashItem<Index> *new_item = new HashItem<Index>;
     for (Counter j = 0; j < HASH_ITEM_SIZE; j++) {
         new_item->number[j] = head->number[j];
     }
@@ -98,16 +101,16 @@ void hashtable_insert(HashTable<Index> *table, Index x) {
 
 template<class Index, class Counter = index_t>
 bool hashtable_lookup(HashTable<Index> *table, Index x) {
-//    static const __mi zero = _mm256_setzero_si256();
+//    static const mi zero = _mm256_setzero_si256();
     Counter i = hash(x);
     HashItem<Index> *head = &table->head[i];
 //    int c = 0;
     do {
 //        c++;
-        __mi v = _mm_set1_epi32((index_t) x);
-        __mi vec = *((__mi *) head->number);
-        __mi cmp = _mm_cmpeq_epi32(v, vec);
-        int mask = _mm_movemask_epi8(cmp);
+        mi v = mm_set1_epi32((index_t) x);
+        mi vec = mm_load((__m256i const *) head->number);
+        mi cmp = mm_cmpeq_epi32(v, vec);
+        int mask = mm_movemask_epi8(cmp);
         if (mask != 0) return true;
         head = head->next;
     } while (head);
@@ -135,10 +138,11 @@ void free_hashtable(HashTable<Index> *table) {
     free(table);
 }
 
-#undef __mi
-#undef _mm_set1_epi32
-#undef _mm_cmpeq_epi32
-#undef _mm_movemask_epi8
+#undef mi
+#undef mm_set1_epi32
+#undef mm_load
+#undef mm_cmpeq_epi32
+#undef mm_movemask_epi8
 
 }
 

@@ -16,6 +16,7 @@ namespace mocked_intrinsics {
 
 typedef real_intrinsics::__m256i __m256i;
 typedef real_intrinsics::__m128i __m128i;
+typedef real_intrinsics::__m128i_u __m128i_u;
 auto static inline _mm256_set_epi32(auto i_0, auto i_1, auto i_2, auto i_3, auto i_4, auto i_5, auto i_6, auto i_7) {
     AVX2::increment_op_count_by(0);
     return real_intrinsics::_mm256_set_epi32(i_0, i_1, i_2, i_3, i_4, i_5, i_6, i_7);
@@ -156,6 +157,10 @@ auto static inline _mm_loadu_si128(auto i_0) {
     AVX2::increment_op_count_by(0);
     return real_intrinsics::_mm_loadu_si128(i_0);
 }
+auto static inline _mm256_load_si256(auto i_0) {
+    AVX2::increment_op_count_by(0);
+    return real_intrinsics::_mm256_load_si256(i_0);
+}
 auto static inline _mm_unpacklo_epi16(auto i_0, auto i_1) {
     AVX2::increment_op_count_by(0);
     return real_intrinsics::_mm_unpacklo_epi16(i_0, i_1);
@@ -191,6 +196,10 @@ auto static inline _mm256_unpacklo_epi32(auto i_0, auto i_1) {
 auto static inline _mm256_cmpeq_epi16(auto i_0, auto i_1) {
     AVX2::increment_op_count_by(16);
     return real_intrinsics::_mm256_cmpeq_epi16(i_0, i_1);
+}
+auto static inline _mm_cmpgt_epi32(auto i_0, auto i_1) {
+    AVX2::increment_op_count_by(4);
+    return real_intrinsics::_mm_cmpgt_epi32(i_0, i_1);
 }
 
 }
