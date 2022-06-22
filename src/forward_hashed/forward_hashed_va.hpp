@@ -70,27 +70,29 @@ void forward_hashed(TRL* lister,AdjacencyGraph<Index> *G, ForwardHashedNeighborC
 
         for (Counter ti = 0; ti < G->adjacency[(index_t) s].count; ti++) {
             Index t = G->adjacency[(index_t) s].neighbors[ti];
+            if (s < t) {
 
-            ForwardHashedNeighborList<Index> *As = &A->adjacency[(index_t) s];
-            ForwardHashedNeighborList<Index> *At = &A->adjacency[(index_t) t];
-            // set intersection: use the smaller hash table to probe the larger one.
-            HashTable<Index> *probe = At->neighbors;
-            HashTable<Index> *build = As->neighbors;
-            if (As->count < At->count) {
-                probe = As->neighbors;
-                build = At->neighbors;
-            }
-            for (Counter i = 0; i < probe->size; i++) {
-                HashItem<Index> *head = probe->container[i];
-                while (head) {
-                    if (hashtable_lookup(build, head->number)) {
-                        lister->list_triangle(s, t, head->number);
-                    }
-                    head = head->next;
+                ForwardHashedNeighborList<Index> *As = &A->adjacency[(index_t) s];
+                ForwardHashedNeighborList<Index> *At = &A->adjacency[(index_t) t];
+                // set intersection: use the smaller hash table to probe the larger one.
+                HashTable<Index> *probe = At->neighbors;
+                HashTable<Index> *build = As->neighbors;
+                if (As->count < At->count) {
+                    probe = As->neighbors;
+                    build = At->neighbors;
                 }
-            }
+                for (Counter i = 0; i < probe->size; i++) {
+                    HashItem<Index> *head = probe->container[i];
+                    while (head) {
+                        if (hashtable_lookup(build, head->number)) {
+                            lister->list_triangle(s, t, head->number);
+                        }
+                        head = head->next;
+                    }
+                }
 
-            hashtable_insert(At->neighbors, s);
+                hashtable_insert(At->neighbors, s);
+            }
         }
     }
 

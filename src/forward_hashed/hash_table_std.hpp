@@ -32,7 +32,7 @@ void hashtable_insert(HashTable<Index> *table, Index x) {
 
 template<class Index, class Counter = index_t>
 bool hashtable_lookup(HashTable<Index> *table, Index x) {
-    return table->contains(x);
+    return table->find(x) != table->end();
 }
 
 template<class Index, class Counter = index_t>
@@ -42,7 +42,7 @@ void hashtable_clear(HashTable<Index> *table) {
 
 template<class Index, class Counter = index_t>
 void free_hashtable(HashTable<Index> *table) {
-    free(table);
+    delete table;
 }
 
 }

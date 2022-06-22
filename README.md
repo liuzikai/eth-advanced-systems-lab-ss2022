@@ -9,12 +9,30 @@ Triangle Listing
 ...
 ```
 
-# Project structure
+# How to run:
+```
+./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o result.csv -algorithm $ALGOS -graph $INPUTDIR/$graph.txt
+```
+IMPORTANT: Adding the flags -no_pre_cut -no_pre_sort should only be done when alogrithm selected is compiled with sorting / cutting code in place (only needed for EI and F).
+
+
+# Counting vs Listing
+Elements can be counted instead of being listed by commenting "#define COLLECT_TRIANGLES" in main.cpp. Counting increase the performance and runtime of some versions significantly.
+ 
+# Instrumentation
+ 
+## Disable & Enable
+Instrumentation can be removed by uncommenting "#define NO_INSTRUMENTATION" in common.h, otherwise the every version will also be run in instrumented mode which might be way slower than the actual version.
+ 
+## AVX Instrumentation
+AVX instructions are instrumented by adding them to "instrumented_intrinsics.json", this allows to specify the number of operations a specific intrinsic does. The "code_generator.py" will then generate a mocked intrinsic header "instrumented_immintrin.h" which uses the instrumented intrinsics only if "INSTRUMENTED" is defined.
+
 
 # Compiler Flags
 -fargument-noalias-anything -fno-strict-aliasing
 works for ei_u4
 does not work for forward
+
 
 # Versions
 ## Edge Iterator
@@ -34,12 +52,13 @@ does not work for forward
 ## Forward
 + f_base
 + f_va
-+ f_v1
-+ f_v2
-+ f_v3
-+ f_v4: vectorized version of u4, unroll by 16.
-+ f_v5: unroll by 32.\
++ f_v1: Removes all branches
++ f_v2: Unroll by and vectroize by factor 4
++ f_v3: Unroll by and vectroize by factor 8
++ f_v4: vectorized version of u4. Unroll by and vectroize by factor 2x8=16
++ f_v5: Unroll by and vectroize by factor 4x8=32\
     Compiling v4 and v5 with -fno-strict-aliasing is somehow worse.
++ f_v6: f_v5 + scalar replacment and gather instead of set optimization as explained in report.
 + f_u4: apply ei_u4 to forward. Same performance characteristics.
 
 ## Forward Hashed

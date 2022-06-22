@@ -6,6 +6,8 @@
 #include "instrumented_index.h"
 #include "triangle_lister.h"
 #include "quick_sort.h"
+#include "merge_sort/merge_sort_v4.h"
+#include <algorithm>
 
 namespace fa {
 
@@ -28,7 +30,14 @@ ForwardNeighborContainer<Index> *forward_create_neighbor_container(const Adjacen
     auto *A = new ForwardNeighborContainer<Index>;
     A->adjacency = new ForwardNeighbourList<Index>[G->n];
     for (Counter u = 0; u < G->n; u++) {
-        A->adjacency[u].neighbors = new Index[G->adjacency[u].orig_count - G->adjacency[u].count];
+        index_t container_size;
+        if(G->adjacency[u].orig_count == G->adjacency[u].count) {
+            // No cutting happened.
+            container_size = G->adjacency[u].orig_count;
+        } else {
+            container_size = G->adjacency[u].orig_count - G->adjacency[u].count;
+        }
+        A->adjacency[u].neighbors = new Index[container_size];
     }
     return A;
 }
@@ -74,7 +83,7 @@ void forward(TRL* lister,AdjacencyGraph<Index> *G, ForwardNeighborContainer<Inde
 
         for (Counter ti = 0; ti < G->adjacency[(index_t) s].count; ti++) {
             Index t = G->adjacency[(index_t) s].neighbors[ti];
-
+            // if(s<t) {
             Counter i = 0, j = 0;
             ForwardNeighbourList<Index> *As = &A->adjacency[(index_t) s];
             ForwardNeighbourList<Index> *At = &A->adjacency[(index_t) t];
@@ -91,6 +100,7 @@ void forward(TRL* lister,AdjacencyGraph<Index> *G, ForwardNeighborContainer<Inde
             }
 
             At->neighbors[At->count++] = s;
+            // }
         }
     }
 
