@@ -5,6 +5,7 @@
 #include "adjacency_graph.h"
 #include "triangle_lister.h"
 #include "quick_sort.h"
+#include "merge_sort/merge_sort_v4.h"
 
 namespace ei2 {
 
@@ -19,12 +20,18 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
     Index s_neighbor1, s_neighbor2;
     Index t_neighbor1, t_neighbor2;
     
-        // According to sec. 4, the sorting is included in the execution time
-    // for (Counter u = 0; u < G->n; u++) {
-    //     if (G->adjacency[u].count > 0) {
-    //         quick_sort(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1);
-    //     }
-    // }
+    #ifdef SORTING
+    static Index sort_buf[10800];
+    // According to sec. 4, the sorting is included in the execution time
+    for (Counter u = 0; u < G->n; u++) {
+        if (G->adjacency[u].count > 0) {
+            quick_cut<Index>(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1, (Index) u, &G->adjacency[u].count);
+            if (G->adjacency[u].count == 0) continue;
+            // std::sort(G->adjacency[u].neighbors, G->adjacency[u].neighbors + G->adjacency[u].count);
+            ms4::merge_sort(G->adjacency[u].neighbors, sort_buf, G->adjacency[u].count);
+        }
+    }
+    #endif
 
     for (Counter si = 0; si < G->n; si++) {  // this should not count toward op count
         s = (Index) si;

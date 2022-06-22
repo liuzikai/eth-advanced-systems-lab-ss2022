@@ -71,36 +71,38 @@ void forward(TRL* lister,AdjacencyGraph<Index> *G, ForwardNeighborContainer<Inde
     
     forward_reset_neighbor_container(G, A);
 
+    #ifdef SORTING
     // According to sec. 4, the sorting is included in the execution time
-    // for (Counter u = 0; u < G->n; u++) {
-    //     if (G->adjacency[u].count > 0) {
-    //         quick_sort(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1);
-    //     }
-    // }
+    for (Counter u = 0; u < G->n; u++) {
+        if (G->adjacency[u].count > 0) {
+            quick_sort(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1);
+        }
+    }
+    #endif
 
     for (Counter si = 0; si < G->n; si++) {  // this should not count toward op count
         Index s = (Index) si;
 
         for (Counter ti = 0; ti < G->adjacency[(index_t) s].count; ti++) {
             Index t = G->adjacency[(index_t) s].neighbors[ti];
-            // if(s<t) {
-            Counter i = 0, j = 0;
-            ForwardNeighbourList<Index> *As = &A->adjacency[(index_t) s];
-            ForwardNeighbourList<Index> *At = &A->adjacency[(index_t) t];
-            while (i < As->count && j < At->count) {
-                if (As->neighbors[i] == At->neighbors[j]) {
-                    lister->list_triangle(s, t, As->neighbors[i]);
-                    i++;
-                    j++;
-                } else if (As->neighbors[i] < At->neighbors[j]) {
-                    i++;
-                } else {
-                    j++;
+            if(s<t) {
+                Counter i = 0, j = 0;
+                ForwardNeighbourList<Index> *As = &A->adjacency[(index_t) s];
+                ForwardNeighbourList<Index> *At = &A->adjacency[(index_t) t];
+                while (i < As->count && j < At->count) {
+                    if (As->neighbors[i] == At->neighbors[j]) {
+                        lister->list_triangle(s, t, As->neighbors[i]);
+                        i++;
+                        j++;
+                    } else if (As->neighbors[i] < At->neighbors[j]) {
+                        i++;
+                    } else {
+                        j++;
+                    }
                 }
-            }
 
-            At->neighbors[At->count++] = s;
-            // }
+                At->neighbors[At->count++] = s;
+            }
         }
     }
 

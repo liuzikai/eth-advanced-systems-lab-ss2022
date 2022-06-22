@@ -4,7 +4,8 @@
 #include <stdint.h>
 #include <inttypes.h>
 
-//#define NO_INSTRUMENTATION
+// #define NO_INSTRUMENTATION
+// #define SORTING
 
 typedef uint32_t index_t;
 #define INDEX_FMT "%" PRIu32

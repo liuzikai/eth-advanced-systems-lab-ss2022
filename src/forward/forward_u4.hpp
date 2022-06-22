@@ -6,6 +6,7 @@
 #include "instrumented_index.h"
 #include "triangle_lister.h"
 #include "quick_sort.h"
+#include "merge_sort/merge_sort_v4.h"
 
 namespace fu4 {
 
@@ -71,12 +72,18 @@ void forward(TRL* lister,AdjacencyGraph<Index> *G, ForwardNeighborContainer<Inde
 
     forward_reset_neighbor_container(G, A);
 
+    #ifdef SORTING
+    static Index sort_buf[10800];
     // According to sec. 4, the sorting is included in the execution time
-    // for (Counter u = 0; u < G->n; u++) {
-    //     if (G->adjacency[u].count > 0) {
-    //         //quick_sort(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1);
-    //     }
-    // }
+    for (Counter u = 0; u < G->n; u++) {
+        if (G->adjacency[u].count > 0) {
+            quick_cut<Index>(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1, (Index) u, &G->adjacency[u].count);
+            if (G->adjacency[u].count == 0) continue;
+            // std::sort(G->adjacency[u].neighbors, G->adjacency[u].neighbors + G->adjacency[u].count);
+            ms4::merge_sort(G->adjacency[u].neighbors, sort_buf, G->adjacency[u].count);
+        }
+    }
+    #endif
 
     for (Counter si = 0; si < G->n; si++) {  // this should not count toward op count
         Index s = (Index) si;

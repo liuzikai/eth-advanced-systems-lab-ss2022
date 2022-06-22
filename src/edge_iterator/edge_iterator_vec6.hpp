@@ -5,6 +5,7 @@
 #include "adjacency_graph.h"
 #include "triangle_lister.h"
 #include "quick_sort.h"
+#include "merge_sort/merge_sort_v4.h"
 
 #include "instrumented_immintrin.h"
 
@@ -34,14 +35,18 @@ void edge_iterator(TRL* lister,AdjacencyGraph<Index> *G, void *dummy = nullptr) 
 
 
 
-#if 0
+    #ifdef SORTING
+    static Index sort_buf[10800];
     // According to sec. 4, the sorting is included in the execution time
     for (Counter u = 0; u < G->n; u++) {
         if (G->adjacency[u].count > 0) {
-            quick_sort(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1);
+            quick_cut<Index>(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1, (Index) u, &G->adjacency[u].count);
+            if (G->adjacency[u].count == 0) continue;
+            // std::sort(G->adjacency[u].neighbors, G->adjacency[u].neighbors + G->adjacency[u].count);
+            ms4::merge_sort(G->adjacency[u].neighbors, sort_buf, G->adjacency[u].count);
         }
     }
-#endif
+    #endif
 
     __m256i res_counter_a = _mm256_set1_epi32(0);
     __m256i res_counter_b = _mm256_set1_epi32(0);

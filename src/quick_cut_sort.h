@@ -56,6 +56,10 @@ template<class Index>
 static inline void quick_cut(Index *arr, index_t low, index_t high, Index u, index_t *count) {
     if (low < high) {
         index_t pi = partition_by_pivot<Index>(arr, low, high, u);
+        index_t rounded_up_size = roundUp(pi, 32);
+        for(uint32_t i = pi; i < rounded_up_size; i++) {
+            arr[i] = (Index)-1;
+        }
         *count = pi;
     } else {
         *count = 0;

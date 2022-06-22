@@ -13,7 +13,7 @@ Triangle Listing
 ```
 ./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o result.csv -algorithm $ALGOS -graph $INPUTDIR/$graph.txt
 ```
-IMPORTANT: Adding the flags -no_pre_cut -no_pre_sort should only be done when alogrithm selected is compiled with sorting / cutting code in place (only needed for EI and F).
+IMPORTANT: Adding the flags -no_pre_cut -no_pre_sort should only be done when alogrithm selected is compiled with sorting / cutting code in place (only needed for EI and F) othewise it might segfault since it will expect cutted input, this can be done by defining SORTING (see common.h). Also adding the flags -no_pre_cut -no_pre_sort for EU and F should only be done when SORTING is defined.
 
 
 # Counting vs Listing

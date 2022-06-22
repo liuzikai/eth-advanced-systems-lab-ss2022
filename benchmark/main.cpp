@@ -345,6 +345,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                         functions.count(&result, benchmark_graphs[run], helper);
                     }
                     cycles = stop_tsc(cycles);
+                    std::cout << result.count << std::endl;
 
                 }
 
@@ -368,6 +369,7 @@ void run(const BenchParams &params, std::ofstream &out_file) {
                     copy_graph(warmup_graph, benchmark_graph_original);
                 }
             }
+             std::cout << "All freee Completed" << std::endl;
             functions.free_helper(helper);
         }
         out_file << "\n";

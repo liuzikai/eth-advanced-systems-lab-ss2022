@@ -92,17 +92,19 @@ void forward(TRL* lister,AdjacencyGraph<Index> *G, ForwardNeighborContainer<Inde
     __m256i perm_idx_low = _mm256_set_epi32(2, 0, 2, 0, 2, 0, 2, 0);
     __m256i perm_idx_high = _mm256_set_epi32(3, 1, 3, 1, 3, 1, 3, 1);
 
-    // static Index sort_buf[10800];
-    // // According to sec. 4, the sorting is included in the execution time
-    // for (Counter u = 0; u < G->n; u++) {
-    //     if (G->adjacency[u].count > 0) {
-    //         quick_cut<Index>(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1, (Index) u, &G->adjacency[u].count);
-    //         if (G->adjacency[u].count == 0) continue;
-    //         // std::sort(G->adjacency[u].neighbors, G->adjacency[u].neighbors + G->adjacency[u].count);
-    //         ms4::merge_sort(G->adjacency[u].neighbors, sort_buf, G->adjacency[u].count);
-    //     }
-    // }
-
+    #ifdef SORTING
+    static Index sort_buf[10800];
+    // According to sec. 4, the sorting is included in the execution time
+    for (Counter u = 0; u < G->n; u++) {
+        if (G->adjacency[u].count > 0) {
+            quick_cut<Index>(G->adjacency[u].neighbors, 0, G->adjacency[u].count - 1, (Index) u, &G->adjacency[u].count);
+            if (G->adjacency[u].count == 0) continue;
+            // std::sort(G->adjacency[u].neighbors, G->adjacency[u].neighbors + G->adjacency[u].count);
+            ms4::merge_sort(G->adjacency[u].neighbors, sort_buf, G->adjacency[u].count);
+        }
+    }
+    #endif
+    
     Counter t_adj_count, s_adj_count, swap_count;
     Index* s_adj_neighbors, *t_adj_neighbors, *swap_neighbors;
 
