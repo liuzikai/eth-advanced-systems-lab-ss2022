@@ -8,6 +8,8 @@ Evaluations are performed on both generated graphs with various densities and re
 
 => [Our report](02_report.pdf)
 
+NOTICE: test data are removed due to large sizes.
+
 ## Authors
 Team 02:
 * Nils Blach (nils.blach@inf.ethz.ch)
