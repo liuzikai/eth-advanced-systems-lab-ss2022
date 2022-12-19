@@ -1,7 +1,21 @@
-Triangle Listing
-================
+ETH Advanced Systems Lab SS2021 - Triangle Listing
+==================================================
 
-# Input File Format
+In-depth optimizations on three common single-core triangle listing algorithms by improving memory layouts, reducing branch mispredictions, and applying SIMD instructions.
+Evaluations are performed on both generated graphs with various densities and real-world graphs, achieving significant speedups of up to 15x in comparison to the straightforward implementations.
+
+> :warning: If you are enrolled in the source, make sure you won't break the academic integrity regulations before proceeding.
+
+=> [Our report](02_report.pdf)
+
+## Authors
+Team 02:
+* Nils Blach (nils.blach@inf.ethz.ch)
+* Matthias Bungeroth (matthias.bungeroth@inf.ethz.ch)
+* Zikai Liu (liuzik@student.ethz.ch)
+* Jingyi Zhu (jinzhu@student.ethz.ch)
+
+## Input File Format
 ```
 <node count>
 <adjacent node count of node 0> <node> <node> ...
@@ -9,33 +23,33 @@ Triangle Listing
 ...
 ```
 
-# How to run:
+## How to run:
 ```
 ./benchmark -num_warmups $WARMUP -num_runs $RUN  -num_phases $PHASE -o result.csv -algorithm $ALGOS -graph $INPUTDIR/$graph.txt
 ```
 IMPORTANT: Adding the flags -no_pre_cut -no_pre_sort should only be done when alogrithm selected is compiled with sorting / cutting code in place (only needed for EI and F) othewise it might segfault since it will expect cutted input, this can be done by defining SORTING (see common.h). Also adding the flags -no_pre_cut -no_pre_sort for EU and F should only be done when SORTING is defined.
 
 
-# Counting vs Listing
+## Counting vs Listing
 Elements can be counted instead of being listed by commenting "#define COLLECT_TRIANGLES" in main.cpp. Counting increase the performance and runtime of some versions significantly.
  
-# Instrumentation
+## Instrumentation
  
-## Disable & Enable
+### Disable & Enable
 Instrumentation can be removed by uncommenting "#define NO_INSTRUMENTATION" in common.h, otherwise the every version will also be run in instrumented mode which might be way slower than the actual version.
  
-## AVX Instrumentation
+### AVX Instrumentation
 AVX instructions are instrumented by adding them to "instrumented_intrinsics.json", this allows to specify the number of operations a specific intrinsic does. The "code_generator.py" will then generate a mocked intrinsic header "instrumented_immintrin.h" which uses the instrumented intrinsics only if "INSTRUMENTED" is defined.
 
 
-# Compiler Flags
+## Compiler Flags
 -fargument-noalias-anything -fno-strict-aliasing
 works for ei_u4
 does not work for forward
 
 
-# Versions
-## Edge Iterator
+## Versions
+### Edge Iterator
 + ei_base: pre sort, no pre cut, has s smaller t everywhere
 + ei_va: pre sort, pre cut, remove all s smaller t, all other versions are based on this
 + ei_v1
@@ -49,7 +63,7 @@ does not work for forward
 + ei_vec5: apply forward_v5 to ei\
     Both vec4 and vec5 has a slightly different gt/lt/ge/le comparison chunk than forward_v4/v5, no significant speedup.
 
-## Forward
+### Forward
 + f_base
 + f_va
 + f_v1: Removes all branches
@@ -61,7 +75,7 @@ does not work for forward
 + f_v6: f_v5 + scalar replacment and gather instead of set optimization as explained in report.
 + f_u4: apply ei_u4 to forward. Same performance characteristics.
 
-## Forward Hashed
+### Forward Hashed
 + fh_base
 + fh_va
 + fh_v1: put the first hash item in the bucket, reduce one indirection
@@ -69,5 +83,5 @@ does not work for forward
 + fh_v3: vectorized one item hash table lookup
 + fh_v4: vectorized one item hash table lookup
 
-# Other optimizations
+## Other optimizations
 + put adjacency.count into adjacency.neighbors, similar for forward helper.
